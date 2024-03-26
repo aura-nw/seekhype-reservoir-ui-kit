@@ -143,7 +143,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
                 color: '$neutralText',
               }}
             >
-              Powered by{' '}
+              Powered by123{' '}
               <Anchor
                 href="https://reservoir.tools/"
                 target="_blank"

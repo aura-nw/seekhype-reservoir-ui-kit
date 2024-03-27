@@ -241,9 +241,10 @@ export const BuyModalRenderer: FC<Props> = ({
   )
   const totalUsd = totalIncludingFees * usdPriceRaw
 
-  const addFundsLink = paymentCurrency?.address
-    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
-    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  // const addFundsLink = paymentCurrency?.address
+  //   ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
+  //   : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  const addFundsLink = `https://halotrade.zone/swap`
 
   const fetchPath = useCallback(
     (

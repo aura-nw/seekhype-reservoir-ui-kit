@@ -7,9 +7,9 @@ import React, {
 } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faClose from '@fortawesome/free-solid-svg-icons/faClose'
 import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
 import faLock from '@fortawesome/free-solid-svg-icons/faLock'
+import { faXmark, faClose } from '@fortawesome/free-solid-svg-icons'
 
 import { Anchor, Button, Flex, Text, Loader, Box } from '../primitives'
 import { styled } from '../../stitches.config'
@@ -143,7 +143,7 @@ export const Modal = forwardRef<ElementRef<typeof Dialog>, Props>(
                 color: '$neutralText',
               }}
             >
-              Powered by123{' '}
+              Powered by{' '}
               <Anchor
                 href="https://reservoir.tools/"
                 target="_blank"

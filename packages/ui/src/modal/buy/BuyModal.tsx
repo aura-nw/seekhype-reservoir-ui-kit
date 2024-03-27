@@ -49,12 +49,12 @@ type PurchaseData = {
 }
 
 const ModalCopy = {
-  titleInsufficientFunds: 'Add Funds',
+  titleInsufficientFunds: 'Get AURA',
   titleDefault: 'Buy',
   ctaClose: 'Close',
   ctaCheckout: 'Checkout',
   ctaConnect: 'Connect',
-  ctaInsufficientFunds: 'Add Funds',
+  ctaInsufficientFunds: 'Get AURA',
   ctaGoToToken: '',
   ctaAwaitingValidation: 'Waiting for transaction to be validated',
   ctaAwaitingApproval: 'Waiting for approval...',

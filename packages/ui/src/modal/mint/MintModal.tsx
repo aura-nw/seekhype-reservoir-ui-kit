@@ -18,7 +18,6 @@ import {
   Anchor,
   Box,
   Button,
-  CryptoCurrencyIcon,
   ErrorWell,
   Flex,
   FormatCryptoCurrency,
@@ -28,7 +27,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
 import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
-import faChevronRight from '@fortawesome/free-solid-svg-icons/faChevronRight'
 import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
 import faCube from '@fortawesome/free-solid-svg-icons/faCube'
 import faEye from '@fortawesome/free-solid-svg-icons/faEye'
@@ -63,7 +61,7 @@ export const MintModalCopy = {
   mintCtaClose: 'Close',
   mintCtaBuy: 'Mint',
   mintCtaBuyDisabled: 'Mint',
-  mintCtaInsufficientFunds: 'Add Funds to Purchase',
+  mintCtaInsufficientFunds: 'Get AURA',
   mintCtaAwaitingApproval: 'Waiting for approval...',
   mintCtaAwaitingValidation: 'Waiting to be validated...',
   mintCtaGoToToken: '',
@@ -315,7 +313,7 @@ export function MintModal({
                     css={{ borderBottom: '1px solid $neutralBorder' }}
                   >
                     {transactionError ? (
-                      <ErrorWell error={transactionError} />
+                      <ErrorWell error={transactionError} css={undefined} />
                     ) : null}
                     <Flex direction="column" css={{ p: '$4', gap: '$4' }}>
                       {token ? (
@@ -372,7 +370,7 @@ export function MintModal({
                     </Flex>
                   </Flex>
                   <Flex direction="column" css={{ pb: '$2' }}>
-                    {paymentTokens.length > 1 ? (
+                    {/* {paymentTokens.length > 1 ? (
                       <Flex
                         direction="column"
                         css={{
@@ -417,7 +415,7 @@ export function MintModal({
                           </Flex>
                         </Flex>
                       </Flex>
-                    ) : null}
+                    ) : null} */}
                     <PaymentDetails
                       chainId={chainId}
                       crosschainFees={mintResponseFees}

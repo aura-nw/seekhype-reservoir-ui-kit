@@ -464,9 +464,10 @@ export const MintModalRenderer: FC<Props> = ({
     mintResponseFees,
   ])
 
-  const addFundsLink = paymentCurrency?.address
-    ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
-    : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  // const addFundsLink = paymentCurrency?.address
+  //   ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
+  //   : `https://jumper.exchange/?toChain=${rendererChain?.id}`
+  const addFundsLink = `https://halotrade.zone/swap`
 
   // Determine if user has enough funds in paymentToken
   useEffect(() => {

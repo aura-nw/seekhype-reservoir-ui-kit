@@ -11,7 +11,7 @@ const getChainBlockExplorerUrl = (chainId: number) => {
     return allChains.zoraTestnet.blockExplorers.default.url
   }
 
-  return wagmiChain?.blockExplorers?.default?.url || 'https://etherscan.io'
+  return wagmiChain?.blockExplorers?.default?.url || 'https://aurascan.io'
 }
 
 export default getChainBlockExplorerUrl

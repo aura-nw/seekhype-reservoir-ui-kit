@@ -1,7 +1,7 @@
 {
-  "name": "@reservoir0x/reservoir-kit-ui",
+  "name": "@sh-reservoir0x/reservoir-kit-ui",
   "description": "ReservoirKit is the official frontend kit to get you started building dApps with the ReservoirProtocol.",
-  "version": "2.3.0",
+  "version": "0.1.1",
   "author": "Reservoir Protocol",
   "license": "MIT",
   "exports": {
@@ -55,8 +55,8 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.20.2",
-    "react": "^18.0",
-    "react-dom": "^18.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "viem": "~2.7.8",
     "wagmi": "~2.5.7"
   },

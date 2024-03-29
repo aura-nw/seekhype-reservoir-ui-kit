@@ -333,7 +333,7 @@ export const MintModalRenderer: FC<Props> = ({
         .catch((err) => {
           setOrders([])
           setFetchMintPathError(err)
-          throw err
+          // throw err
         })
         .finally(() => {
           setFetchedInitialOrders(true)

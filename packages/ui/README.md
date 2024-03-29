@@ -4,7 +4,7 @@
 
 Use your favorite package manager to install reservoir-kit-ui:
 
-`yarn add @reservoir0x/reservoir-kit-ui`
+`yarn add @sh-reservoir0x/reservoir-kit-ui`
 
 Make sure to install the required peer dependencies:
 

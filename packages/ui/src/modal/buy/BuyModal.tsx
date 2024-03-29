@@ -21,8 +21,8 @@ import Progress from '../Progress'
 import { Modal } from '../Modal'
 import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
 import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
-import faChevronRight from '@fortawesome/free-solid-svg-icons/faChevronRight'
+// import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
+// import faChevronRight from '@fortawesome/free-solid-svg-icons/faChevronRight'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BuyModalRenderer, BuyStep, BuyModalStepData } from './BuyModalRenderer'
@@ -36,7 +36,7 @@ import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { truncateAddress } from '../../lib/truncate'
-import { SelectPaymentToken } from '../SelectPaymentToken'
+// import { SelectPaymentToken } from '../SelectPaymentToken'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
@@ -270,7 +270,7 @@ export function BuyModal({
               </Flex>
             )}
 
-            {buyStep === BuyStep.SelectPayment && (
+            {/* {buyStep === BuyStep.SelectPayment && (
               <Flex direction="column" css={{ pb: 20 }}>
                 <Flex align="center" css={{ gap: '$2' }}>
                   <Button
@@ -292,7 +292,7 @@ export function BuyModal({
                   chainId={modalChain?.id || 1}
                 />
               </Flex>
-            )}
+            )} */}
 
             {buyStep === BuyStep.Checkout && !loading && (
               <Flex direction="column">
@@ -328,7 +328,7 @@ export function BuyModal({
                     borderTop: '1px solid $neutralBorder',
                   }}
                 >
-                  {paymentTokens.length > 1 ? (
+                  {/* {paymentTokens.length > 1 ? (
                     <Flex
                       direction="column"
                       css={{
@@ -366,7 +366,7 @@ export function BuyModal({
                         </Flex>
                       </Flex>
                     </Flex>
-                  ) : null}
+                  ) : null} */}
                   <PaymentDetails
                     feeOnTop={feeOnTop}
                     feeUsd={feeUsd}

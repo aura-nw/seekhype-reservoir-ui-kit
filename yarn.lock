@@ -6117,49 +6117,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reservoir0x/reservoir-kit-ui@workspace:*, @reservoir0x/reservoir-kit-ui@workspace:packages/ui":
-  version: 0.0.0-use.local
-  resolution: "@reservoir0x/reservoir-kit-ui@workspace:packages/ui"
-  dependencies:
-    "@fortawesome/fontawesome-svg-core": ^6.2.1
-    "@fortawesome/free-brands-svg-icons": ^6.2.1
-    "@fortawesome/free-solid-svg-icons": ^6.2.1
-    "@fortawesome/react-fontawesome": ^0.2.0
-    "@radix-ui/colors": ^0.1.8
-    "@radix-ui/react-collapsible": 1.0.3
-    "@radix-ui/react-dialog": 1.0.4
-    "@radix-ui/react-dropdown-menu": 2.0.5
-    "@radix-ui/react-popover": 1.0.6
-    "@radix-ui/react-scroll-area": 1.0.4
-    "@radix-ui/react-select": 1.2.2
-    "@radix-ui/react-switch": 1.0.3
-    "@radix-ui/react-toggle-group": 1.0.4
-    "@radix-ui/react-tooltip": 1.0.6
-    "@react-hookz/web": ^19.2.0
-    "@reservoir0x/reservoir-sdk": 2.0.9
-    "@stitches/react": 1.3.1-1
-    dayjs: ^1.11.4
-    flatpickr: ^4.6.13
-    framer-motion: ^6.4.2
-    react-flatpickr: ^3.10.13
-    swr: 2.0.1
-  peerDependencies:
-    "@tanstack/react-query": ^5.20.2
-    react: ^18.0
-    react-dom: ^18.0
-    viem: ~2.7.8
-    wagmi: ~2.5.7
-  languageName: unknown
-  linkType: soft
-
-"@reservoir0x/reservoir-sdk@npm:2.0.9":
-  version: 2.0.9
-  resolution: "@reservoir0x/reservoir-sdk@npm:2.0.9"
+"@reservoir0x/reservoir-sdk@npm:2.0.11":
+  version: 2.0.11
+  resolution: "@reservoir0x/reservoir-sdk@npm:2.0.11"
   dependencies:
     axios: ^1.6.7
   peerDependencies:
     viem: ~2.7.8
-  checksum: 9ba694c7cf16ea021107c664e04f7a03bef903a8059f8f6e0964bb1c4077c94527d9ba234d3bb5269d83c6c2573554b6deb27c66ae37a7395dbe51c6d351b43c
+  checksum: 391b2a18ffcd3038c2c08411a7d382a8e8605661480f9d71cfb20ef7c2ccb4bd547a2c4181d32e84caedf65f9a7d07e8412967ebb843b1aafa2a522fd6ff4819
   languageName: node
   linkType: hard
 
@@ -6347,6 +6312,41 @@ __metadata:
   checksum: cb99505e6d2deef8e55e81df8c563ce8dbfdf1595596dc912bceadcf366c91b05a98130e928ecb090df74efdb20150b64acc4be55bc42768cab4d39a2833d234
   languageName: node
   linkType: hard
+
+"@sh-reservoir0x/reservoir-kit-ui@workspace:*, @sh-reservoir0x/reservoir-kit-ui@workspace:packages/ui":
+  version: 0.0.0-use.local
+  resolution: "@sh-reservoir0x/reservoir-kit-ui@workspace:packages/ui"
+  dependencies:
+    "@fortawesome/fontawesome-svg-core": ^6.2.1
+    "@fortawesome/free-brands-svg-icons": ^6.2.1
+    "@fortawesome/free-solid-svg-icons": ^6.2.1
+    "@fortawesome/react-fontawesome": ^0.2.0
+    "@radix-ui/colors": ^0.1.8
+    "@radix-ui/react-collapsible": 1.0.3
+    "@radix-ui/react-dialog": 1.0.4
+    "@radix-ui/react-dropdown-menu": 2.0.5
+    "@radix-ui/react-popover": 1.0.6
+    "@radix-ui/react-scroll-area": 1.0.4
+    "@radix-ui/react-select": 1.2.2
+    "@radix-ui/react-switch": 1.0.3
+    "@radix-ui/react-toggle-group": 1.0.4
+    "@radix-ui/react-tooltip": 1.0.6
+    "@react-hookz/web": ^19.2.0
+    "@reservoir0x/reservoir-sdk": 2.0.11
+    "@stitches/react": 1.3.1-1
+    dayjs: ^1.11.4
+    flatpickr: ^4.6.13
+    framer-motion: ^6.4.2
+    react-flatpickr: ^3.10.13
+    swr: 2.0.1
+  peerDependencies:
+    "@tanstack/react-query": ^5.20.2
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    viem: ~2.7.8
+    wagmi: ~2.5.7
+  languageName: unknown
+  linkType: soft
 
 "@sinclair/typebox@npm:^0.24.1":
   version: 0.24.51
@@ -19965,7 +19965,7 @@ __metadata:
   dependencies:
     "@radix-ui/colors": ^0.1.8
     "@rainbow-me/rainbowkit": 2.0.0
-    "@reservoir0x/reservoir-kit-ui": "workspace:*"
+    "@sh-reservoir0x/reservoir-kit-ui": "workspace:*"
     "@stitches/react": 1.3.1-1
     "@tanstack/react-query": ^5.20.2
     "@types/node": ^12.12.21
@@ -19980,33 +19980,6 @@ __metadata:
     typescript: ^5.0.4
     viem: ~2.7.8
     wagmi: ~2.5.7
-  languageName: unknown
-  linkType: soft
-
-"reservoir-kit@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "reservoir-kit@workspace:."
-  dependencies:
-    "@changesets/cli": ^2.27.1
-    "@parcel/core": ^2.9.3
-    "@parcel/optimizer-data-url": ^2.9.3
-    "@parcel/packager-ts": ^2.9.3
-    "@parcel/transformer-inline-string": ^2.9.3
-    "@parcel/transformer-typescript-tsc": ^2.9.3
-    "@parcel/transformer-typescript-types": ^2.9.3
-    "@types/node": ^17.0.10
-    "@types/react": ^18.0.15
-    "@types/react-dom": ^18.0.6
-    "@types/react-flatpickr": ^3.8.7
-    buffer: ^6.0.3
-    next-remote-watch: ^1.0.0
-    parcel: ^2.9.3
-    prettier: ^2.5.1
-    process: ^0.11.10
-    replace-in-files: ^3.0.0
-    ts-node: ^10.9.1
-    typescript: ^5.0.4
-    viem: ~2.7.8
   languageName: unknown
   linkType: soft
 
@@ -20565,6 +20538,33 @@ __metadata:
   checksum: be18cbbf70e7d8097c97f713a2e76edf84e87299b40d085c6bf8b65314e994cc15e2e317727342fa6996e38e1f52c59720b53fe621e2eb593a6847bf0356db89
   languageName: node
   linkType: hard
+
+"sh-reservoir-kit@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "sh-reservoir-kit@workspace:."
+  dependencies:
+    "@changesets/cli": ^2.27.1
+    "@parcel/core": ^2.9.3
+    "@parcel/optimizer-data-url": ^2.9.3
+    "@parcel/packager-ts": ^2.9.3
+    "@parcel/transformer-inline-string": ^2.9.3
+    "@parcel/transformer-typescript-tsc": ^2.9.3
+    "@parcel/transformer-typescript-types": ^2.9.3
+    "@types/node": ^17.0.10
+    "@types/react": ^18.0.15
+    "@types/react-dom": ^18.0.6
+    "@types/react-flatpickr": ^3.8.7
+    buffer: ^6.0.3
+    next-remote-watch: ^1.0.0
+    parcel: ^2.9.3
+    prettier: ^2.5.1
+    process: ^0.11.10
+    replace-in-files: ^3.0.0
+    ts-node: ^10.9.1
+    typescript: ^5.0.4
+    viem: ~2.7.8
+  languageName: unknown
+  linkType: soft
 
 "sha.js@npm:^2.4.11":
   version: 2.4.11

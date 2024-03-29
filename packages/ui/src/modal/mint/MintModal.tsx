@@ -25,14 +25,15 @@ import {
   Text,
 } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faChevronLeft from '@fortawesome/free-solid-svg-icons/faChevronLeft'
-import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
-import faCube from '@fortawesome/free-solid-svg-icons/faCube'
-import faEye from '@fortawesome/free-solid-svg-icons/faEye'
-import faPenNib from '@fortawesome/free-solid-svg-icons/faPenNib'
-import faWallet from '@fortawesome/free-solid-svg-icons/faWallet'
-
+import {
+  faCheckCircle,
+  faChevronLeft,
+  faCircleExclamation,
+  faCube,
+  faEye,
+  faPenNib,
+  faWallet,
+} from '@fortawesome/free-solid-svg-icons'
 import { formatNumber } from '../../lib/numbers'
 import { Path } from '../../components/cart/CartCheckoutModal'
 import QuantitySelector from '../QuantitySelector'
@@ -470,7 +471,7 @@ export function MintModal({
                 </Flex>
               )}
 
-            {!loading && mintStep === MintStep.SelectPayment && (
+            {/* {!loading && mintStep === MintStep.SelectPayment && (
               <Flex direction="column" css={{ py: 20 }}>
                 <Flex align="center" css={{ gap: '$2', px: '$4' }}>
                   <Button
@@ -492,7 +493,7 @@ export function MintModal({
                   chainId={modalChain?.id || 1}
                 />
               </Flex>
-            )}
+            )} */}
 
             {!loading && mintStep === MintStep.Approving && (
               <Flex direction="column">

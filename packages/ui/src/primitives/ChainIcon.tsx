@@ -5,6 +5,7 @@ import { useContext } from 'react'
 import { Box } from './'
 import { CSS } from '@stitches/react'
 import chainIcons from '../constants/chainIcons'
+import GoerliIconDark from '../img/chains/GoerliIconDark'
 
 type Props = {
   chainId?: number
@@ -26,7 +27,11 @@ const ChainIcon: FC<Props> = ({ chainId, css = {}, height = 14, color }) => {
       ? themeContext['assets']['chainIcon']['value']
       : 'dark'
 
-  let icon: JSX.Element | null = chainIconConfig[iconTheme]
+  let icon: JSX.Element | null = chainIconConfig ? (
+    chainIconConfig[iconTheme]
+  ) : (
+    <GoerliIconDark />
+  )
 
   if (color) {
     icon = chainIconConfig.color

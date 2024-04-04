@@ -391,82 +391,132 @@ export const ListModalRenderer: FC<Props> = ({
       setListingData([{ listing, marketplace }])
       setListStep(ListStep.Listing)
 
-      client.actions
-        .listToken({
-          chainId: rendererChain?.id,
-          listings: [listing],
-          wallet,
-          onProgress: (steps: Execute['steps']) => {
-            const executableSteps = steps.filter(
-              (step) => step.items && step.items.length > 0
-            )
-
-            let stepCount = executableSteps.length
-            let incompleteStepItemIndex: number | null = null
-            let incompleteStepIndex: number | null = null
-
-            executableSteps.find((step, i) => {
-              if (!step.items) {
-                return false
-              }
-
-              incompleteStepItemIndex = step.items.findIndex(
-                (item) => item.status == 'incomplete'
+      const maker = account?.address
+      if (rendererChain?.name === 'Evmos Testnet') {
+        // wallet.handleSignMessageStep();
+        const txHash = wagmiWallet?.writeContract({
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: '_tokenContract',
+                  type: 'address',
+                },
+                { internalType: 'uint256', name: '_tokenId', type: 'uint256' },
+                { internalType: 'uint256', name: '_askPrice', type: 'uint256' },
+                {
+                  internalType: 'address',
+                  name: '_askCurrency',
+                  type: 'address',
+                },
+                {
+                  internalType: 'address',
+                  name: '_sellerFundsRecipient',
+                  type: 'address',
+                },
+                {
+                  internalType: 'uint16',
+                  name: '_findersFeeBps',
+                  type: 'uint16',
+                },
+              ],
+              name: 'createAsk',
+              outputs: [],
+              stateMutability: 'nonpayable',
+              type: 'function',
+            },
+          ],
+          address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
+          functionName: 'createAsk',
+          args: [
+            '0x0000000000000000000000000000000000000000',
+            BigInt(Number(price) * 1000000),
+            0n,
+            maker as `0x${string}`,
+            contract as `0x${string}`,
+            Number(tokenId),
+          ],
+        })
+        console.log('Hash', txHash)
+      } else {
+        client.actions
+          .listToken({
+            chainId: rendererChain?.id,
+            listings: [listing],
+            wallet,
+            onProgress: (steps: Execute['steps']) => {
+              const executableSteps = steps.filter(
+                (step) => step.items && step.items.length > 0
               )
-              if (incompleteStepItemIndex !== -1) {
-                incompleteStepIndex = i
-                return true
-              }
-            })
 
-            if (
-              incompleteStepIndex === null ||
-              incompleteStepItemIndex === null
-            ) {
-              const currentStep = executableSteps[executableSteps.length - 1]
-              const currentStepItem = currentStep.items
-                ? currentStep.items[currentStep.items.length]
-                : null
-              setListStep(ListStep.Complete)
-              const listings =
-                currentStepItem && currentStepItem.orderIndexes !== undefined
-                  ? listingData.filter((_, i) =>
-                      currentStepItem.orderIndexes?.includes(i)
-                    )
-                  : [listingData[listingData.length - 1]]
-              setStepData({
-                totalSteps: stepCount,
-                stepProgress: stepCount,
-                currentStep,
-                listingData: listings,
-              })
-            } else {
-              const currentStep = executableSteps[incompleteStepIndex]
-              const listingIndexes: Set<number> = new Set()
-              currentStep.items?.forEach(({ orderIndexes, status }) => {
-                if (status === 'incomplete') {
-                  orderIndexes?.forEach((orderIndex) => {
-                    listingIndexes.add(orderIndex)
-                  })
+              let stepCount = executableSteps.length
+              let incompleteStepItemIndex: number | null = null
+              let incompleteStepIndex: number | null = null
+
+              executableSteps.find((step, i) => {
+                if (!step.items) {
+                  return false
+                }
+
+                incompleteStepItemIndex = step.items.findIndex(
+                  (item) => item.status == 'incomplete'
+                )
+                if (incompleteStepItemIndex !== -1) {
+                  incompleteStepIndex = i
+                  return true
                 }
               })
-              const listings = Array.from(listingIndexes).map(
-                (index) => listingData[index]
-              )
 
-              setStepData({
-                totalSteps: stepCount,
-                stepProgress: incompleteStepIndex,
-                currentStep: executableSteps[incompleteStepIndex],
-                listingData: listings,
-              })
-            }
-          },
-        })
-        .catch((error: Error) => {
-          setListStep(ListStep.SetPrice)
-          setTransactionError(error)
-        })
+              if (
+                incompleteStepIndex === null ||
+                incompleteStepItemIndex === null
+              ) {
+                const currentStep = executableSteps[executableSteps.length - 1]
+                const currentStepItem = currentStep.items
+                  ? currentStep.items[currentStep.items.length]
+                  : null
+                setListStep(ListStep.Complete)
+                const listings =
+                  currentStepItem && currentStepItem.orderIndexes !== undefined
+                    ? listingData.filter((_, i) =>
+                        currentStepItem.orderIndexes?.includes(i)
+                      )
+                    : [listingData[listingData.length - 1]]
+                setStepData({
+                  totalSteps: stepCount,
+                  stepProgress: stepCount,
+                  currentStep,
+                  listingData: listings,
+                })
+              } else {
+                const currentStep = executableSteps[incompleteStepIndex]
+                const listingIndexes: Set<number> = new Set()
+                currentStep.items?.forEach(({ orderIndexes, status }) => {
+                  if (status === 'incomplete') {
+                    orderIndexes?.forEach((orderIndex) => {
+                      listingIndexes.add(orderIndex)
+                    })
+                  }
+                })
+                const listings = Array.from(listingIndexes).map(
+                  (index) => listingData[index]
+                )
+
+                setStepData({
+                  totalSteps: stepCount,
+                  stepProgress: incompleteStepIndex,
+                  currentStep: executableSteps[incompleteStepIndex],
+                  listingData: listings,
+                })
+              }
+            },
+          })
+          .catch((error: Error) => {
+            setListStep(ListStep.SetPrice)
+            setTransactionError(error)
+          })
+      }
     },
     [
       client,

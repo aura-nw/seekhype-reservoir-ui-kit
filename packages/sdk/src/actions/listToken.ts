@@ -6,6 +6,8 @@ import { AxiosRequestConfig } from 'axios'
 import { version } from '../../package.json'
 import { isViemWalletClient } from '../utils/viemWallet'
 import { WalletClient } from 'viem'
+import { Exchange, Order } from '@hunglv46/reservoir-sdk/dist/zora'
+import { ethers } from 'ethers'
 
 type ListTokenBody = NonNullable<
   paths['/execute/list/v5']['post']['parameters']['body']['body']
@@ -50,13 +52,13 @@ export async function listToken(
   if (!baseApiUrl) {
     throw new ReferenceError('ReservoirClient missing chain configuration')
   }
-
+ 
   try {
     const data: ListTokenBody = {
       maker,
       source: client.source || undefined,
     }
-
+    
     listings.forEach((listing) => {
       if (
         (!listing.orderbook || listing.orderbook === 'reservoir') &&
@@ -65,7 +67,10 @@ export async function listToken(
       ) {
         if (chain?.marketplaceFees && chain?.marketplaceFees?.length > 0) {
           listing.marketplaceFees = chain.marketplaceFees
-        } else if (client.marketplaceFees && client?.marketplaceFees?.length > 0) {
+        } else if (
+          client.marketplaceFees &&
+          client?.marketplaceFees?.length > 0
+        ) {
           listing.marketplaceFees = client.marketplaceFees
         }
       }

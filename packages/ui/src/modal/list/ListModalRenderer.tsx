@@ -393,52 +393,83 @@ export const ListModalRenderer: FC<Props> = ({
 
       const maker = account?.address
       if (rendererChain?.name === 'Evmos Testnet') {
-        // wallet.handleSignMessageStep();
-        const txHash = wagmiWallet?.writeContract({
-          abi: [
-            {
-              inputs: [
+        // approve module
+        const approveTxHash = wagmiWallet
+          ?.writeContract({
+            abi: [
+              {
+                inputs: [
+                  { internalType: 'address', name: '_module', type: 'address' },
+                  { internalType: 'bool', name: '_approved', type: 'bool' },
+                ],
+                name: 'setApprovalForModule',
+                outputs: [],
+                stateMutability: 'nonpayable',
+                type: 'function',
+              },
+            ],
+            address:
+              '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
+            functionName: 'setApprovalForModule',
+            args: ['0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`, true],
+          })
+          .then(() => {
+            // list token
+            const txHash = wagmiWallet?.writeContract({
+              abi: [
                 {
-                  internalType: 'address',
-                  name: '_tokenContract',
-                  type: 'address',
-                },
-                { internalType: 'uint256', name: '_tokenId', type: 'uint256' },
-                { internalType: 'uint256', name: '_askPrice', type: 'uint256' },
-                {
-                  internalType: 'address',
-                  name: '_askCurrency',
-                  type: 'address',
-                },
-                {
-                  internalType: 'address',
-                  name: '_sellerFundsRecipient',
-                  type: 'address',
-                },
-                {
-                  internalType: 'uint16',
-                  name: '_findersFeeBps',
-                  type: 'uint16',
+                  inputs: [
+                    {
+                      internalType: 'address',
+                      name: '_tokenContract',
+                      type: 'address',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: '_tokenId',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: '_askPrice',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'address',
+                      name: '_askCurrency',
+                      type: 'address',
+                    },
+                    {
+                      internalType: 'address',
+                      name: '_sellerFundsRecipient',
+                      type: 'address',
+                    },
+                    {
+                      internalType: 'uint16',
+                      name: '_findersFeeBps',
+                      type: 'uint16',
+                    },
+                  ],
+                  name: 'createAsk',
+                  outputs: [],
+                  stateMutability: 'nonpayable',
+                  type: 'function',
                 },
               ],
-              name: 'createAsk',
-              outputs: [],
-              stateMutability: 'nonpayable',
-              type: 'function',
-            },
-          ],
-          address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
-          functionName: 'createAsk',
-          args: [
-            contract as `0x${string}`,
-            BigInt(Number(tokenId)),
-            BigInt(Number(price) * 1000000),
-            '0x0000000000000000000000000000000000000000',
-            maker as `0x${string}`,
-            0,
-          ],
-        })
-        console.log('Hash', txHash)
+              address:
+                '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
+              functionName: 'createAsk',
+              args: [
+                contract as `0x${string}`,
+                BigInt(Number(tokenId)),
+                BigInt(Number(price) * 1000000),
+                '0x0000000000000000000000000000000000000000',
+                maker as `0x${string}`,
+                80000,
+              ],
+            })
+            console.log('Hash', txHash)
+          })
       } else {
         client.actions
           .listToken({

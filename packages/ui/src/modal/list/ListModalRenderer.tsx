@@ -430,12 +430,12 @@ export const ListModalRenderer: FC<Props> = ({
           address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
           functionName: 'createAsk',
           args: [
-            '0x0000000000000000000000000000000000000000',
-            BigInt(Number(price) * 1000000),
-            0n,
-            maker as `0x${string}`,
             contract as `0x${string}`,
-            Number(tokenId),
+            BigInt(Number(tokenId)),
+            BigInt(Number(price) * 1000000),
+            '0x0000000000000000000000000000000000000000',
+            maker as `0x${string}`,
+            0,
           ],
         })
         console.log('Hash', txHash)

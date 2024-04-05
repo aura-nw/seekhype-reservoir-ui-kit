@@ -105,6 +105,9 @@ export const CancelListingModalRenderer: FC<Props> = ({
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const totalUsd = usdPrice * (listing?.price?.amount?.decimal || 0)
 
+  const tokenId = listing?.tokenSetId?.split(':')[2]
+  const contract = listing?.tokenSetId?.split(':')[1]
+
   const cancelOrder = useCallback(async () => {
     if (!wallet) {
       const error = new Error('Missing a wallet/signer')
@@ -139,65 +142,89 @@ export const CancelListingModalRenderer: FC<Props> = ({
 
     setCancelStep(CancelStep.Approving)
 
-    client.actions
-      .cancelOrder({
-        chainId: rendererChain?.id,
-        ids: [listingId],
-        wallet,
-        onProgress: (steps: Execute['steps']) => {
-          if (!steps) {
-            return
-          }
-          setSteps(steps)
+    if (rendererChain?.name === 'Evmos Testnet' && tokenId) {
+      await wagmiWallet?.writeContract({
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: '_tokenContract',
+                type: 'address',
+              },
+              { internalType: 'uint256', name: '_tokenId', type: 'uint256' },
+            ],
+            name: 'cancelAsk',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+        ],
+        address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+        functionName: 'cancelAsk',
+        args: [contract as `0x${string}`, BigInt(Number(tokenId))],
+      })
+    } else {
+      client.actions
+        .cancelOrder({
+          chainId: rendererChain?.id,
+          ids: [listingId],
+          wallet,
+          onProgress: (steps: Execute['steps']) => {
+            if (!steps) {
+              return
+            }
+            setSteps(steps)
 
-          const executableSteps = steps.filter(
-            (step) => step.items && step.items.length > 0
-          )
-
-          let stepCount = executableSteps.length
-
-          let currentStepItem:
-            | NonNullable<Execute['steps'][0]['items']>[0]
-            | undefined
-
-          const currentStepIndex = executableSteps.findIndex((step) => {
-            currentStepItem = step.items?.find(
-              (item) => item.status === 'incomplete'
+            const executableSteps = steps.filter(
+              (step) => step.items && step.items.length > 0
             )
-            return currentStepItem
-          })
 
-          const currentStep =
-            currentStepIndex > -1
-              ? executableSteps[currentStepIndex]
-              : executableSteps[stepCount - 1]
+            let stepCount = executableSteps.length
 
-          if (currentStepItem) {
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: currentStepIndex,
-              currentStep,
-              currentStepItem,
+            let currentStepItem:
+              | NonNullable<Execute['steps'][0]['items']>[0]
+              | undefined
+
+            const currentStepIndex = executableSteps.findIndex((step) => {
+              currentStepItem = step.items?.find(
+                (item) => item.status === 'incomplete'
+              )
+              return currentStepItem
             })
-          } else if (
-            steps.every(
-              (step) =>
-                !step.items ||
-                step.items.length == 0 ||
-                step.items?.every((item) => item.status === 'complete')
-            )
-          ) {
-            setCancelStep(CancelStep.Complete)
-          }
-        },
-      })
-      .catch((error: Error) => {
-        setTransactionError(error)
-        setCancelStep(CancelStep.Cancel)
-        setStepData(null)
-        setSteps(null)
-      })
-  }, [listingId, client, rendererChain, wallet, config])
+
+            const currentStep =
+              currentStepIndex > -1
+                ? executableSteps[currentStepIndex]
+                : executableSteps[stepCount - 1]
+
+            if (currentStepItem) {
+              setStepData({
+                totalSteps: stepCount,
+                stepProgress: currentStepIndex,
+                currentStep,
+                currentStepItem,
+              })
+            } else if (
+              steps.every(
+                (step) =>
+                  !step.items ||
+                  step.items.length == 0 ||
+                  step.items?.every((item) => item.status === 'complete')
+              )
+            ) {
+              setCancelStep(CancelStep.Complete)
+            }
+          },
+        })
+        .catch((error: Error) => {
+          setTransactionError(error)
+          setCancelStep(CancelStep.Cancel)
+          setStepData(null)
+          setSteps(null)
+        })
+    }
+  }, [listingId, client, rendererChain, wallet, config, tokenId, contract])
 
   useEffect(() => {
     if (!open) {
@@ -212,9 +239,6 @@ export const CancelListingModalRenderer: FC<Props> = ({
     ? (axios.defaults.headers.common['x-rkui-context'] =
         'cancelListingRenderer')
     : delete axios.defaults.headers.common?.['x-rkui-context']
-
-  const tokenId = listing?.tokenSetId?.split(':')[2]
-  const contract = listing?.tokenSetId?.split(':')[1]
 
   return (
     <>

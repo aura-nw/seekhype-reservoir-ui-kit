@@ -27,8 +27,34 @@ import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { Currency } from '../../types/Currency'
-import { WalletClient, parseUnits, zeroAddress } from 'viem'
+import {
+  WalletClient,
+  parseUnits,
+  zeroAddress,
+  createPublicClient,
+  http,
+  defineChain,
+} from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
+
+const evmosTestnet = /*#__PURE__*/ defineChain({
+  id: 9_000,
+  name: 'Evmos Testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Evmos',
+    symbol: 'EVMOS',
+  },
+  rpcUrls: {
+    default: { http: ['https://rpc-evm.testnet.evmos.dragonstake.io'] },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Evmos Testnet Block Explorer',
+      url: 'https://evm.evmos.dev/',
+    },
+  },
+})
 
 export enum ListStep {
   Unavailable,
@@ -106,6 +132,11 @@ const expirationOptions = [
   },
 ]
 
+const publicClient = createPublicClient({
+  chain: evmosTestnet,
+  transport: http(),
+})
+
 export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
@@ -169,6 +200,8 @@ export const ListModalRenderer: FC<Props> = ({
       : defaultCurrency
   )
   const [quantity, setQuantity] = useState(1)
+  const [isApproveModule, setIsApproveModule] = useState(false)
+  const [isApproveNft, setIsApproveNft] = useState(false)
   const contract = collectionId ? collectionId?.split(':')[0] : undefined
   const { data: collections } = useCollections(
     open && {
@@ -294,6 +327,153 @@ export const ListModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
+  const checkIsApproveModuleAsk = () => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            inputs: [
+              { internalType: 'address', name: '_user', type: 'address' },
+              { internalType: 'address', name: '_module', type: 'address' },
+            ],
+            name: 'isModuleApproved',
+            outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+        functionName: 'isModuleApproved',
+        args: [
+          account?.address as `0x${string}`,
+          '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+        ],
+      })
+      .then((res) => {
+        if (res) {
+          setIsApproveModule(true)
+        }
+      })
+      .catch((err) => {
+        setIsApproveModule(false)
+        console.log(err)
+        console.log('message: ' + err?.message)
+      })
+  }
+
+  const checkIsApproveNft = () => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            constant: true,
+            inputs: [
+              { internalType: 'address', name: 'owner', type: 'address' },
+              { internalType: 'address', name: 'operator', type: 'address' },
+            ],
+            name: 'isApprovedForAll',
+            outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        address: contract as `0x${string}`,
+        functionName: 'isApprovedForAll',
+        args: [
+          account?.address as `0x${string}`,
+          '0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36' as `0x${string}`,
+        ],
+      })
+      .then((res) => {
+        if (res) {
+          setIsApproveNft(true)
+        }
+      })
+      .catch((err) => {
+        setIsApproveNft(false)
+        console.log(err)
+        console.log('message: ' + err?.message)
+      })
+  }
+
+  useEffect(() => {
+    // checkIsApproveModuleAsk()
+    checkIsApproveNft()
+  }, [account, publicClient])
+
+  const triggerListTokenContract = (maker: any) => {
+    // list token
+    wagmiWallet
+      ?.writeContract({
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: '_tokenContract',
+                type: 'address',
+              },
+              {
+                internalType: 'uint256',
+                name: '_tokenId',
+                type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
+                name: '_askPrice',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address',
+                name: '_askCurrency',
+                type: 'address',
+              },
+              {
+                internalType: 'address',
+                name: '_sellerFundsRecipient',
+                type: 'address',
+              },
+              {
+                internalType: 'uint16',
+                name: '_findersFeeBps',
+                type: 'uint16',
+              },
+            ],
+            name: 'createAsk',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+        ],
+        address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
+        functionName: 'createAsk',
+        args: [
+          contract as `0x${string}`,
+          BigInt(Number(tokenId)),
+          BigInt(Number(price) * Math.pow(10, 18)),
+          '0x0000000000000000000000000000000000000000',
+          maker as `0x${string}`,
+          0,
+        ],
+        gas: 500000n,
+      })
+      .then((hash) => {
+        publicClient
+          .waitForTransactionReceipt({ hash })
+          .then((res) => {
+            console.log(res)
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      })
+      .catch((err) => {
+        console.log(err)
+        console.log('message: ' + err?.message)
+      })
+  }
+
   const listToken = useCallback(
     async (options: { royaltyBps?: number } | undefined) => {
       const { royaltyBps } = options ?? {}
@@ -394,12 +574,16 @@ export const ListModalRenderer: FC<Props> = ({
       const maker = account?.address
       if (rendererChain?.name === 'Evmos Testnet') {
         // approve module
-        const approveTxHash = wagmiWallet
+        await wagmiWallet
           ?.writeContract({
             abi: [
               {
                 inputs: [
-                  { internalType: 'address', name: '_module', type: 'address' },
+                  {
+                    internalType: 'address',
+                    name: '_module',
+                    type: 'address',
+                  },
                   { internalType: 'bool', name: '_approved', type: 'bool' },
                 ],
                 name: 'setApprovalForModule',
@@ -409,67 +593,63 @@ export const ListModalRenderer: FC<Props> = ({
               },
             ],
             address:
-              '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
+              '0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd' as `0x${string}`,
             functionName: 'setApprovalForModule',
-            args: ['0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`, true],
+            args: [
+              '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+              true,
+            ],
           })
-          .then(() => {
-            // list token
-            const txHash = wagmiWallet?.writeContract({
+          .then()
+          .catch((err) => {
+            console.log(err)
+            console.log('message: ' + err?.message)
+          })
+
+        if (!isApproveNft) {
+          // approve nft
+          await wagmiWallet
+            ?.writeContract({
               abi: [
                 {
+                  constant: false,
                   inputs: [
-                    {
-                      internalType: 'address',
-                      name: '_tokenContract',
-                      type: 'address',
-                    },
-                    {
-                      internalType: 'uint256',
-                      name: '_tokenId',
-                      type: 'uint256',
-                    },
-                    {
-                      internalType: 'uint256',
-                      name: '_askPrice',
-                      type: 'uint256',
-                    },
-                    {
-                      internalType: 'address',
-                      name: '_askCurrency',
-                      type: 'address',
-                    },
-                    {
-                      internalType: 'address',
-                      name: '_sellerFundsRecipient',
-                      type: 'address',
-                    },
-                    {
-                      internalType: 'uint16',
-                      name: '_findersFeeBps',
-                      type: 'uint16',
-                    },
+                    { internalType: 'address', name: 'to', type: 'address' },
+                    { internalType: 'bool', name: 'approved', type: 'bool' },
                   ],
-                  name: 'createAsk',
+                  name: 'setApprovalForAll',
                   outputs: [],
+                  payable: false,
                   stateMutability: 'nonpayable',
                   type: 'function',
                 },
               ],
-              address:
-                '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
-              functionName: 'createAsk',
+              address: contract as `0x${string}`,
+              functionName: 'setApprovalForAll',
               args: [
-                contract as `0x${string}`,
-                BigInt(Number(tokenId)),
-                BigInt(Number(price) * 1000000),
-                '0x0000000000000000000000000000000000000000',
-                maker as `0x${string}`,
-                80000,
+                '0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36' as `0x${string}`,
+                true,
               ],
+              gas: 100000n,
             })
-            console.log('Hash', txHash)
-          })
+            .then((hash) => {
+              publicClient
+                .waitForTransactionReceipt({ hash })
+                .then((res) => {
+                  triggerListTokenContract(maker)
+                })
+                .catch((error) => {
+                  console.log(error)
+                  triggerListTokenContract(maker)
+                })
+            })
+            .catch((err) => {
+              console.log(err)
+              console.log('message: ' + err?.message)
+            })
+        } else {
+          triggerListTokenContract(maker)
+        }
       } else {
         client.actions
           .listToken({

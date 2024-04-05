@@ -6,8 +6,6 @@ import { AxiosRequestConfig } from 'axios'
 import { version } from '../../package.json'
 import { isViemWalletClient } from '../utils/viemWallet'
 import { WalletClient } from 'viem'
-import { Exchange, Order } from '@hunglv46/reservoir-sdk/dist/zora'
-import { ethers } from 'ethers'
 
 type ListTokenBody = NonNullable<
   paths['/execute/list/v5']['post']['parameters']['body']['body']

@@ -187,7 +187,7 @@ const chainIcons = {
     dark: <BlastIconDark />,
     color: <BlastIconColor />,
   },
-  9000: { // Evmos testnet
+  9_000: { // Evmos testnet
     light: <GoerliIconDark />,
     dark: <GoerliIconLight />,
     color: null,

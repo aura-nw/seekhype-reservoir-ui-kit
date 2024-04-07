@@ -53,8 +53,7 @@ const evmosTestnet = /*#__PURE__*/ defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc-evm.testnet.evmos.dragonstake.io'],
-      webSocket: ['wss://evmos-evm-rpc.publicnode.com'],
+      http: ['https://rpc-evm.testnet.evmos.dragonstake.io']
     },
   },
   blockExplorers: {

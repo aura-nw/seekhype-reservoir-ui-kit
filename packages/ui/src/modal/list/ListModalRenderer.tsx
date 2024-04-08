@@ -15,7 +15,7 @@ import {
   useUserTokens,
   useChainCurrency,
 } from '../../hooks'
-import { useAccount, useConfig, useWalletClient } from 'wagmi'
+import { createConfig, useAccount, useConfig, useWalletClient } from 'wagmi'
 import {
   Execute,
   ReservoirClientActions,
@@ -36,33 +36,13 @@ import {
   defineChain,
   webSocket,
 } from 'viem'
-import { getAccount, switchChain } from 'wagmi/actions'
+import { getAccount, getPublicClient, switchChain } from 'wagmi/actions'
 import {
   ERC721TRANSFERHELPER,
   MARKETPLACE_ADDRESS,
   MODULE_ADDRESS,
 } from '../../constants/common'
-
-const evmosTestnet = /*#__PURE__*/ defineChain({
-  id: 9_000,
-  name: 'Evmos Testnet',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'Evmos',
-    symbol: 'EVMOS',
-  },
-  rpcUrls: {
-    default: {
-      http: ['https://rpc-evm.testnet.evmos.dragonstake.io']
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Evmos Testnet Block Explorer',
-      url: 'https://testnet.escan.live/',
-    },
-  },
-})
+import { evmosTestnet } from '../../constants/evmosChain'
 
 export enum ListStep {
   Unavailable,
@@ -466,25 +446,21 @@ export const ListModalRenderer: FC<Props> = ({
         ],
         gas: 500000n,
       })
-      .then(async (hash) => {
-        const res = await publicClient
+      .then((hash) => {
+        publicClient
           .waitForTransactionReceipt({ hash })
-          // .then((res) => {
-          //   console.log(res)
-          //   setListStep(ListStep.Complete)
-          // })
-          .catch((error) => {
-            console.log(error)
-            setListStep(ListStep.SetPrice)
+          .then((res) => {
+            if (res?.status === 'success') {
+              setListStep(ListStep.Complete)
+            }
           })
-
-        if (res) {
-          setListStep(ListStep.Complete)
-        }
+          .catch((error) => {
+            setListStep(ListStep.SetPrice)
+            setTransactionError(error)
+          })
       })
       .catch((err) => {
-        console.log(err)
-        console.log('message: ' + err?.message)
+        setTransactionError(err)
         setListStep(ListStep.SetPrice)
       })
   }
@@ -613,8 +589,7 @@ export const ListModalRenderer: FC<Props> = ({
               args: [MODULE_ADDRESS as `0x${string}`, true],
             })
             .catch((err) => {
-              console.log(err)
-              console.log('message: ' + err?.message)
+              setTransactionError(err)
               setListStep(ListStep.SetPrice)
             })
         }
@@ -649,13 +624,12 @@ export const ListModalRenderer: FC<Props> = ({
                   triggerListTokenContract(maker)
                 })
                 .catch((error) => {
-                  console.log(error)
                   triggerListTokenContract(maker)
+                  setTransactionError(error)
                 })
             })
             .catch((err) => {
-              console.log(err)
-              console.log('message: ' + err?.message)
+              setTransactionError(err)
               setListStep(ListStep.SetPrice)
             })
         } else {

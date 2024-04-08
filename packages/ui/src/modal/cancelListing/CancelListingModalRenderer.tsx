@@ -5,7 +5,8 @@ import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
-import { WalletClient } from 'viem'
+import { WalletClient, createPublicClient, http } from 'viem'
+import { evmosTestnet } from '../../constants/evmosChain'
 
 export enum CancelStep {
   Cancel,
@@ -45,6 +46,11 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
 }
+
+const publicClient = createPublicClient({
+  chain: evmosTestnet,
+  transport: http(),
+})
 
 export const CancelListingModalRenderer: FC<Props> = ({
   open,
@@ -143,27 +149,46 @@ export const CancelListingModalRenderer: FC<Props> = ({
     setCancelStep(CancelStep.Approving)
 
     if (rendererChain?.name === 'Evmos Testnet' && tokenId) {
-      await wagmiWallet?.writeContract({
-        abi: [
-          {
-            inputs: [
-              {
-                internalType: 'address',
-                name: '_tokenContract',
-                type: 'address',
-              },
-              { internalType: 'uint256', name: '_tokenId', type: 'uint256' },
-            ],
-            name: 'cancelAsk',
-            outputs: [],
-            stateMutability: 'nonpayable',
-            type: 'function',
-          },
-        ],
-        address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
-        functionName: 'cancelAsk',
-        args: [contract as `0x${string}`, BigInt(Number(tokenId))],
-      })
+      await wagmiWallet
+        ?.writeContract({
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: '_tokenContract',
+                  type: 'address',
+                },
+                { internalType: 'uint256', name: '_tokenId', type: 'uint256' },
+              ],
+              name: 'cancelAsk',
+              outputs: [],
+              stateMutability: 'nonpayable',
+              type: 'function',
+            },
+          ],
+          address:
+            '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+          functionName: 'cancelAsk',
+          args: [contract as `0x${string}`, BigInt(Number(tokenId))],
+        })
+        .then((hash) => {
+          publicClient
+            .waitForTransactionReceipt({ hash })
+            .then((res) => {
+              if (res?.status === 'success') {
+                setCancelStep(CancelStep.Complete)
+              }
+            })
+            .catch((error) => {
+              setCancelStep(CancelStep.Cancel)
+              setTransactionError(error)
+            })
+        })
+        .catch((err) => {
+          setCancelStep(CancelStep.Cancel)
+          setTransactionError(err)
+        })
     } else {
       client.actions
         .cancelOrder({

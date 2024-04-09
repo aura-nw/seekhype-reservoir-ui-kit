@@ -7,7 +7,14 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
+import {
+  Address,
+  WalletClient,
+  createPublicClient,
+  formatUnits,
+  http,
+  zeroAddress,
+} from 'viem'
 import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import { getAccount, switchChain } from 'wagmi/actions'
 import {
@@ -32,6 +39,7 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
+import { evmosTestnet } from '../../constants/evmosChain'
 
 export enum MintStep {
   Idle,
@@ -104,6 +112,11 @@ type Props = {
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
 }
+
+const publicClient = createPublicClient({
+  chain: evmosTestnet,
+  transport: http(),
+})
 
 export const MintModalRenderer: FC<Props> = ({
   open,
@@ -238,7 +251,7 @@ export const MintModalRenderer: FC<Props> = ({
 
   // Fetch mint path
   const fetchMintPath = useCallback(
-    (paymentCurrency: EnhancedCurrency | undefined) => {
+    async (paymentCurrency: EnhancedCurrency | undefined) => {
       if (!open || !client) {
         return
       }
@@ -591,89 +604,133 @@ export const MintModalRenderer: FC<Props> = ({
 
     setMintStep(MintStep.Approving)
 
-    client.actions
-      .mintToken({
-        chainId: rendererChain?.id,
-        items: [
-          {
-            collection: tokenData?.token?.tokenId ? undefined : collection?.id,
-            token: tokenData?.token?.tokenId
-              ? `${collectionContract}:${tokenData?.token?.tokenId}`
-              : undefined,
-            quantity: itemAmount,
-          },
-        ],
-        expectedPrice: {
-          [paymentCurrency?.address || zeroAddress]: {
-            raw: totalIncludingFees - relayerFee,
-            currencyAddress: paymentCurrency?.address,
-            currencyDecimals: paymentCurrency?.decimals || 18,
-          },
-        },
-        wallet,
-        options,
-        onProgress: (steps: Execute['steps'], path: Execute['path']) => {
-          if (!steps) {
-            return
-          }
-
-          const executableSteps = steps.filter(
-            (step) => step.items && step.items.length > 0
-          )
-
-          let stepCount = executableSteps.length
-
-          let currentStepItem:
-            | NonNullable<Execute['steps'][0]['items']>[0]
-            | undefined
-
-          const currentStepIndex = executableSteps.findIndex((step) => {
-            currentStepItem = step.items?.find(
-              (item) => item.status === 'incomplete'
-            )
-            return currentStepItem
-          })
-
-          const currentStep =
-            currentStepIndex > -1
-              ? executableSteps[currentStepIndex]
-              : executableSteps[stepCount - 1]
-
-          if (currentStepItem) {
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: currentStepIndex,
-              currentStep,
-              currentStepItem,
-              path: path,
+    if (rendererChain?.name === 'Evmos Testnet') {
+      await wagmiWallet
+        ?.writeContract({
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: 'to',
+                  type: 'address',
+                },
+              ],
+              name: 'safeMint',
+              outputs: [],
+              stateMutability: 'nonpayable',
+              type: 'function',
+            },
+          ],
+          address: collectionContract as `0x${string}`,
+          functionName: 'safeMint',
+          args: [address as `0x${string}`],
+          gas: 500000n,
+        })
+        .then((hash) => {
+          publicClient
+            .waitForTransactionReceipt({ hash })
+            .then((res) => {
+              if (res?.status === 'success') {
+                setMintStep(MintStep.Complete)
+              }
             })
-          }
+            .catch((error) => {
+              setMintStep(MintStep.SelectPayment)
+              setTransactionError(error)
+            })
+        })
+        .catch((err) => {
+          setMintStep(MintStep.SelectPayment)
+          setTransactionError(err)
+        })
+    } else {
+      client.actions
+        .mintToken({
+          chainId: rendererChain?.id,
+          items: [
+            {
+              collection: tokenData?.token?.tokenId
+                ? undefined
+                : collection?.id,
+              token: tokenData?.token?.tokenId
+                ? `${collectionContract}:${tokenData?.token?.tokenId}`
+                : undefined,
+              quantity: itemAmount,
+            },
+          ],
+          expectedPrice: {
+            [paymentCurrency?.address || zeroAddress]: {
+              raw: totalIncludingFees - relayerFee,
+              currencyAddress: paymentCurrency?.address,
+              currencyDecimals: paymentCurrency?.decimals || 18,
+            },
+          },
+          wallet,
+          options,
+          onProgress: (steps: Execute['steps'], path: Execute['path']) => {
+            if (!steps) {
+              return
+            }
 
-          if (
-            currentStepIndex + 1 === executableSteps.length &&
-            currentStep?.items?.every((item) => item.txHashes)
-          ) {
-            setMintStep(MintStep.Finalizing)
-          }
-
-          if (
-            steps.every(
-              (step) =>
-                !step.items ||
-                step.items.length == 0 ||
-                step.items?.every((item) => item.status === 'complete')
+            const executableSteps = steps.filter(
+              (step) => step.items && step.items.length > 0
             )
-          ) {
-            setMintStep(MintStep.Complete)
-          }
-        },
-      })
-      .catch((error: Error) => {
-        setTransactionError(error)
-        setMintStep(MintStep.Idle)
-        mutateCollection()
-        fetchMintPath(paymentCurrency)
-      })
+
+            let stepCount = executableSteps.length
+
+            let currentStepItem:
+              | NonNullable<Execute['steps'][0]['items']>[0]
+              | undefined
+
+            const currentStepIndex = executableSteps.findIndex((step) => {
+              currentStepItem = step.items?.find(
+                (item) => item.status === 'incomplete'
+              )
+              return currentStepItem
+            })
+
+            const currentStep =
+              currentStepIndex > -1
+                ? executableSteps[currentStepIndex]
+                : executableSteps[stepCount - 1]
+
+            if (currentStepItem) {
+              setStepData({
+                totalSteps: stepCount,
+                stepProgress: currentStepIndex,
+                currentStep,
+                currentStepItem,
+                path: path,
+              })
+            }
+
+            if (
+              currentStepIndex + 1 === executableSteps.length &&
+              currentStep?.items?.every((item) => item.txHashes)
+            ) {
+              setMintStep(MintStep.Finalizing)
+            }
+
+            if (
+              steps.every(
+                (step) =>
+                  !step.items ||
+                  step.items.length == 0 ||
+                  step.items?.every((item) => item.status === 'complete')
+              )
+            ) {
+              setMintStep(MintStep.Complete)
+            }
+          },
+        })
+        .catch((error: Error) => {
+          setTransactionError(error)
+          setMintStep(MintStep.Idle)
+          mutateCollection()
+          fetchMintPath(paymentCurrency)
+        })
+    }
   }, [
     client,
     wallet,

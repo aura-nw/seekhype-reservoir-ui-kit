@@ -15,7 +15,7 @@ import {
   useUserTokens,
   useChainCurrency,
 } from '../../hooks'
-import { useAccount, useConfig, useWalletClient } from 'wagmi'
+import { createConfig, useAccount, useConfig, useWalletClient } from 'wagmi'
 import {
   Execute,
   ReservoirClientActions,
@@ -34,27 +34,15 @@ import {
   createPublicClient,
   http,
   defineChain,
+  webSocket,
 } from 'viem'
-import { getAccount, switchChain } from 'wagmi/actions'
-
-const evmosTestnet = /*#__PURE__*/ defineChain({
-  id: 9_000,
-  name: 'Evmos Testnet',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'Evmos',
-    symbol: 'EVMOS',
-  },
-  rpcUrls: {
-    default: { http: ['https://rpc-evm.testnet.evmos.dragonstake.io'] },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Evmos Testnet Block Explorer',
-      url: 'https://evm.evmos.dev/',
-    },
-  },
-})
+import { getAccount, getPublicClient, switchChain } from 'wagmi/actions'
+import {
+  ERC721TRANSFERHELPER,
+  MARKETPLACE_ADDRESS,
+  MODULE_ADDRESS,
+} from '../../constants/common'
+import { evmosTestnet } from '../../constants/evmosChain'
 
 export enum ListStep {
   Unavailable,
@@ -342,11 +330,11 @@ export const ListModalRenderer: FC<Props> = ({
             type: 'function',
           },
         ],
-        address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+        address: MARKETPLACE_ADDRESS as `0x${string}`,
         functionName: 'isModuleApproved',
         args: [
           account?.address as `0x${string}`,
-          '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+          MODULE_ADDRESS as `0x${string}`,
         ],
       })
       .then((res) => {
@@ -382,7 +370,7 @@ export const ListModalRenderer: FC<Props> = ({
         functionName: 'isApprovedForAll',
         args: [
           account?.address as `0x${string}`,
-          '0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36' as `0x${string}`,
+          ERC721TRANSFERHELPER as `0x${string}`,
         ],
       })
       .then((res) => {
@@ -398,7 +386,7 @@ export const ListModalRenderer: FC<Props> = ({
   }
 
   useEffect(() => {
-    // checkIsApproveModuleAsk()
+    checkIsApproveModuleAsk()
     checkIsApproveNft()
   }, [account, publicClient])
 
@@ -446,7 +434,7 @@ export const ListModalRenderer: FC<Props> = ({
             type: 'function',
           },
         ],
-        address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x{string}`,
+        address: MODULE_ADDRESS as `0x{string}`,
         functionName: 'createAsk',
         args: [
           contract as `0x${string}`,
@@ -462,15 +450,18 @@ export const ListModalRenderer: FC<Props> = ({
         publicClient
           .waitForTransactionReceipt({ hash })
           .then((res) => {
-            console.log(res)
+            if (res?.status === 'success') {
+              setListStep(ListStep.Complete)
+            }
           })
           .catch((error) => {
-            console.log(error)
+            setListStep(ListStep.SetPrice)
+            setTransactionError(error)
           })
       })
       .catch((err) => {
-        console.log(err)
-        console.log('message: ' + err?.message)
+        setTransactionError(err)
+        setListStep(ListStep.SetPrice)
       })
   }
 
@@ -573,38 +564,35 @@ export const ListModalRenderer: FC<Props> = ({
 
       const maker = account?.address
       if (rendererChain?.name === 'Evmos Testnet') {
-        // approve module
-        await wagmiWallet
-          ?.writeContract({
-            abi: [
-              {
-                inputs: [
-                  {
-                    internalType: 'address',
-                    name: '_module',
-                    type: 'address',
-                  },
-                  { internalType: 'bool', name: '_approved', type: 'bool' },
-                ],
-                name: 'setApprovalForModule',
-                outputs: [],
-                stateMutability: 'nonpayable',
-                type: 'function',
-              },
-            ],
-            address:
-              '0x6779178Ba139A61890A0B05a15045dF2ED0ae2dd' as `0x${string}`,
-            functionName: 'setApprovalForModule',
-            args: [
-              '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
-              true,
-            ],
-          })
-          .then()
-          .catch((err) => {
-            console.log(err)
-            console.log('message: ' + err?.message)
-          })
+        if (!isApproveModule) {
+          // approve module
+          await wagmiWallet
+            ?.writeContract({
+              abi: [
+                {
+                  inputs: [
+                    {
+                      internalType: 'address',
+                      name: '_module',
+                      type: 'address',
+                    },
+                    { internalType: 'bool', name: '_approved', type: 'bool' },
+                  ],
+                  name: 'setApprovalForModule',
+                  outputs: [],
+                  stateMutability: 'nonpayable',
+                  type: 'function',
+                },
+              ],
+              address: MARKETPLACE_ADDRESS as `0x${string}`,
+              functionName: 'setApprovalForModule',
+              args: [MODULE_ADDRESS as `0x${string}`, true],
+            })
+            .catch((err) => {
+              setTransactionError(err)
+              setListStep(ListStep.SetPrice)
+            })
+        }
 
         if (!isApproveNft) {
           // approve nft
@@ -626,10 +614,7 @@ export const ListModalRenderer: FC<Props> = ({
               ],
               address: contract as `0x${string}`,
               functionName: 'setApprovalForAll',
-              args: [
-                '0x7a56178610624943aeDF11Ce7b7C9d991aFBCc36' as `0x${string}`,
-                true,
-              ],
+              args: [ERC721TRANSFERHELPER as `0x${string}`, true],
               gas: 100000n,
             })
             .then((hash) => {
@@ -639,13 +624,13 @@ export const ListModalRenderer: FC<Props> = ({
                   triggerListTokenContract(maker)
                 })
                 .catch((error) => {
-                  console.log(error)
                   triggerListTokenContract(maker)
+                  setTransactionError(error)
                 })
             })
             .catch((err) => {
-              console.log(err)
-              console.log('message: ' + err?.message)
+              setTransactionError(err)
+              setListStep(ListStep.SetPrice)
             })
         } else {
           triggerListTokenContract(maker)
@@ -743,6 +728,8 @@ export const ListModalRenderer: FC<Props> = ({
       price,
       marketplace,
       exchange,
+      isApproveModule,
+      isApproveNft,
     ]
   )
 

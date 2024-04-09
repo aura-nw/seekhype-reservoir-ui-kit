@@ -26,13 +26,22 @@ import {
   axios,
   BuyTokenBodyParameters,
 } from '@reservoir0x/reservoir-sdk'
-import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
+import {
+  Address,
+  WalletClient,
+  createPublicClient,
+  formatUnits,
+  http,
+  zeroAddress,
+} from 'viem'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
+import { MODULE_ADDRESS } from '../../constants/common'
+import { evmosTestnet } from '../../constants/evmosChain'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -111,6 +120,11 @@ type Props = {
     'items' | 'feesOnTop' | 'taker'
   >
 }
+
+const publicClient = createPublicClient({
+  chain: evmosTestnet,
+  transport: http(),
+})
 
 export const BuyModalRenderer: FC<Props> = ({
   open,
@@ -247,7 +261,7 @@ export const BuyModalRenderer: FC<Props> = ({
   const addFundsLink = `https://halotrade.zone/swap`
 
   const fetchPath = useCallback(
-    (
+    async (
       paymentCurrency: EnhancedCurrency | undefined,
       paymentTokens: EnhancedCurrency[]
     ) => {
@@ -541,79 +555,182 @@ export const BuyModalRenderer: FC<Props> = ({
     }
     items.push(item)
 
-    client.actions
-      .buyToken({
-        chainId: rendererChain?.id,
-        items: items,
-        expectedPrice: {
-          [paymentCurrency?.address || zeroAddress]: {
-            raw: totalIncludingFees - relayerFee,
-            currencyAddress: paymentCurrency?.address,
-            currencyDecimals: paymentCurrency?.decimals || 18,
-          },
-        },
-        wallet,
-        onProgress: (steps: Execute['steps']) => {
-          if (!steps) {
-            return
-          }
-          setSteps(steps)
+    if (rendererChain?.name === 'Evmos Testnet') {
+      await wagmiWalletClient
+        ?.writeContract({
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: '_tokenContract',
+                  type: 'address',
+                },
+                {
+                  internalType: 'uint256',
+                  name: '_tokenId',
+                  type: 'uint256',
+                },
+                {
+                  internalType: 'address',
+                  name: '_fillCurrency',
+                  type: 'address',
+                },
+                {
+                  internalType: 'uint256',
+                  name: '_fillAmount',
+                  type: 'uint256',
+                },
+                { internalType: 'address', name: '_finder', type: 'address' },
+              ],
+              name: 'fillAsk',
+              outputs: [],
+              stateMutability: 'payable',
+              type: 'function',
+            },
+          ],
+          address: MODULE_ADDRESS as `0x${string}`,
+          functionName: 'fillAsk',
+          args: [
+            tokenData?.token?.contract as `0x${string}`,
+            BigInt(Number(tokenData?.token?.tokenId)),
+            '0x0000000000000000000000000000000000000000',
+            (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop,
+            address as `0x${string}`,
+          ],
+          gas: 500000n,
+          value: (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop,
+        })
+        .then((hash) => {
+          publicClient
+            .waitForTransactionReceipt({ hash })
+            .then((res) => {
+              if (res?.status === 'success') {
+                const steps: Execute['steps'] = [
+                  {
+                    error: '',
+                    errorData: [],
+                    action: '',
+                    description: '',
+                    kind: 'transaction',
+                    id: '',
+                    items: [
+                      {
+                        status: 'complete',
+                        transfersData: [
+                          {
+                            amount: '1',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ]
 
-          const executableSteps = steps.filter(
-            (step) => step.items && step.items.length > 0
-          )
-
-          let stepCount = executableSteps.length
-
-          let currentStepItem:
-            | NonNullable<Execute['steps'][0]['items']>[0]
-            | undefined
-
-          const currentStepIndex = executableSteps.findIndex((step) => {
-            currentStepItem = step.items?.find(
-              (item) => item.status === 'incomplete'
-            )
-            return currentStepItem
-          })
-
-          const currentStep =
-            currentStepIndex > -1
-              ? executableSteps[currentStepIndex]
-              : executableSteps[stepCount - 1]
-
-          if (currentStepItem) {
-            setStepData({
-              totalSteps: stepCount,
-              stepProgress: currentStepIndex,
-              currentStep,
-              currentStepItem,
+                if (
+                  steps &&
+                  steps?.length > 0 &&
+                  steps[0]?.items &&
+                  steps[0]?.items?.length > 0
+                ) {
+                  setStepData({
+                    totalSteps: 1,
+                    stepProgress: 1,
+                    currentStep: steps[0],
+                    currentStepItem: steps[0]?.items[0],
+                  })
+                }
+                setBuyStep(BuyStep.Complete)
+              }
             })
-          } else if (
-            steps.every(
-              (step) =>
-                !step.items ||
-                step.items.length == 0 ||
-                step.items?.every((item) => item.status === 'complete')
+            .catch((error) => {
+              setBuyStep(BuyStep.Checkout)
+              setTransactionError(error)
+            })
+        })
+        .catch((err) => {
+          setBuyStep(BuyStep.Checkout)
+          setTransactionError(err)
+        })
+    } else {
+      client.actions
+        .buyToken({
+          chainId: rendererChain?.id,
+          items: items,
+          expectedPrice: {
+            [paymentCurrency?.address || zeroAddress]: {
+              raw: totalIncludingFees - relayerFee,
+              currencyAddress: paymentCurrency?.address,
+              currencyDecimals: paymentCurrency?.decimals || 18,
+            },
+          },
+          wallet,
+          onProgress: (steps: Execute['steps']) => {
+            if (!steps) {
+              return
+            }
+            setSteps(steps)
+
+            const executableSteps = steps.filter(
+              (step) => step.items && step.items.length > 0
             )
+
+            let stepCount = executableSteps.length
+
+            let currentStepItem:
+              | NonNullable<Execute['steps'][0]['items']>[0]
+              | undefined
+
+            const currentStepIndex = executableSteps.findIndex((step) => {
+              currentStepItem = step.items?.find(
+                (item) => item.status === 'incomplete'
+              )
+              return currentStepItem
+            })
+
+            const currentStep =
+              currentStepIndex > -1
+                ? executableSteps[currentStepIndex]
+                : executableSteps[stepCount - 1]
+
+            if (currentStepItem) {
+              setStepData({
+                totalSteps: stepCount,
+                stepProgress: currentStepIndex,
+                currentStep,
+                currentStepItem,
+              })
+            } else if (
+              steps.every(
+                (step) =>
+                  !step.items ||
+                  step.items.length == 0 ||
+                  step.items?.every((item) => item.status === 'complete')
+              )
+            ) {
+              setBuyStep(BuyStep.Complete)
+            }
+          },
+          options,
+        })
+        .catch((error: Error) => {
+          if (
+            error &&
+            error?.message &&
+            error?.message.includes('ETH balance')
           ) {
-            setBuyStep(BuyStep.Complete)
+            setHasEnoughCurrency(false)
+          } else {
+            setTransactionError(error)
+            mutateCollection()
+            mutateTokens()
+            fetchPath(paymentCurrency, paymentTokens)
           }
-        },
-        options,
-      })
-      .catch((error: Error) => {
-        if (error && error?.message && error?.message.includes('ETH balance')) {
-          setHasEnoughCurrency(false)
-        } else {
-          setTransactionError(error)
-          mutateCollection()
-          mutateTokens()
-          fetchPath(paymentCurrency, paymentTokens)
-        }
-        setBuyStep(BuyStep.Checkout)
-        setStepData(null)
-        setSteps(null)
-      })
+          setBuyStep(BuyStep.Checkout)
+          setStepData(null)
+          setSteps(null)
+        })
+    }
   }, [
     token,
     orderId,

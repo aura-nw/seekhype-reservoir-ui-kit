@@ -599,6 +599,7 @@ export const BuyModalRenderer: FC<Props> = ({
             address as `0x${string}`,
           ],
           gas: 500000n,
+          value: (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop,
         })
         .then((hash) => {
           publicClient

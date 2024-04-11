@@ -555,7 +555,7 @@ export const BuyModalRenderer: FC<Props> = ({
     }
     items.push(item)
 
-    if (rendererChain?.name === 'Evmos Testnet') {
+    if (rendererChain?.name === evmosTestnet?.name) {
       await wagmiWalletClient
         ?.writeContract({
           abi: [

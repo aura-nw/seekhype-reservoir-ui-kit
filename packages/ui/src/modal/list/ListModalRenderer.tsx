@@ -563,7 +563,7 @@ export const ListModalRenderer: FC<Props> = ({
       setListStep(ListStep.Listing)
 
       const maker = account?.address
-      if (rendererChain?.name === 'Evmos Testnet') {
+      if (rendererChain?.name === evmosTestnet?.name) {
         if (!isApproveModule) {
           // approve module
           await wagmiWallet

@@ -604,7 +604,7 @@ export const MintModalRenderer: FC<Props> = ({
 
     setMintStep(MintStep.Approving)
 
-    if (rendererChain?.name === 'Evmos Testnet') {
+    if (rendererChain?.name === evmosTestnet?.name) {
       await wagmiWallet
         ?.writeContract({
           abi: [

@@ -148,7 +148,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
 
     setCancelStep(CancelStep.Approving)
 
-    if (rendererChain?.name === 'Evmos Testnet' && tokenId) {
+    if (rendererChain?.name === evmosTestnet?.name && tokenId) {
       await wagmiWallet
         ?.writeContract({
           abi: [

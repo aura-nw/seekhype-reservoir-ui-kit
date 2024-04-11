@@ -587,6 +587,7 @@ export const ListModalRenderer: FC<Props> = ({
               address: MARKETPLACE_ADDRESS as `0x${string}`,
               functionName: 'setApprovalForModule',
               args: [MODULE_ADDRESS as `0x${string}`, true],
+              gas: 500000n
             })
             .catch((err) => {
               setTransactionError(err)
@@ -615,7 +616,7 @@ export const ListModalRenderer: FC<Props> = ({
               address: contract as `0x${string}`,
               functionName: 'setApprovalForAll',
               args: [ERC721TRANSFERHELPER as `0x${string}`, true],
-              gas: 100000n,
+              gas: 500000n,
             })
             .then((hash) => {
               publicClient

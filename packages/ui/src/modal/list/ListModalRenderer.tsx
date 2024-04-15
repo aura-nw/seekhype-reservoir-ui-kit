@@ -39,8 +39,9 @@ import {
 import { getAccount, getPublicClient, switchChain } from 'wagmi/actions'
 import {
   ERC721TRANSFERHELPER,
-  MARKETPLACE_ADDRESS,
-  MODULE_ADDRESS,
+  ZORA_MODULE_MANAGER_ADDRESS,
+  ASK1_1_MODULE_ADDRESS,
+  ContractConfig,
 } from '../../constants/common'
 import { evmosTestnet } from '../../constants/evmosChain'
 
@@ -330,11 +331,11 @@ export const ListModalRenderer: FC<Props> = ({
             type: 'function',
           },
         ],
-        address: MARKETPLACE_ADDRESS as `0x${string}`,
+        address: ZORA_MODULE_MANAGER_ADDRESS as `0x${string}`,
         functionName: 'isModuleApproved',
         args: [
           account?.address as `0x${string}`,
-          MODULE_ADDRESS as `0x${string}`,
+          ASK1_1_MODULE_ADDRESS as `0x${string}`,
         ],
       })
       .then((res) => {
@@ -434,7 +435,7 @@ export const ListModalRenderer: FC<Props> = ({
             type: 'function',
           },
         ],
-        address: MODULE_ADDRESS as `0x{string}`,
+        address: ASK1_1_MODULE_ADDRESS as `0x{string}`,
         functionName: 'createAsk',
         args: [
           contract as `0x${string}`,
@@ -584,10 +585,10 @@ export const ListModalRenderer: FC<Props> = ({
                   type: 'function',
                 },
               ],
-              address: MARKETPLACE_ADDRESS as `0x${string}`,
+              address: ZORA_MODULE_MANAGER_ADDRESS as `0x${string}`,
               functionName: 'setApprovalForModule',
-              args: [MODULE_ADDRESS as `0x${string}`, true],
-              gas: 500000n
+              args: [ASK1_1_MODULE_ADDRESS as `0x${string}`, true],
+              gas: 500000n,
             })
             .catch((err) => {
               setTransactionError(err)

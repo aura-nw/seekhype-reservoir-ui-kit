@@ -55,6 +55,8 @@ import ApexPopIconColor from '../img/chains/ApexPopIconColor'
 import BlastIconColor from '../img/chains/BlastIconColor'
 import BlastIconDark from '../img/chains/BlastIconDark'
 import BlastIconLight from '../img/chains/BlastIconLight'
+import AuraIconLight from '../img/chains/AuraIconLight'
+import AuraIconDark from '../img/chains/AuraIconDark'
 
 const chainIcons = {
   [reservoirChains.ancient8.id]: {
@@ -190,6 +192,16 @@ const chainIcons = {
   9_000: { // Evmos testnet
     light: <GoerliIconDark />,
     dark: <GoerliIconLight />,
+    color: null,
+  },
+  1235: { // Aura dev
+    light: <AuraIconLight />,
+    dark: <AuraIconDark />,
+    color: null,
+  },
+  1236: { // Aura serenity
+    light: <AuraIconLight />,
+    dark: <AuraIconDark />,
     color: null,
   },
 }

@@ -7,6 +7,7 @@ import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { WalletClient, createPublicClient, http } from 'viem'
 import { evmosTestnet } from '../../constants/evmosChain'
+import { ASK1_1_MODULE_ADDRESS } from '../../constants/common'
 
 export enum CancelStep {
   Cancel,
@@ -167,10 +168,10 @@ export const CancelListingModalRenderer: FC<Props> = ({
               type: 'function',
             },
           ],
-          address:
-            '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC' as `0x${string}`,
+          address: ASK1_1_MODULE_ADDRESS as `0x${string}`,
           functionName: 'cancelAsk',
           args: [contract as `0x${string}`, BigInt(Number(tokenId))],
+          gas: 500000n,
         })
         .then((hash) => {
           publicClient

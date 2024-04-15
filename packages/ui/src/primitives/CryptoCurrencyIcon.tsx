@@ -44,18 +44,14 @@ const CryptoCurrencyIcon: FC<Props> = ({
   }
 
   return (
-    // <StyledImg
-    //   src={
-    //     chain?.id == 9000
-    //       ? `https://explorer-proxy-testnets.reservoir.tools/api/reservoir/evmos/redirect/currency/${address}/icon/v1`
-    //       : `${chain?.baseApiUrl}/redirect/currency/${address}/icon/v1`
-    //   }
-    //   css={{
-    //     borderRadius: '100%',
-    //     ...css,
-    //   }}
-    // />
-    <div></div>
+    <StyledImg
+      src={`https://aurascan.io/assets/images/logo/title-logo.png`}
+      // src={`${chain?.baseApiUrl}/redirect/currency/${address}/icon/v1`}
+      css={{
+        borderRadius: '100%',
+        ...css,
+      }}
+    />
   )
 }
 

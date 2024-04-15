@@ -190,13 +190,13 @@ const TokenPrimitive: FC<Props> = ({
           </Grid>
         </Flex>
         <Grid css={{ justifyItems: 'end', alignContent: 'start', rowGap: 4 }}>
-          {source && (
+          {/* {source && (
             <Img
               src={source}
               alt="Source Icon"
               css={{ w: 17, h: 17, borderRadius: 99999, overflow: 'hidden' }}
             />
-          )}
+          )} */}
           {price ? (
             <FormatCryptoCurrency
               amount={price}

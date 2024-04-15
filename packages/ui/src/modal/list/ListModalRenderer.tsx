@@ -335,7 +335,8 @@ export const ListModalRenderer: FC<Props> = ({
         functionName: 'isModuleApproved',
         args: [
           account?.address as `0x${string}`,
-          ASK1_1_MODULE_ADDRESS as `0x${string}`,
+          ContractConfig[chainId ? chainId : 1235]
+            ?.ASK1_1_MODULE_ADDRESS as `0x${string}`,
         ],
       })
       .then((res) => {
@@ -435,13 +436,14 @@ export const ListModalRenderer: FC<Props> = ({
             type: 'function',
           },
         ],
-        address: ASK1_1_MODULE_ADDRESS as `0x{string}`,
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.ASK1_1_MODULE_ADDRESS as `0x{string}`,
         functionName: 'createAsk',
         args: [
           contract as `0x${string}`,
           BigInt(Number(tokenId)),
           BigInt(Number(price) * Math.pow(10, 18)),
-          '0x0000000000000000000000000000000000000000',
+          zeroAddress,
           maker as `0x${string}`,
           0,
         ],
@@ -587,7 +589,11 @@ export const ListModalRenderer: FC<Props> = ({
               ],
               address: ZORA_MODULE_MANAGER_ADDRESS as `0x${string}`,
               functionName: 'setApprovalForModule',
-              args: [ASK1_1_MODULE_ADDRESS as `0x${string}`, true],
+              args: [
+                ContractConfig[chainId ? chainId : 1235]
+                  ?.ASK1_1_MODULE_ADDRESS as `0x${string}`,
+                true,
+              ],
               gas: 500000n,
             })
             .catch((err) => {

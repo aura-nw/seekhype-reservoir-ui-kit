@@ -1,7 +1,7 @@
-import { defineChain } from "viem";
+import { defineChain } from 'viem'
 
-export const evmosTestnet = /*#__PURE__*/ defineChain({
-  id: 1235,
+export const auraEVMTestnet = /*#__PURE__*/ defineChain({
+  id: 1236,
   name: 'Aura EVM',
   nativeCurrency: {
     decimals: 18,

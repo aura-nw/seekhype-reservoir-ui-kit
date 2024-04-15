@@ -6,7 +6,7 @@ import { getAccount, switchChain } from 'wagmi/actions'
 import { customChains } from '@reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { WalletClient, createPublicClient, http } from 'viem'
-import { evmosTestnet } from '../../constants/evmosChain'
+import { auraEVMTestnet } from '../../constants/evmosChain'
 import { ASK1_1_MODULE_ADDRESS, ContractConfig } from '../../constants/common'
 
 export enum CancelStep {
@@ -49,7 +49,7 @@ type Props = {
 }
 
 const publicClient = createPublicClient({
-  chain: evmosTestnet,
+  chain: auraEVMTestnet,
   transport: http(),
 })
 
@@ -149,7 +149,7 @@ export const CancelListingModalRenderer: FC<Props> = ({
 
     setCancelStep(CancelStep.Approving)
 
-    if (rendererChain?.name === evmosTestnet?.name && tokenId) {
+    if (rendererChain?.name === auraEVMTestnet?.name && tokenId) {
       await wagmiWallet
         ?.writeContract({
           abi: [

@@ -43,7 +43,7 @@ import {
   ASK1_1_MODULE_ADDRESS,
   ContractConfig,
 } from '../../constants/common'
-import { evmosTestnet } from '../../constants/evmosChain'
+import { auraEVMTestnet } from '../../constants/evmosChain'
 
 export enum ListStep {
   Unavailable,
@@ -122,7 +122,7 @@ const expirationOptions = [
 ]
 
 const publicClient = createPublicClient({
-  chain: evmosTestnet,
+  chain: auraEVMTestnet,
   transport: http(),
 })
 
@@ -372,7 +372,8 @@ export const ListModalRenderer: FC<Props> = ({
         functionName: 'isApprovedForAll',
         args: [
           account?.address as `0x${string}`,
-          ERC721TRANSFERHELPER as `0x${string}`,
+          ContractConfig[chainId ? chainId : 1235]
+            ?.ERC721TRANSFERHELPER as `0x${string}`,
         ],
       })
       .then((res) => {
@@ -566,7 +567,7 @@ export const ListModalRenderer: FC<Props> = ({
       setListStep(ListStep.Listing)
 
       const maker = account?.address
-      if (rendererChain?.name === evmosTestnet?.name) {
+      if (rendererChain?.name === auraEVMTestnet?.name) {
         if (!isApproveModule) {
           // approve module
           await wagmiWallet
@@ -587,7 +588,8 @@ export const ListModalRenderer: FC<Props> = ({
                   type: 'function',
                 },
               ],
-              address: ZORA_MODULE_MANAGER_ADDRESS as `0x${string}`,
+              address: ContractConfig[chainId ? chainId : 1235]
+                ?.ZORA_MODULE_MANAGER_ADDRESS as `0x${string}`,
               functionName: 'setApprovalForModule',
               args: [
                 ContractConfig[chainId ? chainId : 1235]

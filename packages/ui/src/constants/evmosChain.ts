@@ -1,6 +1,6 @@
-import { defineChain } from "viem";
+import { defineChain } from 'viem'
 
-export const evmosTestnet = /*#__PURE__*/ defineChain({
+export const auraEVMTestnet = /*#__PURE__*/ defineChain({
   id: 1236,
   name: 'Aura EVM',
   nativeCurrency: {
@@ -10,13 +10,13 @@ export const evmosTestnet = /*#__PURE__*/ defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://jsonrpc.serenity.aura.network/'],
+      http: ['https://jsonrpc.dev.aura.network/'],
     },
   },
   blockExplorers: {
     default: {
       name: 'Aura EVM Block Explorer',
-      url: 'https://serenity.aurascan.io/',
+      url: 'https://explorer.dev.aura.network/',
     },
   },
 })

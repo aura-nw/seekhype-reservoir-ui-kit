@@ -41,7 +41,7 @@ import usePaymentTokens, {
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { ASK1_1_MODULE_ADDRESS, ContractConfig } from '../../constants/common'
-import { evmosTestnet } from '../../constants/evmosChain'
+import { auraEVMTestnet } from '../../constants/evmosChain'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
 
@@ -122,7 +122,7 @@ type Props = {
 }
 
 const publicClient = createPublicClient({
-  chain: evmosTestnet,
+  chain: auraEVMTestnet,
   transport: http(),
 })
 
@@ -555,7 +555,7 @@ export const BuyModalRenderer: FC<Props> = ({
     }
     items.push(item)
 
-    if (rendererChain?.name === evmosTestnet?.name) {
+    if (rendererChain?.name === auraEVMTestnet?.name) {
       await wagmiWalletClient
         ?.writeContract({
           abi: [
@@ -595,7 +595,7 @@ export const BuyModalRenderer: FC<Props> = ({
           args: [
             tokenData?.token?.contract as `0x${string}`,
             BigInt(Number(tokenData?.token?.tokenId)),
-            '0x0000000000000000000000000000000000000000',
+            zeroAddress,
             (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop,
             address as `0x${string}`,
           ],

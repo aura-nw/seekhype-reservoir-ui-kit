@@ -39,7 +39,7 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
-import { evmosTestnet } from '../../constants/evmosChain'
+import { auraEVMTestnet } from '../../constants/evmosChain'
 
 export enum MintStep {
   Idle,
@@ -114,7 +114,7 @@ type Props = {
 }
 
 const publicClient = createPublicClient({
-  chain: evmosTestnet,
+  chain: auraEVMTestnet,
   transport: http(),
 })
 
@@ -604,7 +604,7 @@ export const MintModalRenderer: FC<Props> = ({
 
     setMintStep(MintStep.Approving)
 
-    if (rendererChain?.name === evmosTestnet?.name) {
+    if (rendererChain?.name === auraEVMTestnet?.name) {
       await wagmiWallet
         ?.writeContract({
           abi: [

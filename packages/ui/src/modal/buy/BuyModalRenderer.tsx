@@ -40,7 +40,7 @@ import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import { ASK1_1_MODULE_ADDRESS } from '../../constants/common'
+import { ASK1_1_MODULE_ADDRESS, ContractConfig } from '../../constants/common'
 import { evmosTestnet } from '../../constants/evmosChain'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
@@ -589,7 +589,8 @@ export const BuyModalRenderer: FC<Props> = ({
               type: 'function',
             },
           ],
-          address: ASK1_1_MODULE_ADDRESS as `0x${string}`,
+          address: ContractConfig[chainId ? chainId : 1235]
+          ?.ASK1_1_MODULE_ADDRESS as `0x${string}`,
           functionName: 'fillAsk',
           args: [
             tokenData?.token?.contract as `0x${string}`,

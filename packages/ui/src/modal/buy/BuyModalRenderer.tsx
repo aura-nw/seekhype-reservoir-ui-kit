@@ -40,7 +40,7 @@ import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import { ASK1_1_MODULE_ADDRESS, ContractConfig } from '../../constants/common'
+import { ContractConfig } from '../../constants/common'
 import { auraEVMTestnet } from '../../constants/evmosChain'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
@@ -556,6 +556,20 @@ export const BuyModalRenderer: FC<Props> = ({
     items.push(item)
 
     if (rendererChain?.name === auraEVMTestnet?.name) {
+      setBuyStep(BuyStep.Approving)
+      setStepData({
+        totalSteps: 1,
+        stepProgress: 1,
+        currentStep: {
+          kind: 'transaction',
+          action: 'Confirm transaction in your wallet',
+          description: '',
+          id: '1',
+        },
+        currentStepItem: {
+          status: 'incomplete',
+        },
+      })
       await wagmiWalletClient
         ?.writeContract({
           abi: [
@@ -590,7 +604,7 @@ export const BuyModalRenderer: FC<Props> = ({
             },
           ],
           address: ContractConfig[chainId ? chainId : 1235]
-          ?.ASK1_1_MODULE_ADDRESS as `0x${string}`,
+            ?.ASK1_1_MODULE_ADDRESS as `0x${string}`,
           functionName: 'fillAsk',
           args: [
             tokenData?.token?.contract as `0x${string}`,
@@ -623,6 +637,12 @@ export const BuyModalRenderer: FC<Props> = ({
                             amount: '1',
                           },
                         ],
+                        txHashes: [
+                          {
+                            txHash: hash,
+                            chainId: chainId ? chainId : 1235,
+                          },
+                        ],
                       },
                     ],
                   },
@@ -634,6 +654,7 @@ export const BuyModalRenderer: FC<Props> = ({
                   steps[0]?.items &&
                   steps[0]?.items?.length > 0
                 ) {
+                  setSteps(steps)
                   setStepData({
                     totalSteps: 1,
                     stepProgress: 1,

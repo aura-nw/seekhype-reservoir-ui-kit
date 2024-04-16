@@ -23,11 +23,11 @@ export default () => (
         gradientUnits="userSpaceOnUse"
         gradientTransform="translate(38.9752 14.6145) scale(45.1744)"
       >
-        <stop offset="0.0677083" stop-color="#ECEDEE" />
-        <stop offset="0.25" stop-color="#787F85" />
-        <stop offset="0.473958" stop-color="#4C5155" />
-        <stop offset="0.880208" stop-color="#26292B" />
-        <stop offset="1" stop-color="#313538" />
+        <stop offset="0.0677083" stopColor="#ECEDEE" />
+        <stop offset="0.25" stopColor="#787F85" />
+        <stop offset="0.473958" stopColor="#4C5155" />
+        <stop offset="0.880208" stopColor="#26292B" />
+        <stop offset="1" stopColor="#313538" />
       </radialGradient>
       <clipPath id="clip0_4824_71881">
         <rect width="60" height="60" fill="white" />

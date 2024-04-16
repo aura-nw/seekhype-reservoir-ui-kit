@@ -105,7 +105,11 @@ const TokenPrimitive: FC<Props> = ({
               </Text>
               {expires && quantity && quantity > 1 && !name ? (
                 <Flex align="center">
-                  <ChainIcon chainId={chain?.id} height={12} css={{ mr: 5 }} />
+                  <ChainIcon
+                    chainId={chain?.id}
+                    height={12}
+                    css={{ mr: 5, alignItems: 'center', width: '12px' }}
+                  />
                   <Text style="tiny" color="subtle">
                     {chain?.name}
                   </Text>
@@ -132,7 +136,11 @@ const TokenPrimitive: FC<Props> = ({
             </Flex>
             {!name && !quantity && expires ? (
               <Flex align="center">
-                <ChainIcon chainId={chain?.id} height={12} css={{ mr: 5 }} />
+                <ChainIcon
+                  chainId={chain?.id}
+                  height={12}
+                  css={{ mr: 5, alignItems: 'center', width: '12px' }}
+                />
                 <Text style="body3" color="subtle">
                   {chain?.name}
                 </Text>
@@ -142,13 +150,18 @@ const TokenPrimitive: FC<Props> = ({
               <Flex
                 css={{
                   maxWidth: '370px',
+                  alignItems: 'center',
                 }}
               >
                 <Text ellipsify style="body3" color="subtle">
                   {collection}
                 </Text>
                 <Divider direction="vertical" />
-                <ChainIcon chainId={chain?.id} css={{ mr: 5 }} height={12} />
+                <ChainIcon
+                  chainId={chain?.id}
+                  css={{ mr: 5, alignItems: 'center', width: '12px' }}
+                  height={12}
+                />
                 <Text style="body3" color="subtle">
                   {chain?.name}
                 </Text>

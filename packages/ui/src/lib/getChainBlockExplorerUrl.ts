@@ -1,5 +1,6 @@
 import * as allChains from 'viem/chains'
 import { customChains } from '@reservoir0x/reservoir-sdk'
+import { auraEVMTestnet } from '../constants/evmosChain'
 
 const getChainBlockExplorerUrl = (chainId: number) => {
   const wagmiChain: allChains.Chain | undefined = Object.values({
@@ -7,11 +8,10 @@ const getChainBlockExplorerUrl = (chainId: number) => {
     ...customChains,
   }).find(({ id }) => id === chainId)
 
-  if (chainId === 999) {
-    return allChains.zoraTestnet.blockExplorers.default.url
-  }
-
-  return wagmiChain?.blockExplorers?.default?.url || 'https://aurascan.io'
+  return (
+    wagmiChain?.blockExplorers?.default?.url ||
+    auraEVMTestnet?.blockExplorers?.default?.url
+  )
 }
 
 export default getChainBlockExplorerUrl

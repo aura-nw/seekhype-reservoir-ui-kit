@@ -1,4 +1,4 @@
-import { defineChain } from 'viem'
+import { defineChain } from "viem";
 
 export const auraEVMTestnet = /*#__PURE__*/ defineChain({
   id: 1236,
@@ -10,13 +10,13 @@ export const auraEVMTestnet = /*#__PURE__*/ defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://jsonrpc.dev.aura.network/'],
+      http: ['https://jsonrpc.serenity.aura.network/'],
     },
   },
   blockExplorers: {
     default: {
       name: 'Aura EVM Block Explorer',
-      url: 'https://explorer.dev.aura.network/',
+      url: 'https://serenity.aurascan.io/',
     },
   },
 })

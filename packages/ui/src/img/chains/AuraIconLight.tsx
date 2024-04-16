@@ -21,9 +21,9 @@ export default () => (
         y2="4.66444"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFD569" />
-        <stop offset="0.515056" stop-color="#FC8E4F" />
-        <stop offset="1" stop-color="#FF697B" />
+        <stop stopColor="#FFD569" />
+        <stop offset="0.515056" stopColor="#FC8E4F" />
+        <stop offset="1" stopColor="#FF697B" />
       </linearGradient>
     </defs>
   </svg>

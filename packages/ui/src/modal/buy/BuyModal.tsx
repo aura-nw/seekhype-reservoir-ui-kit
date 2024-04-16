@@ -531,7 +531,7 @@ export function BuyModal({
                   {totalPurchases === 1 && (
                     <img
                       src={tokenData?.token?.imageSmall}
-                      style={{ width: 100, height: 100 }}
+                      style={{ width: 100, height: 100, objectFit: 'contain' }}
                     />
                   )}
                   {totalPurchases > 1 && (

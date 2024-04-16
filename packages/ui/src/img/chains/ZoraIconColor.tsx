@@ -202,8 +202,8 @@ export default () => (
         gradientUnits="userSpaceOnUse"
         gradientTransform="translate(11.9504 5.11263) rotate(128.228) scale(15.3367 15.3355)"
       >
-        <stop offset="0.286458" stop-color="#387AFA" />
-        <stop offset="0.647782" stop-color="#387AFA" stop-opacity="0" />
+        <stop offset="0.286458" stopColor="#387AFA" />
+        <stop offset="0.647782" stopColor="#387AFA" stop-opacity="0" />
       </radialGradient>
       <radialGradient
         id="paint1_radial_179_1873"

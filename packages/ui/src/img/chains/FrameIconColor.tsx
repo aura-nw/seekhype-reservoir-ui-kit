@@ -42,8 +42,8 @@ export default () => (
         y2="5.02"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FCC02D" />
-        <stop offset="1" stop-color="#FCBA2C" />
+        <stop stopColor="#FCC02D" />
+        <stop offset="1" stopColor="#FCBA2C" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_264_1723"
@@ -53,8 +53,8 @@ export default () => (
         y2="9.18705"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FD9B28" />
-        <stop offset="1" stop-color="#FD9F28" />
+        <stop stopColor="#FD9B28" />
+        <stop offset="1" stopColor="#FD9F28" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_264_1723"
@@ -64,8 +64,8 @@ export default () => (
         y2="9.71049"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FE7A24" />
-        <stop offset="1" stop-color="#FE7B24" />
+        <stop stopColor="#FE7A24" />
+        <stop offset="1" stopColor="#FE7B24" />
       </linearGradient>
     </defs>
   </svg>

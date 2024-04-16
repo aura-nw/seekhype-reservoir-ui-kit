@@ -32,9 +32,9 @@ export default () => (
         y2="4.84284"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#A726C1" />
-        <stop offset="0.88" stop-color="#803BDF" />
-        <stop offset="1" stop-color="#7B3FE4" />
+        <stop stopColor="#A726C1" />
+        <stop offset="0.88" stopColor="#803BDF" />
+        <stop offset="1" stopColor="#7B3FE4" />
       </linearGradient>
       <clipPath id="clip0_176_1602">
         <rect y="0.5" width="18" height="18" rx="9" fill="white" />

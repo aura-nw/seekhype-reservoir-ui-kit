@@ -227,22 +227,6 @@ const blast = {
   checkPollingInterval: 1000,
 } satisfies ReservoirBaseChain
 
-const evmosTestnet = {
-  id: 9000,
-  name: 'Evmos testnet',
-  baseApiUrl: 'http://103.154.187.238:3000',
-  paymentTokens: [
-    {
-      chainId: 9000,
-      address: '0xE49a78aafcAFA57a7795B42A68b7b02D7f481baC',
-      symbol: 'tEVMOS',
-      name: 'tEVMOS',
-      decimals: 6,
-    },
-  ],
-  checkPollingInterval: 1000,
-} satisfies ReservoirBaseChain
-
 export const reservoirChains = {
   mainnet,
   goerli,
@@ -270,6 +254,5 @@ export const reservoirChains = {
   frameTestnet,
   blastSepolia,
   apexPop,
-  blast,
-  evmosTestnet
+  blast
 }

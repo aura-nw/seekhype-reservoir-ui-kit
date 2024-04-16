@@ -685,7 +685,7 @@ export function ListModal({
                     Your item has been listed!
                   </Text>
 
-                  {source ? (
+                  {/* {source ? (
                     <Flex direction="column" align="center" css={{ gap: '$2' }}>
                       <Text style="subtitle3" color="subtle" as="p">
                         View Listing on
@@ -700,7 +700,7 @@ export function ListModal({
                         />
                       </a>
                     </Flex>
-                  ) : null}
+                  ) : null} */}
                 </Flex>
                 <Flex
                   css={{

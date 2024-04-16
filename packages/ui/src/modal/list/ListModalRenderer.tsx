@@ -33,17 +33,9 @@ import {
   zeroAddress,
   createPublicClient,
   http,
-  defineChain,
-  webSocket,
 } from 'viem'
 import { getAccount, getPublicClient, switchChain } from 'wagmi/actions'
-import {
-  ERC721TRANSFERHELPER,
-  ZORA_MODULE_MANAGER_ADDRESS,
-  ASK1_1_MODULE_ADDRESS,
-  ContractConfig,
-} from '../../constants/common'
-import { auraEVMTestnet } from '../../constants/evmosChain'
+import { ContractConfig, ChainConfig } from '../../constants/common'
 
 export enum ListStep {
   Unavailable,
@@ -121,11 +113,6 @@ const expirationOptions = [
   },
 ]
 
-const publicClient = createPublicClient({
-  chain: auraEVMTestnet,
-  transport: http(),
-})
-
 export const ListModalRenderer: FC<Props> = ({
   open,
   tokenId,
@@ -171,6 +158,12 @@ export const ListModalRenderer: FC<Props> = ({
       ),
     [allMarketplaces]
   )
+
+  const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
+  const publicClient = createPublicClient({
+    chain: auraEVMTestnet,
+    transport: http(),
+  })
 
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -331,7 +324,8 @@ export const ListModalRenderer: FC<Props> = ({
             type: 'function',
           },
         ],
-        address: ZORA_MODULE_MANAGER_ADDRESS as `0x${string}`,
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.ZORA_MODULE_MANAGER_ADDRESS as `0x${string}`,
         functionName: 'isModuleApproved',
         args: [
           account?.address as `0x${string}`,
@@ -624,7 +618,11 @@ export const ListModalRenderer: FC<Props> = ({
               ],
               address: contract as `0x${string}`,
               functionName: 'setApprovalForAll',
-              args: [ERC721TRANSFERHELPER as `0x${string}`, true],
+              args: [
+                ContractConfig[chainId ? chainId : 1235]
+                  ?.ERC721TRANSFERHELPER as `0x${string}`,
+                true,
+              ],
               gas: 500000n,
             })
             .then((hash) => {

@@ -1,6 +1,6 @@
 import * as allChains from 'viem/chains'
 import { customChains } from '@reservoir0x/reservoir-sdk'
-import { auraEVMTestnet } from '../constants/evmosChain'
+import { ChainConfig } from '../constants/common'
 
 const getChainBlockExplorerUrl = (chainId: number) => {
   const wagmiChain: allChains.Chain | undefined = Object.values({
@@ -10,7 +10,7 @@ const getChainBlockExplorerUrl = (chainId: number) => {
 
   return (
     wagmiChain?.blockExplorers?.default?.url ||
-    auraEVMTestnet?.blockExplorers?.default?.url
+    ChainConfig[chainId]?.blockExplorers?.default?.url
   )
 }
 

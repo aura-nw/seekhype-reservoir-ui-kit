@@ -40,7 +40,7 @@ import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import { ContractConfig } from '../../constants/common'
+import { ChainConfig, ContractConfig } from '../../constants/common'
 import { auraEVMTestnet } from '../../constants/evmosChain'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
@@ -121,11 +121,6 @@ type Props = {
   >
 }
 
-const publicClient = createPublicClient({
-  chain: auraEVMTestnet,
-  transport: http(),
-})
-
 export const BuyModalRenderer: FC<Props> = ({
   open,
   token,
@@ -166,6 +161,12 @@ export const BuyModalRenderer: FC<Props> = ({
   const rendererChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
+
+  const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
+  const publicClient = createPublicClient({
+    chain: auraEVMTestnet,
+    transport: http(),
+  })
 
   const wagmiChain: allChains.Chain | undefined = Object.values({
     ...allChains,

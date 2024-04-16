@@ -39,7 +39,7 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
-import { auraEVMTestnet } from '../../constants/evmosChain'
+import { ChainConfig } from '../../constants/common'
 
 export enum MintStep {
   Idle,
@@ -113,11 +113,6 @@ type Props = {
   walletClient?: ReservoirWallet | WalletClient
 }
 
-const publicClient = createPublicClient({
-  chain: auraEVMTestnet,
-  transport: http(),
-})
-
 export const MintModalRenderer: FC<Props> = ({
   open,
   contract,
@@ -166,6 +161,12 @@ export const MintModalRenderer: FC<Props> = ({
     ...allChains,
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
+
+  const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
+  const publicClient = createPublicClient({
+    chain: auraEVMTestnet,
+    transport: http(),
+  })
 
   const providerOptions = useContext(ProviderOptionsContext)
   const includeListingCurrency =

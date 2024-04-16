@@ -38,3 +38,46 @@ export const ContractConfig = {
     WETH: '0x5Db8A2543e7e3Add18389C5ED63757A46A4848C1',
   },
 }
+
+export const ChainConfig = {
+  [1235 as number]: {
+    id: 1235,
+    name: 'Aura EVM',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'aura',
+      symbol: 'aura',
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://jsonrpc.dev.aura.network/'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Aura EVM Block Explorer',
+        url: 'https://explorer.dev.aura.network/',
+      },
+    },
+  },
+  [1236 as number]: {
+    id: 1236,
+    name: 'Aura EVM',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'aura',
+      symbol: 'aura',
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://jsonrpc.serenity.aura.network/'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Aura EVM Block Explorer',
+        url: 'https://serenity.aurascan.io/',
+      },
+    },
+  },
+}

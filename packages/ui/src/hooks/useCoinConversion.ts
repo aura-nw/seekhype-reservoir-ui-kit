@@ -14,8 +14,8 @@ const createBaseUrl = (config: CoinGecko | undefined) => {
 
 export default function (
   vs_currency?: string,
-  symbols: string = 'eth',
-  id: string = ''
+  symbols: string = 'aura',
+  id: string = 'aura-network'
 ): { price: number; symbol: string; id: string }[] {
   const providerOptionsContext = useContext(ProviderOptionsContext)
   const { data: coinIds } = useCoinIds()

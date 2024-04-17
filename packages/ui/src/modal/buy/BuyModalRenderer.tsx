@@ -40,7 +40,7 @@ import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
-import { ChainConfig, ContractConfig } from '../../constants/common'
+import { ChainConfig, ContractConfig, HALO_TRADE } from '../../constants/common'
 import { auraEVMTestnet } from '../../constants/evmosChain'
 
 type Item = Parameters<ReservoirClientActions['buyToken']>['0']['items'][0]
@@ -259,7 +259,7 @@ export const BuyModalRenderer: FC<Props> = ({
   // const addFundsLink = paymentCurrency?.address
   //   ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
   //   : `https://jumper.exchange/?toChain=${rendererChain?.id}`
-  const addFundsLink = `https://halotrade.zone/swap`
+  const addFundsLink = HALO_TRADE[chainId ? chainId : 1235]
 
   const fetchPath = useCallback(
     async (

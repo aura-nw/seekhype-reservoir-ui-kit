@@ -39,7 +39,7 @@ import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import usePaymentTokens, {
   EnhancedCurrency,
 } from '../../hooks/usePaymentTokens'
-import { ChainConfig } from '../../constants/common'
+import { ChainConfig, HALO_TRADE } from '../../constants/common'
 
 export enum MintStep {
   Idle,
@@ -481,7 +481,7 @@ export const MintModalRenderer: FC<Props> = ({
   // const addFundsLink = paymentCurrency?.address
   //   ? `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${paymentCurrency?.address}`
   //   : `https://jumper.exchange/?toChain=${rendererChain?.id}`
-  const addFundsLink = `https://halotrade.zone/swap`
+  const addFundsLink = HALO_TRADE[chainId ? chainId : 1235]
 
   // Determine if user has enough funds in paymentToken
   useEffect(() => {

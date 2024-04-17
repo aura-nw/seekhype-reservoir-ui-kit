@@ -81,3 +81,8 @@ export const ChainConfig = {
     },
   },
 }
+
+export const HALO_TRADE = {
+  [1235 as number]: 'https://dev.halotrade.zone/swap',
+  [1236 as number]: 'https://serenity.halotrade.zone/swap'
+}

@@ -30,7 +30,7 @@ import {
   ListStep,
   ListModalStepData,
 } from './ListModalRenderer'
-import {faCalendar, faImages, faTag} from '@fortawesome/free-solid-svg-icons'
+import { faCalendar, faImages, faTag } from '@fortawesome/free-solid-svg-icons'
 
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Currency } from '../../types/Currency'
@@ -604,11 +604,20 @@ export function ListModal({
                   ) : null}
                   {stepData && stepData.currentStep.id !== 'auth' ? (
                     <>
-                      <Text css={{ textAlign: 'center' }} style="h6">
-                        {stepData.currentStep.kind === 'transaction'
-                          ? 'Approve Collections'
-                          : 'Confirm listing in your wallet'}
-                      </Text>
+                      {stepData.currentStep.kind === 'transaction' &&
+                        stepData.currentStep.action === 'approval' && (
+                          <Text css={{ textAlign: 'center' }} style="h6">
+                            Grant the approval
+                          </Text>
+                        )}
+
+                      {stepData.currentStep.action !== 'approval' && (
+                        <Text css={{ textAlign: 'center' }} style="h6">
+                          {stepData.currentStep.kind === 'transaction'
+                            ? 'Approve collection(s)'
+                            : 'Confirm listing'}
+                        </Text>
+                      )}
                       <Text
                         css={{
                           textAlign: 'center',
@@ -621,14 +630,7 @@ export function ListModal({
                         {stepData?.currentStep.description}
                       </Text>
                       <Flex css={{ color: '$neutralSolid' }}>
-                        <FontAwesomeIcon
-                          icon={
-                            stepData.currentStep.kind === 'transaction'
-                              ? faImages
-                              : faTag
-                          }
-                          size="2x"
-                        />
+                        <FontAwesomeIcon icon={faTag} size="2x" />
                       </Flex>
                     </>
                   ) : null}
@@ -670,6 +672,7 @@ export function ListModal({
                         height: 120,
                         aspectRatio: '1/1',
                         borderRadius: 4,
+                        objectFit: 'cover'
                       }}
                     />
                     <Text style="h6" ellipsify>

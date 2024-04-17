@@ -256,9 +256,9 @@ export function CancelListingModal({
                   <Text style="body2" color="subtle" css={{ mb: 24 }}>
                     <>
                       Your{' '}
-                      <Text style="body2" color="accent">
+                      {/* <Text style="body2" color="accent">
                         {listing?.source?.name as string}
-                      </Text>{' '}
+                      </Text>{' '} */}
                       listing for{' '}
                       <Text style="body2" color="accent">
                         {listing?.criteria?.data?.token?.name ||

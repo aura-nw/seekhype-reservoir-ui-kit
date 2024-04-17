@@ -11,10 +11,11 @@ import {
 } from '../primitives'
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { BuyResponses, MintResponses } from '@reservoir0x/reservoir-sdk'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import faInfoCircle from '@fortawesome/free-solid-svg-icons/faInfoCircle'
+import { useCoinConversion } from '../hooks'
 
 type Props = {
   css?: CSS
@@ -35,10 +36,17 @@ export const PaymentDetails: FC<Props> = ({
   feeUsd,
   crosschainFees,
 }) => {
+  const coinConversion = useCoinConversion('USD')
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
   const providerOptions = useContext(ProviderOptionsContext)
+  // const usdTotal = formatUnits(
+  //   ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+  //     (paymentCurrency?.usdPriceRaw || 0n),
+  //   (paymentCurrency?.decimals || 18) + 6
+  const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
   const usdTotal = formatUnits(
     ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
-      (paymentCurrency?.usdPriceRaw || 0n),
+      (usdPriceRaw || 0n),
     (paymentCurrency?.decimals || 18) + 6
   )
 

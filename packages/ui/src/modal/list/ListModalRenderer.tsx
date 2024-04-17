@@ -388,6 +388,19 @@ export const ListModalRenderer: FC<Props> = ({
   }, [account, publicClient])
 
   const triggerListTokenContract = (maker: any) => {
+    setListStep(ListStep.Listing)
+    setStepData({
+      totalSteps: 1,
+      stepProgress: 1,
+      currentStep: {
+        kind: 'signature',
+        action: '',
+        description:
+          'Please review and confirm to create the listing from your wallet.',
+        id: '1',
+      },
+      listingData: [],
+    })
     // list token
     wagmiWallet
       ?.writeContract({
@@ -454,6 +467,63 @@ export const ListModalRenderer: FC<Props> = ({
           })
           .catch((error) => {
             setListStep(ListStep.SetPrice)
+            setTransactionError(error)
+          })
+      })
+      .catch((err) => {
+        setTransactionError(err)
+        setListStep(ListStep.SetPrice)
+      })
+  }
+
+  const triggerApproveCollection = (maker: any) => {
+    setListStep(ListStep.Listing)
+    setStepData({
+      totalSteps: 1,
+      stepProgress: 1,
+      currentStep: {
+        kind: 'transaction',
+        action: '',
+        description:
+          'Please approve the collection(s) form your wallet. Each collection only needs to be approved once.',
+        id: '1',
+      },
+      listingData: [],
+    })
+    // approve nft
+    wagmiWallet
+      ?.writeContract({
+        abi: [
+          {
+            constant: false,
+            inputs: [
+              { internalType: 'address', name: 'to', type: 'address' },
+              { internalType: 'bool', name: 'approved', type: 'bool' },
+            ],
+            name: 'setApprovalForAll',
+            outputs: [],
+            payable: false,
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+        ],
+        address: contract as `0x${string}`,
+        functionName: 'setApprovalForAll',
+        args: [
+          ContractConfig[chainId ? chainId : 1235]
+            ?.ERC721TRANSFERHELPER as `0x${string}`,
+          true,
+        ],
+        gas: 500000n,
+      })
+      .then((hash) => {
+        publicClient
+          .waitForTransactionReceipt({ hash })
+          .then(() => {
+            triggerListTokenContract(maker)
+          })
+          .catch((error) => {
+            triggerListTokenContract(maker)
             setTransactionError(error)
           })
       })
@@ -563,6 +633,19 @@ export const ListModalRenderer: FC<Props> = ({
       const maker = account?.address
       if (rendererChain?.name === auraEVMTestnet?.name) {
         if (!isApproveModule) {
+          setListStep(ListStep.Listing)
+          setStepData({
+            totalSteps: 1,
+            stepProgress: 1,
+            currentStep: {
+              kind: 'transaction',
+              action: 'approval',
+              description:
+                'You will be prompted to grant approval for selling on the marketplace. You only need to approve it once for the first time.',
+              id: '1',
+            },
+            listingData: [],
+          })
           // approve module
           await wagmiWallet
             ?.writeContract({
@@ -592,47 +675,14 @@ export const ListModalRenderer: FC<Props> = ({
               ],
               gas: 500000n,
             })
-            .catch((err) => {
-              setTransactionError(err)
-              setListStep(ListStep.SetPrice)
-            })
-        }
-
-        if (!isApproveNft) {
-          // approve nft
-          await wagmiWallet
-            ?.writeContract({
-              abi: [
-                {
-                  constant: false,
-                  inputs: [
-                    { internalType: 'address', name: 'to', type: 'address' },
-                    { internalType: 'bool', name: 'approved', type: 'bool' },
-                  ],
-                  name: 'setApprovalForAll',
-                  outputs: [],
-                  payable: false,
-                  stateMutability: 'nonpayable',
-                  type: 'function',
-                },
-              ],
-              address: contract as `0x${string}`,
-              functionName: 'setApprovalForAll',
-              args: [
-                ContractConfig[chainId ? chainId : 1235]
-                  ?.ERC721TRANSFERHELPER as `0x${string}`,
-                true,
-              ],
-              gas: 500000n,
-            })
             .then((hash) => {
               publicClient
                 .waitForTransactionReceipt({ hash })
                 .then((res) => {
-                  triggerListTokenContract(maker)
+                  triggerApproveCollection(maker)
                 })
                 .catch((error) => {
-                  triggerListTokenContract(maker)
+                  triggerApproveCollection(maker)
                   setTransactionError(error)
                 })
             })
@@ -640,6 +690,12 @@ export const ListModalRenderer: FC<Props> = ({
               setTransactionError(err)
               setListStep(ListStep.SetPrice)
             })
+
+          return
+        }
+
+        if (!isApproveNft) {
+          triggerApproveCollection(maker)
         } else {
           triggerListTokenContract(maker)
         }

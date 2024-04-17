@@ -45,7 +45,7 @@ const ListCheckout: FC<ListCheckoutProps> = ({
         <Img
           src={token?.token?.imageSmall || collection?.image}
           alt={token?.token?.name || collection?.name}
-          css={{ width: 56, height: 56, borderRadius: 4, aspectRatio: '1/1' }}
+          css={{ width: 56, height: 56, borderRadius: 4, aspectRatio: '1/1', objectFit: 'cover' }}
         />
         <Flex direction="column" css={{ gap: '$1', overflow: 'hidden' }}>
           <Text style="h6" ellipsify>

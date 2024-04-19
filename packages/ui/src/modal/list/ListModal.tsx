@@ -57,7 +57,7 @@ const ModalCopy = {
   ctaClose: 'Close',
   ctaSetPrice: 'Set your price',
   ctaList: 'List for Sale',
-  ctaAwaitingApproval: 'Waiting for Approval',
+  ctaAwaitingApproval: 'Waiting for approval...',
   ctaGoToToken: 'Go to Token',
 }
 

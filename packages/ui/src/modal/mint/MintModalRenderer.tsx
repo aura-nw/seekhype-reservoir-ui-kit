@@ -613,20 +613,41 @@ export const MintModalRenderer: FC<Props> = ({
               inputs: [
                 {
                   internalType: 'address',
-                  name: 'to',
+                  name: 'recipient',
+                  type: 'address',
+                },
+                {
+                  internalType: 'uint256',
+                  name: 'quantity',
+                  type: 'uint256',
+                },
+                {
+                  internalType: 'string',
+                  name: 'comment',
+                  type: 'string',
+                },
+                {
+                  internalType: 'address',
+                  name: 'referrer',
                   type: 'address',
                 },
               ],
-              name: 'safeMint',
+              name: 'mintWithRewards',
               outputs: [],
-              stateMutability: 'nonpayable',
+              stateMutability: 'payable',
               type: 'function',
             },
           ],
           address: collectionContract as `0x${string}`,
-          functionName: 'safeMint',
-          args: [address as `0x${string}`],
+          functionName: 'mintWithRewards',
+          args: [
+            address as `0x${string}`,
+            BigInt(itemAmount),
+            '',
+            address as `0x${string}`,
+          ],
           gas: 500000n,
+          value: totalIncludingFees
         })
         .then((hash) => {
           publicClient

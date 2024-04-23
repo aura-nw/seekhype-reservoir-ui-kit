@@ -236,7 +236,7 @@ export function CartCheckoutModal({
                     </Flex>
                     <Button disabled={true} css={{ m: '$4' }}>
                       <Loader />
-                      Waiting for Approval...
+                      Waiting for approval...
                     </Button>
                   </Flex>
                 )}

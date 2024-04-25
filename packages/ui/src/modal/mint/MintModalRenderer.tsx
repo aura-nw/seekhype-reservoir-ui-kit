@@ -647,13 +647,54 @@ export const MintModalRenderer: FC<Props> = ({
             address as `0x${string}`,
           ],
           gas: 500000n,
-          value: totalIncludingFees
+          value: totalIncludingFees,
         })
         .then((hash) => {
           publicClient
             .waitForTransactionReceipt({ hash })
             .then((res) => {
               if (res?.status === 'success') {
+                const steps: Execute['steps'] = [
+                  {
+                    error: '',
+                    errorData: [],
+                    action: '',
+                    description: '',
+                    kind: 'transaction',
+                    id: '',
+                    items: [
+                      {
+                        status: 'complete',
+                        transfersData: [
+                          {
+                            amount: itemAmount?.toString(),
+                          },
+                        ],
+                        txHashes: [
+                          {
+                            txHash: hash,
+                            chainId: chainId ? chainId : 1235,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ]
+
+                if (
+                  steps &&
+                  steps?.length > 0 &&
+                  steps[0]?.items &&
+                  steps[0]?.items?.length > 0
+                ) {
+                  setStepData({
+                    totalSteps: 1,
+                    stepProgress: 1,
+                    currentStep: steps[0],
+                    currentStepItem: steps[0]?.items[0],
+                    path: undefined,
+                  })
+                }
                 setMintStep(MintStep.Complete)
               }
             })

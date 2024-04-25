@@ -232,7 +232,9 @@ export const CancelListingModalRenderer: FC<Props> = ({
             .waitForTransactionReceipt({ hash })
             .then((res) => {
               if (res?.status === 'success') {
-                setCancelStep(CancelStep.Complete)
+                setTimeout(() => {
+                  setCancelStep(CancelStep.Complete)
+                }, 5000)
               }
             })
             .catch((error) => {

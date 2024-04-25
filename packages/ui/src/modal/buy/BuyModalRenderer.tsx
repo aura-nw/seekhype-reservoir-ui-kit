@@ -622,48 +622,50 @@ export const BuyModalRenderer: FC<Props> = ({
             .waitForTransactionReceipt({ hash })
             .then((res) => {
               if (res?.status === 'success') {
-                const steps: Execute['steps'] = [
-                  {
-                    error: '',
-                    errorData: [],
-                    action: '',
-                    description: '',
-                    kind: 'transaction',
-                    id: '',
-                    items: [
-                      {
-                        status: 'complete',
-                        transfersData: [
-                          {
-                            amount: '1',
-                          },
-                        ],
-                        txHashes: [
-                          {
-                            txHash: hash,
-                            chainId: chainId ? chainId : 1235,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ]
+                setTimeout(() => {
+                  const steps: Execute['steps'] = [
+                    {
+                      error: '',
+                      errorData: [],
+                      action: '',
+                      description: '',
+                      kind: 'transaction',
+                      id: '',
+                      items: [
+                        {
+                          status: 'complete',
+                          transfersData: [
+                            {
+                              amount: '1',
+                            },
+                          ],
+                          txHashes: [
+                            {
+                              txHash: hash,
+                              chainId: chainId ? chainId : 1235,
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ]
 
-                if (
-                  steps &&
-                  steps?.length > 0 &&
-                  steps[0]?.items &&
-                  steps[0]?.items?.length > 0
-                ) {
-                  setSteps(steps)
-                  setStepData({
-                    totalSteps: 1,
-                    stepProgress: 1,
-                    currentStep: steps[0],
-                    currentStepItem: steps[0]?.items[0],
-                  })
-                }
-                setBuyStep(BuyStep.Complete)
+                  if (
+                    steps &&
+                    steps?.length > 0 &&
+                    steps[0]?.items &&
+                    steps[0]?.items?.length > 0
+                  ) {
+                    setSteps(steps)
+                    setStepData({
+                      totalSteps: 1,
+                      stepProgress: 1,
+                      currentStep: steps[0],
+                      currentStepItem: steps[0]?.items[0],
+                    })
+                  }
+                  setBuyStep(BuyStep.Complete)
+                }, 5000)
               }
             })
             .catch((error) => {

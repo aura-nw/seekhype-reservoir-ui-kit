@@ -272,6 +272,7 @@ export function CancelListingModal({
                           css={{ height: 18 }}
                           address={''}
                         />
+                        {''}
                         {listing?.price?.amount?.decimal}{' '}
                         {listing?.price?.currency?.symbol} has been canceled.
                       </Flex>

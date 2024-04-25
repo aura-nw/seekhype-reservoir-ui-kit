@@ -462,7 +462,9 @@ export const ListModalRenderer: FC<Props> = ({
           .waitForTransactionReceipt({ hash })
           .then((res) => {
             if (res?.status === 'success') {
-              setListStep(ListStep.Complete)
+              setTimeout(() => {
+                setListStep(ListStep.Complete)
+              }, 5000)
             }
           })
           .catch((error) => {

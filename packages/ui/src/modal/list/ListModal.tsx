@@ -412,11 +412,11 @@ export function ListModal({
                               height: 20,
                             }}
                           >
-                            <CryptoCurrencyIcon
+                            {/* <CryptoCurrencyIcon
                               chainId={chainId}
                               css={{ height: 18 }}
                               address={currency.contract}
-                            />
+                            /> */}
                           </Box>
                           <Text
                             style="body1"
@@ -489,7 +489,7 @@ export function ListModal({
                         </Box>
                       )}
                   </Flex>
-                  <Flex direction="column" css={{ width: '100%', gap: '$2' }}>
+                  {/* <Flex direction="column" css={{ width: '100%', gap: '$2' }}>
                     <Text style="subtitle2">Expiration Date</Text>
                     <Flex align="center" css={{ gap: '$2' }}>
                       <Select
@@ -558,7 +558,7 @@ export function ListModal({
                         }}
                       />
                     </Flex>
-                  </Flex>
+                  </Flex> */}
                   <PriceBreakdown
                     price={price}
                     usdPrice={usdPrice}
@@ -672,7 +672,7 @@ export function ListModal({
                         height: 120,
                         aspectRatio: '1/1',
                         borderRadius: 4,
-                        objectFit: 'cover'
+                        objectFit: 'cover',
                       }}
                     />
                     <Text style="h6" ellipsify>

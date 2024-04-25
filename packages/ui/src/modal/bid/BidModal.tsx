@@ -70,7 +70,7 @@ const ModalCopy = {
   ctaBid: '',
   ctaConvertManually: 'Convert Manually',
   ctaConvertAutomatically: '',
-  ctaAwaitingApproval: 'Waiting for Approval',
+  ctaAwaitingApproval: 'Waiting for approval...',
   ctaEditOffer: 'Edit Offer',
   ctaRetry: 'Retry',
   ctaViewOffers: 'View Offers',

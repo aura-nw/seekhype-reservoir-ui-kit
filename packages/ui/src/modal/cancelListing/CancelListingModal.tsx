@@ -14,6 +14,7 @@ import {
   Loader,
   Anchor,
   ErrorWell,
+  CryptoCurrencyIcon,
 } from '../../primitives'
 import {
   CancelListingModalRenderer,
@@ -264,8 +265,17 @@ export function CancelListingModal({
                         {listing?.criteria?.data?.token?.name ||
                           listing?.criteria?.data?.collection?.name}{' '}
                       </Text>
-                      at {listing?.price?.amount?.decimal}{' '}
-                      {listing?.price?.currency?.symbol} has been canceled.
+                      <Flex align="center">
+                        at{' '}
+                        <CryptoCurrencyIcon
+                          chainId={chainId}
+                          css={{ height: 18 }}
+                          address={''}
+                        />
+                        {''}
+                        {listing?.price?.amount?.decimal}{' '}
+                        {listing?.price?.currency?.symbol} has been canceled.
+                      </Flex>
                     </>
                   </Text>
                   <Flex direction="column" align="center" css={{ gap: '$2' }}>

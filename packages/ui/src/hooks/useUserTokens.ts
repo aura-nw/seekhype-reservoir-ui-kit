@@ -26,7 +26,7 @@ export default function (
         return null
       }
 
-      const url = new URL(`${chain?.baseApiUrl}/users/${user}/tokens/v9`)
+      const url = new URL(`${chain?.baseApiUrl}/users/${user}/tokens/v10`)
 
       let query: UserTokenQuery = { ...options }
 

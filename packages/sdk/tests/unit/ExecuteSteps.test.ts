@@ -5,7 +5,7 @@ import {
   executeSteps,
   ReservoirClient,
   axios
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import { createWalletClient, hexToBigInt, http, WalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { mainnet } from 'viem/chains'

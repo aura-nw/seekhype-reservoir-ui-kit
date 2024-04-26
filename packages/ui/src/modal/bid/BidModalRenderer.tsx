@@ -29,7 +29,7 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
   axios,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import defaultExpirationOptions from '../../lib/defaultExpirationOptions'
 import { formatBN } from '../../lib/numbers'

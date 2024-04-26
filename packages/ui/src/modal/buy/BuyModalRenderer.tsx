@@ -25,7 +25,7 @@ import {
   ReservoirWallet,
   axios,
   BuyTokenBodyParameters,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import {
   Address,
   WalletClient,
@@ -34,7 +34,7 @@ import {
   http,
   zeroAddress,
 } from 'viem'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import { customChains } from '@sh-reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import usePaymentTokens, {
   EnhancedCurrency,

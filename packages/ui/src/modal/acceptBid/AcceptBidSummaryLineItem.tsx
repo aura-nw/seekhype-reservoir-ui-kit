@@ -6,7 +6,7 @@ import {
   FormatCurrency,
   Text,
 } from '../../primitives'
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain } from '@sh-reservoir0x/reservoir-sdk'
 import {
   AcceptBidPrice,
   EnhancedAcceptBidTokenData,

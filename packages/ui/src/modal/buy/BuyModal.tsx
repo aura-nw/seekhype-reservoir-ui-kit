@@ -30,7 +30,7 @@ import {
   BuyTokenBodyParameters,
   Execute,
   ReservoirWallet,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import ProgressBar from '../ProgressBar'
 import QuantitySelector from '../QuantitySelector'
 import { formatNumber } from '../../lib/numbers'

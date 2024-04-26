@@ -18,7 +18,7 @@ import { formatNumber } from '../../lib/numbers'
 import QuantitySelector from '../../modal/QuantitySelector'
 import * as allChains from 'viem/chains'
 import { Chain } from 'viem'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import { customChains } from '@sh-reservoir0x/reservoir-sdk'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 type Props = {

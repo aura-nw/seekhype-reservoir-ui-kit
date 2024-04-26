@@ -6,7 +6,7 @@
 
 - Updated dependencies [96bee20]
 - Updated dependencies [c029a8e]
-  - @reservoir0x/reservoir-sdk@2.0.2
+  - @sh-reservoir0x/reservoir-sdk@2.0.2
   - @reservoir0x/ethers-wallet-adapter@1.0.2
 
 ## 1.0.1
@@ -14,7 +14,7 @@
 ### Patch Changes
 
 - Updated dependencies [cc4ec58]
-  - @reservoir0x/reservoir-sdk@2.0.1
+  - @sh-reservoir0x/reservoir-sdk@2.0.1
   - @reservoir0x/ethers-wallet-adapter@1.0.1
 
 ## 1.0.0
@@ -27,7 +27,7 @@
 
 - Updated dependencies [b7ad7a5]
   - @reservoir0x/ethers-wallet-adapter@1.0.0
-  - @reservoir0x/reservoir-sdk@2.0.0
+  - @sh-reservoir0x/reservoir-sdk@2.0.0
 
 ## 0.6.30
 
@@ -40,7 +40,7 @@
 ### Patch Changes
 
 - Updated dependencies [20f9271]
-  - @reservoir0x/reservoir-sdk@1.12.16
+  - @sh-reservoir0x/reservoir-sdk@1.12.16
   - @reservoir0x/ethers-wallet-adapter@0.6.30
 
 ## 0.6.28
@@ -48,5 +48,5 @@
 ### Patch Changes
 
 - Updated dependencies [578dd19]
-  - @reservoir0x/reservoir-sdk@1.12.15
+  - @sh-reservoir0x/reservoir-sdk@1.12.15
   - @reservoir0x/ethers-wallet-adapter@0.6.29

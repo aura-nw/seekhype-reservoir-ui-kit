@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { axios, paths } from '@reservoir0x/reservoir-sdk'
+import { axios, paths } from '@sh-reservoir0x/reservoir-sdk'
 import { useReservoirClient } from './'
 
 type SolverCapacityResponse =

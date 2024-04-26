@@ -1,5 +1,5 @@
 import React from 'react'
-import { reservoirChains } from '@reservoir0x/reservoir-sdk'
+import { reservoirChains } from '@sh-reservoir0x/reservoir-sdk'
 import MainnetIconDark from '../img/chains/MainnetIconDark'
 import MainnetIconLight from '../img/chains/MainnetIconLight'
 import PolygonIconDark from '../img/chains/PolygonIconDark'
@@ -89,11 +89,6 @@ const chainIcons = {
     dark: <BaseIconLight />,
     color: <BaseIconColor />,
   },
-  [reservoirChains.baseGoerli.id]: {
-    light: <BaseIconDark />,
-    dark: <BaseIconLight />,
-    color: <BaseIconColor />,
-  },
   [reservoirChains.baseSepolia.id]: {
     light: <BaseIconDark />,
     dark: <BaseIconLight />,
@@ -108,11 +103,6 @@ const chainIcons = {
     light: <BscIconDark />,
     dark: <BscIconLight />,
     color: <BscIconColor />,
-  },
-  [reservoirChains.goerli.id]: {
-    light: <GoerliIconDark />,
-    dark: <GoerliIconLight />,
-    color: null,
   },
   [reservoirChains.sepolia.id]: {
     light: <GoerliIconDark />,
@@ -140,11 +130,6 @@ const chainIcons = {
     color: <PolygonZkevmIconColor />,
   },
   [reservoirChains.polygon.id]: {
-    light: <PolygonIconDark />,
-    dark: <PolygonIconLight />,
-    color: <PolygonIconColor />,
-  },
-  [reservoirChains.mumbai.id]: {
     light: <PolygonIconDark />,
     dark: <PolygonIconLight />,
     color: <PolygonIconColor />,

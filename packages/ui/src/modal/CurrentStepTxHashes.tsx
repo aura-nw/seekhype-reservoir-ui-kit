@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Execute } from '@reservoir0x/reservoir-sdk'
+import { Execute } from '@sh-reservoir0x/reservoir-sdk'
 import { truncateAddress } from '../lib/truncate'
 import getChainBlockExplorerUrl from '../lib/getChainBlockExplorerUrl'
 import { Anchor, Flex } from '../primitives'

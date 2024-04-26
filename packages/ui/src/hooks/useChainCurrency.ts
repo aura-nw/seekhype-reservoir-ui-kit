@@ -1,4 +1,4 @@
-import { getClient, customChains } from '@reservoir0x/reservoir-sdk'
+import { getClient, customChains } from '@sh-reservoir0x/reservoir-sdk'
 import { Address, zeroAddress } from 'viem'
 import * as allChains from 'viem/chains'
 import { ChainConfig } from '../constants/common'

@@ -1,5 +1,98 @@
 ## 1.12.15
 
+## 2.1.0
+
+### Minor Changes
+
+- 433943d: Removed deprecated chains
+
+## 2.0.16
+
+### Patch Changes
+
+- 5a6b034: Update polygon amoy wmatic address
+
+## 2.0.15
+
+### Patch Changes
+
+- b1bdf17: Handle reverted transactions by throwing an error after receiving receipt
+
+## 2.0.14
+
+### Patch Changes
+
+- 432bdbb: Add garnet and remove redstone testnet
+- 00cfcfe: Update tokens/refresh api to v2
+- ff2b661: Add polygon amoy
+
+## 2.0.13
+
+### Patch Changes
+
+- 7c556b3: Add redstone chain
+
+## 2.0.12
+
+### Patch Changes
+
+- 2ecd779: Add berachain testnet
+
+## 2.0.11
+
+### Patch Changes
+
+- 9c46f40: Add redstone testnet configuration
+
+## 2.0.10
+
+### Patch Changes
+
+- 2198ecd: Add apex pop testnet configuration
+
+## 2.0.9
+
+### Patch Changes
+
+- fd61f2b: Remove submitting transaction to solver
+- 5a0aa7f: Sync api types
+
+## 2.0.8
+
+### Patch Changes
+
+- c2ef89f: Fix passing chainId in recursive call to executeSteps
+
+## 2.0.7
+
+### Patch Changes
+
+- 213a434: Fix Astar WETH paymentToken
+
+## 2.0.6
+
+### Patch Changes
+
+- 61b2d03: Added Astar ZkEVM
+
+## 2.0.5
+
+### Patch Changes
+
+- 9d802e7: Add blast chain configuration
+
+## 2.0.4
+
+### Patch Changes
+
+- 46c7295: Fix paymentTokens for Blast Sepolia
+
+## 2.0.3
+
+### Patch Changes
+
+- 4bc7810: Switch apex rpc to https
+
 ## 2.0.2
 
 ### Patch Changes
@@ -17,7 +110,11 @@
 
 ### Major Changes
 
-- b7ad7a5: Upgrade viem and wagmi to v2
+- b7ad7a5: Upgrade viem to v2
+
+### Breaking Changes:
+
+Make sure to upgrade peer dependency `viem` to 2.x.x
 
 ## 1.12.16
 

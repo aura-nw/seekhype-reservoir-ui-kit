@@ -7,7 +7,7 @@ import {
   Text,
 } from '../primitives'
 import { useCollections, useTokens } from '../hooks'
-import { PaymentToken } from '@reservoir0x/reservoir-sdk'
+import { PaymentToken } from '@sh-reservoir0x/reservoir-sdk'
 
 enum Size {
   SM,

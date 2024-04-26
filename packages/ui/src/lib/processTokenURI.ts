@@ -1,4 +1,4 @@
-import { axios } from '@reservoir0x/reservoir-sdk'
+import { axios } from '@sh-reservoir0x/reservoir-sdk'
 
 const gatewayConfig = {
   'ipfs://': 'https://ipfs.io/ipfs/',

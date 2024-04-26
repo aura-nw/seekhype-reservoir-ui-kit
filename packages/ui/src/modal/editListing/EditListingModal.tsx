@@ -27,7 +27,7 @@ import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
 import PriceInput from '../../primitives/PriceInput'
 import InfoTooltip from '../../primitives/InfoTooltip'
 import { WalletClient, formatUnits, zeroAddress } from 'viem'
-import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
 import { formatNumber } from '../../lib/numbers'
 import { Dialog } from '../../primitives/Dialog'
 

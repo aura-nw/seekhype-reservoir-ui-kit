@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import { Execute, ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirChain } from '@sh-reservoir0x/reservoir-sdk'
 import { ApproveCollapsible } from '../ApproveCollapisble'
 import { EnhancedAcceptBidTokenData } from './AcceptBidModalRenderer'
 import { Flex, Grid, Img, Loader, Text } from '../../primitives'

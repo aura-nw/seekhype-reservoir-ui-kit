@@ -3,7 +3,7 @@ import { Button, Flex, Text } from '../../primitives'
 import TokenMedia from './index'
 import { defaultHeaders } from '../../lib/swr'
 import { useReservoirClient } from '../../hooks'
-import { axios, paths } from '@reservoir0x/reservoir-sdk'
+import { axios, paths } from '@sh-reservoir0x/reservoir-sdk'
 import faImage from '@fortawesome/free-solid-svg-icons/faImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 

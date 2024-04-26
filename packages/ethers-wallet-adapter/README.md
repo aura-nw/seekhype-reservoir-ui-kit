@@ -3,13 +3,13 @@
 ### Installation
 
 ```
-yarn add @reservoir0x/ethers-wallet-adapter @reservoir0x/reservoir-sdk
+yarn add @reservoir0x/ethers-wallet-adapter @sh-reservoir0x/reservoir-sdk
 ```
 
 Also make sure to install the peer dependencies required by the adapter if your application doesn't already include them:
 
 ```
-yarn add ethers viem @reservoir0x/reservoir-sdk
+yarn add ethers viem @sh-reservoir0x/reservoir-sdk
 ```
 
 ### Usage
@@ -17,7 +17,7 @@ yarn add ethers viem @reservoir0x/reservoir-sdk
 To use the adapter simply pass in your ethers signer and receive a normalized ReservoirWallet object:
 
 ```
-import { getClient } from '@reservoir0x/reservoir-sdk'
+import { getClient } from '@sh-reservoir0x/reservoir-sdk'
 import { adaptEthersSigner } from '@reservoir0x/ethers-wallet-adapter'
 import { useSigner } from 'wagmi'
 

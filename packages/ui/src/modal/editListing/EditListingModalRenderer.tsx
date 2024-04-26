@@ -16,7 +16,7 @@ import {
   useMarketplaces,
 } from '../../hooks'
 import { useWalletClient, useAccount, useConfig } from 'wagmi'
-import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@sh-reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'

@@ -32,7 +32,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
 import faClose from '@fortawesome/free-solid-svg-icons/faClose'
 
-import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
 import { WalletClient, formatUnits } from 'viem'
 import { formatNumber } from '../../lib/numbers'
 import { Dialog } from '../../primitives/Dialog'

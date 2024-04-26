@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef } from 'react'
 import { Cache, SWRConfig } from 'swr'
 import { version } from '../../package.json'
-import { axios } from '@reservoir0x/reservoir-sdk'
+import { axios } from '@sh-reservoir0x/reservoir-sdk'
 
 export const defaultHeaders = (
   apiKey?: string | null,

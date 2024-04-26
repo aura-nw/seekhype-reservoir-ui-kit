@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { styled } from '../../../stitches.config'
 import { Flex, FormatCryptoCurrency, Text, Tooltip } from '../../primitives'
-import { SellPath } from '@reservoir0x/reservoir-sdk'
+import { SellPath } from '@sh-reservoir0x/reservoir-sdk'
 
 type Props = {
   token: {

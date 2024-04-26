@@ -21,7 +21,7 @@ import {
   ReservoirClientActions,
   ReservoirWallet,
   axios,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import dayjs from 'dayjs'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ExpirationOption } from '../../types/ExpirationOption'

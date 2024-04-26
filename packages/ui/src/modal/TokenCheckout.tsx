@@ -1,4 +1,4 @@
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain } from '@sh-reservoir0x/reservoir-sdk'
 import React, { FC } from 'react'
 import { Cart } from '../context/CartProvider'
 import {

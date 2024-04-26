@@ -1,4 +1,4 @@
-const { createClient } = require('@reservoir0x/reservoir-sdk')
+const { createClient } = require('@sh-reservoir0x/reservoir-sdk')
 const { adaptDefenderRelay } = require('@reservoir0x/defender-relayer-adapter')
 
 const args = process.argv.slice(2).reduce((acc, arg) => {

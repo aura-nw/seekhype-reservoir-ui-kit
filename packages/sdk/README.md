@@ -4,7 +4,7 @@
 
 Use your favorite package manager to install the reservoir-sdk:
 
-`yarn add @reservoir0x/reservoir-sdk`
+`yarn add @sh-reservoir0x/reservoir-sdk`
 
 Make sure to install the required peer dependencies:
 

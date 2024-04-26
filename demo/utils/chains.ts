@@ -1,4 +1,4 @@
-import { customChains, reservoirChains } from '@reservoir0x/reservoir-sdk'
+import { customChains, reservoirChains } from '@sh-reservoir0x/reservoir-sdk'
 import { zeroAddress } from 'viem'
 
 export default [

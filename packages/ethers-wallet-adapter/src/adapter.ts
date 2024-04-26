@@ -2,7 +2,7 @@ import {
   LogLevel,
   ReservoirWallet,
   getClient,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import { Signer } from 'ethers/lib/ethers'
 import { arrayify } from 'ethers/lib/utils'
 import { TypedDataSigner } from '@ethersproject/abstract-signer/lib/index'

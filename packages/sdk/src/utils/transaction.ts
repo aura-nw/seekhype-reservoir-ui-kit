@@ -1,6 +1,6 @@
-import { Address, PublicClient, serializeTransaction } from 'viem'
+import { Address, PublicClient } from 'viem'
 import { LogLevel, getClient } from '..'
-import { Execute, ReservoirWallet, TransactionStepItem, paths } from '../types'
+import { Execute, ReservoirWallet, TransactionStepItem } from '../types'
 import { CrossChainTransactionError, TransactionTimeoutError } from '../errors'
 import axios, {
   AxiosRequestConfig,
@@ -36,15 +36,6 @@ export async function sendTransactionSafely(
   const reservoirChain =
     client.chains.find((chain) => chain.id == chainId) || null
   let txHash = await wallet.handleSendTransactionStep(chainId, item, step)
-  submitTransactionToSolver({
-    chainId,
-    viemClient,
-    step,
-    request,
-    headers,
-    txHash,
-    isCrossChainIntent,
-  })
   const pollingInterval = reservoirChain?.checkPollingInterval ?? 5000
   const maximumAttempts =
     client.maxPollingAttemptsBeforeTimeout ??
@@ -59,7 +50,7 @@ export async function sendTransactionSafely(
   setTxHashes([{ txHash: txHash, chainId: chainId }])
 
   // Handle transaction replacements and cancellations
-  viemClient
+  const receipt = await viemClient
     .waitForTransactionReceipt({
       hash: txHash,
       onReplaced: (replacement) => {
@@ -77,15 +68,6 @@ export async function sendTransactionSafely(
           ['Transaction replaced', replacement],
           LogLevel.Verbose
         )
-        submitTransactionToSolver({
-          chainId,
-          viemClient,
-          step,
-          request,
-          headers,
-          txHash,
-          isCrossChainIntent,
-        })
       },
     })
     .catch((error) => {
@@ -94,6 +76,13 @@ export async function sendTransactionSafely(
         LogLevel.Error
       )
     })
+  if (!receipt || receipt.status === 'reverted') {
+    getClient()?.log(
+      ['Transaction reverted or missing tx receipt', receipt],
+      LogLevel.Verbose
+    )
+    throw Error('Transaction reverted or missing tx receipt')
+  }
 
   const validate = (res: AxiosResponse) => {
     getClient()?.log(
@@ -191,77 +180,4 @@ export async function sendTransactionSafely(
   }
 
   return true
-}
-
-const submitTransactionToSolver = async ({
-  chainId,
-  viemClient,
-  request,
-  headers,
-  step,
-  txHash,
-  isCrossChainIntent,
-}: {
-  chainId: number
-  viemClient: PublicClient
-  step: Execute['steps'][0]
-  request: AxiosRequestConfig
-  headers: AxiosRequestHeaders
-  txHash: Address | undefined
-  isCrossChainIntent?: boolean
-}) => {
-  if (step.id === 'sale' && txHash && isCrossChainIntent) {
-    getClient()?.log(['Submitting transaction to solver'], LogLevel.Verbose)
-    try {
-      const tx = await viemClient.getTransaction({
-        hash: txHash,
-      })
-      const serializedTx = serializeTransaction(
-        {
-          type: tx.type,
-          chainId: tx.chainId ?? chainId,
-          gas: tx.gas,
-          nonce: tx.nonce,
-          to: tx.to || undefined,
-          value: tx.value,
-          maxFeePerGas: tx.maxFeePerGas,
-          maxPriorityFeePerGas: tx.maxPriorityFeePerGas,
-          accessList: tx.accessList,
-          data: tx.input,
-        },
-        {
-          v: tx.v < 27n ? tx.v + 27n : tx.v,
-          r: tx.r,
-          s: tx.s,
-        }
-      )
-
-      const solveData: paths['/execute/solve/v1']['post']['parameters']['body']['body'] =
-        {
-          //@ts-ignore
-          kind: 'cross-chain-intent',
-          tx: serializedTx,
-          chainId: chainId,
-        }
-
-      axios
-        .request({
-          url: `${request.baseURL}/execute/solve/v1`,
-          method: 'POST',
-          headers: headers,
-          data: solveData,
-        })
-        .then(() => {
-          getClient()?.log(
-            ['Transaction submitted to solver'],
-            LogLevel.Verbose
-          )
-        })
-    } catch (e) {
-      getClient()?.log(
-        ['Failed to submit transaction to solver', e],
-        LogLevel.Warn
-      )
-    }
-  }
 }

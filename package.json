@@ -13,7 +13,7 @@
     "lint": "tsc --skipLibCheck --noEmit",
     "demo": "yarn workspace reservoir-kit-demo dev",
     "clean": "yarn workspaces foreach --exclude primitives --exclude ssr-testing run clean",
-    "test": "yarn workspace @reservoir0x/reservoir-sdk test",
+    "test": "yarn workspace @sh-reservoir0x/reservoir-sdk test",
     "dev:clean": "./scripts/package-cleanup.sh",
     "dev": "yarn dev:watch",
     "dev:watch": "parcel watch 'packages/*' --no-cache --no-hmr --no-source-maps",

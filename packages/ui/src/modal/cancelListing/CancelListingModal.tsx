@@ -28,7 +28,7 @@ import { faGasPump } from '@fortawesome/free-solid-svg-icons'
 
 import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'
-import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
 
@@ -265,15 +265,14 @@ export function CancelListingModal({
                         {listing?.criteria?.data?.token?.name ||
                           listing?.criteria?.data?.collection?.name}{' '}
                       </Text>
-                      <Flex align="center">
-                        at{' '}
+                      <Flex align="center" css={{ gap: '4px' }}>
+                        at
                         <CryptoCurrencyIcon
                           chainId={chainId}
                           css={{ height: 18 }}
                           address={''}
                         />
-                        {''}
-                        {listing?.price?.amount?.decimal}{' '}
+                        {listing?.price?.amount?.decimal}
                         {listing?.price?.currency?.symbol} has been canceled.
                       </Flex>
                     </>

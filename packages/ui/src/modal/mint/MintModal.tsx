@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from 'react'
 import { WalletClient, formatUnits } from 'viem'
-import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
 import { useFallbackState, useReservoirClient } from '../../hooks'
 import { Modal } from '../Modal'
 import {

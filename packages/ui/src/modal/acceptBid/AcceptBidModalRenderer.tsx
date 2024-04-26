@@ -15,11 +15,11 @@ import {
   ReservoirWallet,
   SellPath,
   axios,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { WalletClient, formatUnits, parseUnits } from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import { customChains } from '@sh-reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 
 export enum AcceptBidStep {

@@ -104,24 +104,48 @@ export const blastSepolia = {
 
 export const apexPop = {
   id: 70700,
-  name: 'Apex Proof of Play',
+  name: 'Apex',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['http://rpc.apex.proofofplay.com'],
+      http: ['https://rpc.apex.proofofplay.com'],
     },
     public: {
-      http: ['http://rpc.apex.proofofplay.com'],
+      http: ['https://rpc.apex.proofofplay.com'],
     },
   },
   blockExplorers: {
     etherscan: {
-      name: 'Apex Pop Explorer',
+      name: 'Apex',
       url: 'https://explorer.apex.proofofplay.com',
     },
     default: {
-      name: 'Apex Pop Explorer',
+      name: 'Apex',
       url: 'https://explorer.apex.proofofplay.com',
+    },
+  },
+}
+
+export const apexPopTestnet = {
+  id: 70800,
+  name: 'Apex Testnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-pop-testnet-barret-oxaolmcfss.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-pop-testnet-barret-oxaolmcfss.t.conduit.xyz'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Apex Testnet',
+      url: 'https://explorerl2new-pop-testnet-barret-oxaolmcfss.t.conduit.xyz',
+    },
+    default: {
+      name: 'Apex Testnet',
+      url: 'https://explorerl2new-pop-testnet-barret-oxaolmcfss.t.conduit.xyz',
     },
   },
 }
@@ -132,10 +156,10 @@ export const blast = {
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {
-      http: ['https://rpc.blast.io'],
+      http: ['https://blast.blockpi.network/v1/rpc/public'],
     },
     public: {
-      http: ['https://rpc.blast.io'],
+      http: ['https://blast.blockpi.network/v1/rpc/public'],
     },
   },
   blockExplorers: {
@@ -150,11 +174,131 @@ export const blast = {
   },
 }
 
+export const astarZkEVM = {
+  id: 3776,
+  name: 'Astar ZkEVM',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.startale.com/astar-zkevm'],
+    },
+    public: {
+      http: ['https://rpc.startale.com/astar-zkevm'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Astar zkEVM',
+      url: 'https://astar-zkevm.explorer.startale.com',
+    },
+    default: {
+      name: 'Astar zkEVM',
+      url: 'https://astar-zkevm.explorer.startale.com',
+    },
+  },
+} as const satisfies Chain
+
+export const garnet = {
+  id: 17069,
+  name: 'Garnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.garnet.qry.live'],
+    },
+    public: {
+      http: ['https://rpc.garnet.qry.live'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Garnet',
+      url: 'https://explorer.garnet.qry.live',
+    },
+    default: {
+      name: 'Garnet',
+      url: 'https://explorer.garnet.qry.live',
+    },
+  },
+} as const satisfies Chain
+
+export const redstone = {
+  id: 690,
+  name: 'Redstone',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.redstonechain.com'],
+    },
+    public: {
+      http: ['https://rpc.redstonechain.com'],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'Redstone',
+      url: 'https://explorer.redstone.xyz',
+    },
+    default: {
+      name: 'Redstone',
+      url: 'https://explorer.redstone.xyz',
+    },
+  },
+} as const satisfies Chain
+
+export const auraEVMDev = {
+  id: 1235,
+  name: 'Aura EVM',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'aura',
+    symbol: 'aura',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://jsonrpc.dev.aura.network/'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Aura EVM Block Explorer',
+      url: 'https://explorer.dev.aura.network/',
+    },
+  },
+} as const satisfies Chain
+
+export const auraEVMSerenity = {
+  id: 1236,
+  name: 'Aura EVM',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'aura',
+    symbol: 'aura',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://jsonrpc.serenity.aura.network/'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Aura EVM Block Explorer',
+      url: 'https://serenity.aurascan.io/',
+    },
+  },
+} as const satisfies Chain
+
 export const customChains = {
   ancient8,
   ancient8Testnet,
   frameTestnet,
   blastSepolia,
   apexPop,
+  apexPopTestnet,
   blast,
+  astarZkEVM,
+  garnet,
+  redstone,
+  auraEVMDev,
+  auraEVMSerenity,
 } as const satisfies Record<string, Chain>

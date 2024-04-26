@@ -44,7 +44,7 @@ import SigninStep from '../SigninStep'
 import AcceptBidSummaryLineItem from './AcceptBidSummaryLineItem'
 import { truncateAddress } from '../../lib/truncate'
 import { WalletClient } from 'viem'
-import { ReservoirWallet, SellPath } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet, SellPath } from '@sh-reservoir0x/reservoir-sdk'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
 

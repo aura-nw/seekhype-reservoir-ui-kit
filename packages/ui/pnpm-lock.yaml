@@ -50,7 +50,7 @@ dependencies:
   '@react-hookz/web':
     specifier: ^19.2.0
     version: 19.2.0(react-dom@18.2.0)(react@18.2.0)
-  '@reservoir0x/reservoir-sdk':
+  '@sh-reservoir0x/reservoir-sdk':
     specifier: 2.0.9
     version: 2.0.9(viem@2.7.22)
   '@stitches/react':
@@ -1269,7 +1269,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@reservoir0x/reservoir-sdk@2.0.9(viem@2.7.22):
+  /@sh-reservoir0x/reservoir-sdk@2.0.9(viem@2.7.22):
     resolution: {integrity: sha512-kDuwq8wtL8DydyqQFjmVbu9zYORNOZWNplU8i+TftswjfMOpHkmuNxjg83HiJX0QWhZ51TY3j0dx9CiTcxDF4w==}
     peerDependencies:
       viem: ~2.7.8

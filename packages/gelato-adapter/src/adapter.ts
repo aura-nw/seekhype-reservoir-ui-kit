@@ -1,4 +1,4 @@
-import { ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet, axios } from '@sh-reservoir0x/reservoir-sdk'
 import {
   ERC2771Type,
   GelatoRelay,

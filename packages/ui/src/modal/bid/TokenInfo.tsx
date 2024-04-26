@@ -8,7 +8,7 @@ import {
   Img,
   Text,
 } from '../../primitives'
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain } from '@sh-reservoir0x/reservoir-sdk'
 import { Currency } from '../../types/Currency'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import { CSS } from '@stitches/react'

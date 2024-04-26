@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { TokenCheckout } from './TokenCheckout'
-import { Execute, ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirChain } from '@sh-reservoir0x/reservoir-sdk'
 import { ApproveCollapsible } from './ApproveCollapisble'
 import { Flex } from '../primitives'
 

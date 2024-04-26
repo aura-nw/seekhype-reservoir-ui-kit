@@ -3,13 +3,13 @@
 ## Installation
 
 ```
-yarn add @reservoir0x/gelato-adapter @reservoir0x/reservoir-sdk
+yarn add @reservoir0x/gelato-adapter @sh-reservoir0x/reservoir-sdk
 ```
 
 Also make sure to install the peer dependencies required by the adapter if your application doesn't already include them:
 
 ```
-yarn add ethers viem @reservoir0x/reservoir-sdk
+yarn add ethers viem @sh-reservoir0x/reservoir-sdk
 ```
 
 ## Usage
@@ -49,7 +49,7 @@ deactivate G
 <h4>Example adapter integration</h4>
 
 ```typescript
-import { getClient } from '@reservoir0x/reservoir-sdk'
+import { getClient } from '@sh-reservoir0x/reservoir-sdk'
 import { adaptGelatoRelayer } from '@reservoir0x/gelato-adapter'
 import { useSigner } from 'wagmi'
 
@@ -109,7 +109,7 @@ deactivate P
 <h4>Example adapter integration</h4>
 
 ```typescript
-import { getClient } from '@reservoir0x/reservoir-sdk'
+import { getClient } from '@sh-reservoir0x/reservoir-sdk'
 import { adaptGelatoRelayer } from '@reservoir0x/gelato-adapter'
 import { useSigner } from 'wagmi'
 

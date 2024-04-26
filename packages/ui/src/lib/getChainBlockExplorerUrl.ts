@@ -1,5 +1,5 @@
 import * as allChains from 'viem/chains'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import { customChains } from '@sh-reservoir0x/reservoir-sdk'
 import { ChainConfig } from '../constants/common'
 
 const getChainBlockExplorerUrl = (chainId: number) => {

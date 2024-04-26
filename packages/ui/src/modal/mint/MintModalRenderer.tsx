@@ -27,7 +27,7 @@ import {
   ReservoirWallet,
   axios,
   customChains,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import {
   useChainCurrency,
   useCollections,
@@ -260,8 +260,8 @@ export const MintModalRenderer: FC<Props> = ({
       setIsFetchingPath(true)
 
       let options: MintTokenOptions = {
-        partial: true,
-        onlyPath: true,
+        partial: false,
+        onlyPath: false,
         currencyChainId: paymentCurrency?.chainId,
       }
 
@@ -565,8 +565,9 @@ export const MintModalRenderer: FC<Props> = ({
 
     setTransactionError(null)
     let options: MintTokenOptions = {
-      partial: true,
+      partial: false,
       currencyChainId: paymentCurrency?.chainId,
+      onlyPath: false
     }
 
     const relayerFee = BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)
@@ -605,197 +606,296 @@ export const MintModalRenderer: FC<Props> = ({
 
     setMintStep(MintStep.Approving)
 
-    if (rendererChain?.name === auraEVMTestnet?.name) {
-      await wagmiWallet
-        ?.writeContract({
-          abi: [
-            {
-              inputs: [
-                {
-                  internalType: 'address',
-                  name: 'recipient',
-                  type: 'address',
-                },
-                {
-                  internalType: 'uint256',
-                  name: 'quantity',
-                  type: 'uint256',
-                },
-                {
-                  internalType: 'string',
-                  name: 'comment',
-                  type: 'string',
-                },
-                {
-                  internalType: 'address',
-                  name: 'referrer',
-                  type: 'address',
-                },
-              ],
-              name: 'mintWithRewards',
-              outputs: [],
-              stateMutability: 'payable',
-              type: 'function',
-            },
-          ],
-          address: collectionContract as `0x${string}`,
-          functionName: 'mintWithRewards',
-          args: [
-            address as `0x${string}`,
-            BigInt(itemAmount),
-            '',
-            address as `0x${string}`,
-          ],
-          gas: 500000n,
-          value: totalIncludingFees,
-        })
-        .then((hash) => {
-          publicClient
-            .waitForTransactionReceipt({ hash })
-            .then((res) => {
-              if (res?.status === 'success') {
-                setTimeout(() => {
-                  const steps: Execute['steps'] = [
-                    {
-                      error: '',
-                      errorData: [],
-                      action: '',
-                      description: '',
-                      kind: 'transaction',
-                      id: '',
-                      items: [
-                        {
-                          status: 'complete',
-                          transfersData: [
-                            {
-                              amount: itemAmount?.toString(),
-                            },
-                          ],
-                          txHashes: [
-                            {
-                              txHash: hash,
-                              chainId: chainId ? chainId : 1235,
-                            },
-                          ],
-                        },
-                      ],
-                    },
-                  ]
+    // if (rendererChain?.name === auraEVMTestnet?.name) {
+    //   setStepData({
+    //     totalSteps: 1,
+    //     stepProgress: 1,
+    //     currentStep: {
+    //       kind: 'transaction',
+    //       action: 'Confirm transaction in your wallet',
+    //       description: '',
+    //       id: '1',
+    //     },
+    //     currentStepItem: {
+    //       status: 'incomplete',
+    //     },
+    //     path: undefined,
+    //   })
+    //   await wagmiWallet
+    //     ?.writeContract({
+    //       abi: [
+    //         {
+    //           inputs: [
+    //             {
+    //               internalType: 'address',
+    //               name: 'recipient',
+    //               type: 'address',
+    //             },
+    //             {
+    //               internalType: 'uint256',
+    //               name: 'quantity',
+    //               type: 'uint256',
+    //             },
+    //             {
+    //               internalType: 'string',
+    //               name: 'comment',
+    //               type: 'string',
+    //             },
+    //             {
+    //               internalType: 'address',
+    //               name: 'referrer',
+    //               type: 'address',
+    //             },
+    //           ],
+    //           name: 'mintWithRewards',
+    //           outputs: [],
+    //           stateMutability: 'payable',
+    //           type: 'function',
+    //         },
+    //       ],
+    //       address: collectionContract as `0x${string}`,
+    //       functionName: 'mintWithRewards',
+    //       args: [
+    //         address as `0x${string}`,
+    //         BigInt(itemAmount),
+    //         '',
+    //         address as `0x${string}`,
+    //       ],
+    //       gas: 500000n,
+    //       value: totalIncludingFees,
+    //     })
+    //     .then((hash) => {
+    //       const steps: Execute['steps'] = [
+    //         {
+    //           error: '',
+    //           errorData: [],
+    //           action: '',
+    //           description: '',
+    //           kind: 'transaction',
+    //           id: '',
+    //           items: [
+    //             {
+    //               status: 'complete',
+    //               transfersData: [
+    //                 {
+    //                   amount: itemAmount?.toString(),
+    //                 },
+    //               ],
+    //               txHashes: [
+    //                 {
+    //                   txHash: hash,
+    //                   chainId: chainId ? chainId : 1235,
+    //                 },
+    //               ],
+    //             },
+    //           ],
+    //         },
+    //       ]
 
-                  if (
-                    steps &&
-                    steps?.length > 0 &&
-                    steps[0]?.items &&
-                    steps[0]?.items?.length > 0
-                  ) {
-                    setStepData({
-                      totalSteps: 1,
-                      stepProgress: 1,
-                      currentStep: steps[0],
-                      currentStepItem: steps[0]?.items[0],
-                      path: undefined,
-                    })
-                  }
-                  setMintStep(MintStep.Complete)
-                }, 5000)
-              }
-            })
-            .catch((error) => {
-              setMintStep(MintStep.SelectPayment)
-              setTransactionError(error)
-            })
-        })
-        .catch((err) => {
-          setMintStep(MintStep.SelectPayment)
-          setTransactionError(err)
-        })
-    } else {
-      client.actions
-        .mintToken({
-          chainId: rendererChain?.id,
-          items: [
-            {
-              collection: tokenData?.token?.tokenId
-                ? undefined
-                : collection?.id,
-              token: tokenData?.token?.tokenId
-                ? `${collectionContract}:${tokenData?.token?.tokenId}`
-                : undefined,
-              quantity: itemAmount,
-            },
-          ],
-          expectedPrice: {
-            [paymentCurrency?.address || zeroAddress]: {
-              raw: totalIncludingFees - relayerFee,
-              currencyAddress: paymentCurrency?.address,
-              currencyDecimals: paymentCurrency?.decimals || 18,
-            },
+    //       if (
+    //         steps &&
+    //         steps?.length > 0 &&
+    //         steps[0]?.items &&
+    //         steps[0]?.items?.length > 0
+    //       ) {
+    //         setStepData({
+    //           totalSteps: 1,
+    //           stepProgress: 1,
+    //           currentStep: steps[0],
+    //           currentStepItem: steps[0]?.items[0],
+    //           path: undefined,
+    //         })
+    //       }
+    //       setMintStep(MintStep.Finalizing)
+
+    //       publicClient
+    //         .waitForTransactionReceipt({ hash })
+    //         .then((res) => {
+    //           if (res?.status === 'success') {
+    //             setTimeout(() => {
+    //               setMintStep(MintStep.Complete)
+    //             }, 5000)
+    //           }
+    //         })
+    //         .catch((error) => {
+    //           setMintStep(MintStep.SelectPayment)
+    //           setTransactionError(error)
+    //         })
+    //     })
+    //     .catch((err) => {
+    //       setMintStep(MintStep.SelectPayment)
+    //       setTransactionError(err)
+    //     })
+    // } else {
+    //   client.actions
+    //     .mintToken({
+    //       chainId: rendererChain?.id,
+    //       items: [
+    //         {
+    //           collection: tokenData?.token?.tokenId
+    //             ? undefined
+    //             : collection?.id,
+    //           token: tokenData?.token?.tokenId
+    //             ? `${collectionContract}:${tokenData?.token?.tokenId}`
+    //             : undefined,
+    //           quantity: itemAmount,
+    //         },
+    //       ],
+    //       expectedPrice: {
+    //         [paymentCurrency?.address || zeroAddress]: {
+    //           raw: totalIncludingFees - relayerFee,
+    //           currencyAddress: paymentCurrency?.address,
+    //           currencyDecimals: paymentCurrency?.decimals || 18,
+    //         },
+    //       },
+    //       wallet,
+    //       options,
+    //       onProgress: (steps: Execute['steps'], path: Execute['path']) => {
+    //         if (!steps) {
+    //           return
+    //         }
+
+    //         const executableSteps = steps.filter(
+    //           (step) => step.items && step.items.length > 0
+    //         )
+
+    //         let stepCount = executableSteps.length
+
+    //         let currentStepItem:
+    //           | NonNullable<Execute['steps'][0]['items']>[0]
+    //           | undefined
+
+    //         const currentStepIndex = executableSteps.findIndex((step) => {
+    //           currentStepItem = step.items?.find(
+    //             (item) => item.status === 'incomplete'
+    //           )
+    //           return currentStepItem
+    //         })
+
+    //         const currentStep =
+    //           currentStepIndex > -1
+    //             ? executableSteps[currentStepIndex]
+    //             : executableSteps[stepCount - 1]
+
+    //         if (currentStepItem) {
+    //           setStepData({
+    //             totalSteps: stepCount,
+    //             stepProgress: currentStepIndex,
+    //             currentStep,
+    //             currentStepItem,
+    //             path: path,
+    //           })
+    //         }
+
+    //         if (
+    //           currentStepIndex + 1 === executableSteps.length &&
+    //           currentStep?.items?.every((item) => item.txHashes)
+    //         ) {
+    //           setMintStep(MintStep.Finalizing)
+    //         }
+
+    //         if (
+    //           steps.every(
+    //             (step) =>
+    //               !step.items ||
+    //               step.items.length == 0 ||
+    //               step.items?.every((item) => item.status === 'complete')
+    //           )
+    //         ) {
+    //           setMintStep(MintStep.Complete)
+    //         }
+    //       },
+    //     })
+    //     .catch((error: Error) => {
+    //       setTransactionError(error)
+    //       setMintStep(MintStep.Idle)
+    //       mutateCollection()
+    //       fetchMintPath(paymentCurrency)
+    //     })
+    // }
+    client.actions
+      .mintToken({
+        chainId: rendererChain?.id,
+        items: [
+          {
+            collection: tokenData?.token?.tokenId ? undefined : collection?.id,
+            token: tokenData?.token?.tokenId
+              ? `${collectionContract}:${tokenData?.token?.tokenId}`
+              : undefined,
+            quantity: itemAmount,
           },
-          wallet,
-          options,
-          onProgress: (steps: Execute['steps'], path: Execute['path']) => {
-            if (!steps) {
-              return
-            }
+        ],
+        expectedPrice: {
+          [paymentCurrency?.address || zeroAddress]: {
+            raw: totalIncludingFees - relayerFee,
+            currencyAddress: paymentCurrency?.address,
+            currencyDecimals: paymentCurrency?.decimals || 18,
+          },
+        },
+        wallet,
+        options,
+        onProgress: (steps: Execute['steps'], path: Execute['path']) => {
+          if (!steps) {
+            return
+          }
 
-            const executableSteps = steps.filter(
-              (step) => step.items && step.items.length > 0
+          const executableSteps = steps.filter(
+            (step) => step.items && step.items.length > 0
+          )
+
+          let stepCount = executableSteps.length
+
+          let currentStepItem:
+            | NonNullable<Execute['steps'][0]['items']>[0]
+            | undefined
+
+          const currentStepIndex = executableSteps.findIndex((step) => {
+            currentStepItem = step.items?.find(
+              (item) => item.status === 'incomplete'
             )
+            return currentStepItem
+          })
 
-            let stepCount = executableSteps.length
+          const currentStep =
+            currentStepIndex > -1
+              ? executableSteps[currentStepIndex]
+              : executableSteps[stepCount - 1]
 
-            let currentStepItem:
-              | NonNullable<Execute['steps'][0]['items']>[0]
-              | undefined
-
-            const currentStepIndex = executableSteps.findIndex((step) => {
-              currentStepItem = step.items?.find(
-                (item) => item.status === 'incomplete'
-              )
-              return currentStepItem
+          if (currentStepItem) {
+            setStepData({
+              totalSteps: stepCount,
+              stepProgress: currentStepIndex,
+              currentStep,
+              currentStepItem,
+              path: path,
             })
+          }
 
-            const currentStep =
-              currentStepIndex > -1
-                ? executableSteps[currentStepIndex]
-                : executableSteps[stepCount - 1]
+          if (
+            currentStepIndex + 1 === executableSteps.length &&
+            currentStep?.items?.every((item) => item.txHashes)
+          ) {
+            setMintStep(MintStep.Finalizing)
+          }
 
-            if (currentStepItem) {
-              setStepData({
-                totalSteps: stepCount,
-                stepProgress: currentStepIndex,
-                currentStep,
-                currentStepItem,
-                path: path,
-              })
-            }
-
-            if (
-              currentStepIndex + 1 === executableSteps.length &&
-              currentStep?.items?.every((item) => item.txHashes)
-            ) {
-              setMintStep(MintStep.Finalizing)
-            }
-
-            if (
-              steps.every(
-                (step) =>
-                  !step.items ||
-                  step.items.length == 0 ||
-                  step.items?.every((item) => item.status === 'complete')
-              )
-            ) {
-              setMintStep(MintStep.Complete)
-            }
-          },
-        })
-        .catch((error: Error) => {
-          setTransactionError(error)
-          setMintStep(MintStep.Idle)
-          mutateCollection()
-          fetchMintPath(paymentCurrency)
-        })
-    }
+          if (
+            steps.every(
+              (step) =>
+                !step.items ||
+                step.items.length == 0 ||
+                step.items?.every((item) => item.status === 'complete')
+            )
+          ) {
+            setMintStep(MintStep.Complete)
+          }
+        },
+      })
+      .catch((error: Error) => {
+        setTransactionError(error)
+        setMintStep(MintStep.Idle)
+        mutateCollection()
+        fetchMintPath(paymentCurrency)
+      })
   }, [
     client,
     wallet,

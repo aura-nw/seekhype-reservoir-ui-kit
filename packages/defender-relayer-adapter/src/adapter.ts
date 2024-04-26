@@ -4,7 +4,7 @@ import {
   DefenderRelaySigner,
   DefenderRelaySignerOptions,
 } from '@openzeppelin/defender-relay-client/lib/ethers'
-import { ReservoirWallet } from '@reservoir0x/reservoir-sdk'
+import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
 import { CustomTransport, HttpTransport } from 'viem'
 import { adaptEthersSigner } from '@reservoir0x/ethers-wallet-adapter'
 

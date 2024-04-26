@@ -6,7 +6,7 @@ import { useState } from 'react'
 import DeeplinkCheckbox from 'components/DeeplinkCheckbox'
 import { useRouter } from 'next/router'
 import ChainSwitcher from 'components/ChainSwitcher'
-import { BuyTokenBodyParameters } from '@reservoir0x/reservoir-sdk'
+import { BuyTokenBodyParameters } from '@sh-reservoir0x/reservoir-sdk'
 
 const DEFAULT_COLLECTION_ID =
   process.env.NEXT_PUBLIC_DEFAULT_COLLECTION_ID ||

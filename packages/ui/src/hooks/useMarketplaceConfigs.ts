@@ -1,4 +1,4 @@
-import { paths, setParams } from '@reservoir0x/reservoir-sdk'
+import { paths, setParams } from '@sh-reservoir0x/reservoir-sdk'
 import useSWR from 'swr/immutable'
 import { useReservoirClient } from './'
 

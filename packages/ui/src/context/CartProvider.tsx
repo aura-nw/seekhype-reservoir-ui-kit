@@ -6,7 +6,7 @@ import {
   ReservoirWallet,
   paths,
   setParams,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import {
   useCurrencyConversion,
   useListings,

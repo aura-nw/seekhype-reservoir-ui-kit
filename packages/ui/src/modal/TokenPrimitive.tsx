@@ -11,7 +11,7 @@ import {
   Divider,
 } from '../primitives'
 import InfoTooltip from '../primitives/InfoTooltip'
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain } from '@sh-reservoir0x/reservoir-sdk'
 
 type Props = {
   img?: string

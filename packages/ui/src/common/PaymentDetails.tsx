@@ -12,7 +12,7 @@ import {
 import { ProviderOptionsContext } from '../ReservoirKitProvider'
 import { EnhancedCurrency } from '../hooks/usePaymentTokens'
 import { formatUnits, parseUnits } from 'viem'
-import { BuyResponses, MintResponses } from '@reservoir0x/reservoir-sdk'
+import { BuyResponses, MintResponses } from '@sh-reservoir0x/reservoir-sdk'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import faInfoCircle from '@fortawesome/free-solid-svg-icons/faInfoCircle'
 import { useCoinConversion } from '../hooks'

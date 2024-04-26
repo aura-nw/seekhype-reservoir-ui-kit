@@ -4,7 +4,7 @@ import Flex from './Flex'
 import Text from './Text'
 import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
 import Anchor from './Anchor'
-import { TransactionTimeoutError } from '@reservoir0x/reservoir-sdk'
+import { TransactionTimeoutError } from '@sh-reservoir0x/reservoir-sdk'
 import { truncateAddress } from '../lib/truncate'
 
 type Props = {

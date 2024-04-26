@@ -25,7 +25,7 @@ import {
 } from 'wagmi'
 import { mainnet, goerli } from 'wagmi/chains'
 
-import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@sh-reservoir0x/reservoir-sdk'
 import { ExpirationOption } from '../../types/ExpirationOption'
 import expirationOptions from '../../lib/defaultExpirationOptions'
 import dayjs from 'dayjs'
@@ -40,7 +40,7 @@ import {
 import { formatBN } from '../../lib/numbers'
 import { Address, WalletClient, erc20Abi, parseUnits } from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import { customChains } from '@sh-reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { Marketplace } from '../../hooks/useMarketplaces'
 

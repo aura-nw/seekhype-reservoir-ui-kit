@@ -2,7 +2,7 @@ import {
   createClient,
   getClient as getReservoirClient,
   reservoirChains
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 
 export const getClient = () => {
   let client = getReservoirClient()

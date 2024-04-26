@@ -12,7 +12,7 @@
 - c029a8e: Add apex proof of play chain configuration
 - Updated dependencies [96bee20]
 - Updated dependencies [c029a8e]
-  - @reservoir0x/reservoir-sdk@2.0.2
+  - @sh-reservoir0x/reservoir-sdk@2.0.2
 
 ## 2.2.0
 
@@ -23,7 +23,7 @@
 ### Patch Changes
 
 - Updated dependencies [cc4ec58]
-  - @reservoir0x/reservoir-sdk@2.0.1
+  - @sh-reservoir0x/reservoir-sdk@2.0.1
 
 ## 2.1.0
 
@@ -47,19 +47,19 @@
 ### Patch Changes
 
 - Updated dependencies [b7ad7a5]
-  - @reservoir0x/reservoir-sdk@2.0.0
+  - @sh-reservoir0x/reservoir-sdk@2.0.0
 
 ## 1.25.11
 
 ### Patch Changes
 
 - Updated dependencies [20f9271]
-  - @reservoir0x/reservoir-sdk@1.12.16
+  - @sh-reservoir0x/reservoir-sdk@1.12.16
 
 ### Patch Changes
 
 - Updated dependencies [578dd19]
-  - @reservoir0x/reservoir-sdk@1.12.15
+  - @sh-reservoir0x/reservoir-sdk@1.12.15
 
 ## [v1.25.9-UI](https://github.com/reservoirprotocol/reservoir-kit/commit/a1760bed72f9a2f643e8c91e189987014dc5e4f5) (2024-02-13)
 

@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { ChainIcon, Divider, Flex, Img, Text } from '../primitives'
 import { useCollections, useTokens } from '../hooks'
-import { ReservoirChain } from '@reservoir0x/reservoir-sdk'
+import { ReservoirChain } from '@sh-reservoir0x/reservoir-sdk'
 
 type Props = {
   token?: NonNullable<ReturnType<typeof useTokens>['data']>[0]

@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState, useCallback, ReactNode } from 'react'
 import { useCoinConversion, useReservoirClient, useBids } from '../../hooks'
 import { useConfig, useWalletClient } from 'wagmi'
-import { Execute, ReservoirWallet, axios } from '@reservoir0x/reservoir-sdk'
+import { Execute, ReservoirWallet, axios } from '@sh-reservoir0x/reservoir-sdk'
 import { getAccount, switchChain } from 'wagmi/actions'
-import { customChains } from '@reservoir0x/reservoir-sdk'
+import { customChains } from '@sh-reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { WalletClient } from 'viem'
 

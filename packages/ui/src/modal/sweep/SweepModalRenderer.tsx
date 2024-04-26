@@ -22,7 +22,7 @@ import {
   ReservoirChain,
   ReservoirClientActions,
   axios,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import { Address, WalletClient, formatUnits, zeroAddress } from 'viem'
 import { EnhancedCurrency } from '../../hooks/usePaymentTokens'
 import { getAccount, switchChain } from 'wagmi/actions'
@@ -31,7 +31,7 @@ import {
   customChains,
   ReservoirWallet,
   BuyResponses,
-} from '@reservoir0x/reservoir-sdk'
+} from '@sh-reservoir0x/reservoir-sdk'
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 
 export enum SweepStep {

@@ -9138,7 +9138,7 @@ export interface operations {
     parameters: {
       query: {
         /** Time window to aggregate. */
-        period?: "5m" | "10m" | "30m" | "1h" | "2h" | "6h" | "24h";
+        period?: "5m" | "10m" | "30m" | "1h" | "2h" | "6h" | "24h" | "30d";
         /** The type of the mint (free/paid). */
         type?: "free" | "paid" | "any";
         /** Amount of items returned in response. Default is 50 and max is 50. Expected to be sorted and filtered on client side. */

@@ -110,7 +110,7 @@ export function MintModal({
   onPointerDownOutside,
   defaultQuantity,
   maxMintQuantity,
-  maxMintPerWallet
+  maxMintPerWallet,
 }: Props): ReactElement {
   const copy: typeof MintModalCopy = {
     ...MintModalCopy,
@@ -141,6 +141,8 @@ export function MintModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       walletClient={walletClient}
+      maxMintQuantity={maxMintQuantity}
+      maxMintPerWallet={maxMintPerWallet}
     >
       {({
         loading,
@@ -217,9 +219,12 @@ export function MintModal({
         //   ? paymentCurrency?.maxItems
         //   : maxItemAmount
 
-        const maxQuantity = maxMintPerWallet && maxMintPerWallet > 0
-          ? (maxMintPerWallet)
-          : ((maxMintQuantity || 1) > 20 ? 20 : (maxMintQuantity || 1))
+        const maxQuantity =
+          maxMintPerWallet && maxMintPerWallet > 0
+            ? maxMintPerWallet
+            : (maxMintQuantity || 1) > 20
+            ? 20
+            : maxMintQuantity || 1
 
         const totalMints =
           stepData?.currentStep?.items?.reduce((total, item) => {

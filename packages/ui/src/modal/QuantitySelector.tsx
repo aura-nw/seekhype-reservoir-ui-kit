@@ -71,14 +71,14 @@ const QuantitySelector: FC<Props> = ({
         />
       </QuantityButton>
       <QuantityInput
-        value={quantity == -1 ? '' : quantity}
+        value={quantity == -1 ? 1 : quantity}
         onChange={(e) => {
           if (e.target.value === '') {
-            setQuantity(-1)
+            setQuantity(min)
             return
           }
 
-          const newQuantity = Number(e.target.value || 0)
+          const newQuantity = Number(e.target.value || 1)
           if (newQuantity && newQuantity >= min && newQuantity <= max) {
             setQuantity(newQuantity)
           } else {

@@ -111,6 +111,8 @@ type Props = {
   feesOnTopUsd?: string[] | null
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
+  maxMintQuantity?: number
+  maxMintPerWallet?: number
 }
 
 export const MintModalRenderer: FC<Props> = ({
@@ -125,6 +127,8 @@ export const MintModalRenderer: FC<Props> = ({
   feesOnTopUsd,
   children,
   walletClient,
+  maxMintQuantity,
+  maxMintPerWallet,
 }) => {
   const client = useReservoirClient()
   const config = useConfig()
@@ -337,11 +341,18 @@ export const MintModalRenderer: FC<Props> = ({
               }
             }
 
-            setMaxItemAmount(
-              pathOrderQuantity > totalMaxQuantity
-                ? totalMaxQuantity
-                : pathOrderQuantity
-            )
+            // setMaxItemAmount(
+            //   pathOrderQuantity > totalMaxQuantity
+            //     ? totalMaxQuantity
+            //     : pathOrderQuantity
+            // )
+            const maxQuantity =
+              maxMintPerWallet && maxMintPerWallet > 0
+                ? maxMintPerWallet
+                : (maxMintQuantity || 1) > 20
+                ? 20
+                : maxMintQuantity || 1
+            setMaxItemAmount(maxQuantity)
           }
         })
         .catch((err) => {
@@ -567,7 +578,7 @@ export const MintModalRenderer: FC<Props> = ({
     let options: MintTokenOptions = {
       partial: false,
       currencyChainId: paymentCurrency?.chainId,
-      onlyPath: false
+      onlyPath: false,
     }
 
     const relayerFee = BigInt(mintResponseFees?.relayer?.amount?.raw ?? 0)

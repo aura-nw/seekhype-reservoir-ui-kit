@@ -87,6 +87,8 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onPointerDownOutside?: ComponentPropsWithoutRef<
     typeof Dialog
   >['onPointerDownOutside']
+  maxMintQuantity?: number
+  maxMintPerWallet?: number
 }
 
 export function MintModal({
@@ -107,6 +109,8 @@ export function MintModal({
   onGoToToken,
   onPointerDownOutside,
   defaultQuantity,
+  maxMintQuantity,
+  maxMintPerWallet,
 }: Props): ReactElement {
   const copy: typeof MintModalCopy = {
     ...MintModalCopy,
@@ -137,6 +141,8 @@ export function MintModal({
       feesOnTopBps={feesOnTopBps}
       feesOnTopUsd={feesOnTopUsd}
       walletClient={walletClient}
+      maxMintQuantity={maxMintQuantity}
+      maxMintPerWallet={maxMintPerWallet}
     >
       {({
         loading,
@@ -209,9 +215,16 @@ export function MintModal({
             )
           : {}
 
-        const maxQuantity = paymentCurrency?.maxItems
-          ? paymentCurrency?.maxItems
-          : maxItemAmount
+        // const maxQuantity = paymentCurrency?.maxItems
+        //   ? paymentCurrency?.maxItems
+        //   : maxItemAmount
+
+        const maxQuantity =
+          maxMintPerWallet && maxMintPerWallet > 0
+            ? maxMintPerWallet
+            : (maxMintQuantity || 1) > 20
+            ? 20
+            : maxMintQuantity || 1
 
         const totalMints =
           stepData?.currentStep?.items?.reduce((total, item) => {
@@ -360,7 +373,7 @@ export function MintModal({
                           quantity={itemAmount}
                           setQuantity={setItemAmount}
                           min={1}
-                          max={maxQuantity}
+                          max={10}
                           css={{
                             width: '100%',
                             justifyContent: 'space-between',

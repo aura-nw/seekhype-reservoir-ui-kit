@@ -111,6 +111,7 @@ type Props = {
   feesOnTopUsd?: string[] | null
   children: (props: ChildrenProps) => ReactNode
   walletClient?: ReservoirWallet | WalletClient
+  maxMintQuantity?: number
 }
 
 export const MintModalRenderer: FC<Props> = ({
@@ -125,6 +126,7 @@ export const MintModalRenderer: FC<Props> = ({
   feesOnTopUsd,
   children,
   walletClient,
+  maxMintQuantity
 }) => {
   const client = useReservoirClient()
   const config = useConfig()

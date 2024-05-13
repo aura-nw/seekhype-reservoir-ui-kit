@@ -373,7 +373,7 @@ export function MintModal({
                           quantity={itemAmount}
                           setQuantity={setItemAmount}
                           min={1}
-                          max={10}
+                          max={20}
                           css={{
                             width: '100%',
                             justifyContent: 'space-between',

@@ -44,7 +44,14 @@ export const CurrentStepTxHashes: FC<CurrentStepTxHashesProps> = ({
             : []
         const allTxHashes = [...validTxHashes, ...validInternalTxHashes]
         if (allTxHashes?.length > 0) {
-          return allTxHashes?.map((hash, txHashIndex) => {
+          const distinctTxHashes = [
+            ...[
+              ...new Map(
+                allTxHashes?.map((item) => [item['txHash'], item])
+              ).values(),
+            ],
+          ]
+          return distinctTxHashes?.map((hash, txHashIndex) => {
             const truncatedTxHash = truncateAddress(hash.txHash)
             const blockExplorerBaseUrl = getChainBlockExplorerUrl(hash.chainId)
             return (

@@ -5,9 +5,13 @@ import React, {
   SetStateAction,
   useEffect,
 } from 'react'
-import { WalletClient, formatUnits } from 'viem'
+import { WalletClient, formatUnits, parseUnits } from 'viem'
 import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
-import { useFallbackState, useReservoirClient } from '../../hooks'
+import {
+  useCoinConversion,
+  useFallbackState,
+  useReservoirClient,
+} from '../../hooks'
 import { Modal } from '../Modal'
 import {
   MintModalRenderer,
@@ -128,6 +132,10 @@ export function MintModal({
   const modalChain = chainId
     ? client?.chains.find(({ id }) => id === chainId) || currentChain
     : currentChain
+
+  const coinConversion = useCoinConversion('USD')
+  const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
+  const usdCoinConversionPriceRaw = parseUnits(usdPrice.toString(), 6)
 
   return (
     <MintModalRenderer
@@ -437,6 +445,7 @@ export function MintModal({
                       feeOnTop={feeOnTop}
                       feeUsd={feeUsd}
                       loading={isFetchingPath}
+                      itemAmount={itemAmount}
                       css={{ pt: '$4' }}
                     />
                   </Flex>
@@ -522,12 +531,16 @@ export function MintModal({
                     token={token}
                     itemCount={itemAmount}
                     totalPrice={
-                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                      (paymentCurrency?.currencyTotalRaw || 0n) *
+                        BigInt(itemAmount) +
+                      feeOnTop
                     }
                     currency={paymentCurrency}
                     usdTotalFormatted={formatUnits(
-                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
-                        (paymentCurrency?.usdPriceRaw || 0n),
+                      ((paymentCurrency?.currencyTotalRaw || 0n) *
+                        BigInt(itemAmount) +
+                        feeOnTop) *
+                        (usdCoinConversionPriceRaw || 0n),
                       (paymentCurrency?.decimals || 18) + 6
                     )}
                   />
@@ -682,12 +695,16 @@ export function MintModal({
                     token={token}
                     itemCount={itemAmount}
                     totalPrice={
-                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
+                      (paymentCurrency?.currencyTotalRaw || 0n) *
+                        BigInt(itemAmount) +
+                      feeOnTop
                     }
                     currency={paymentCurrency}
                     usdTotalFormatted={formatUnits(
-                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
-                        (paymentCurrency?.usdPriceRaw || 0n),
+                      ((paymentCurrency?.currencyTotalRaw || 0n) *
+                        BigInt(itemAmount) +
+                        feeOnTop) *
+                        (usdCoinConversionPriceRaw || 0n),
                       (paymentCurrency?.decimals || 18) + 6
                     )}
                   />

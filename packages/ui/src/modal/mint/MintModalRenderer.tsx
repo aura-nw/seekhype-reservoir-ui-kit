@@ -166,12 +166,6 @@ export const MintModalRenderer: FC<Props> = ({
     ...customChains,
   }).find(({ id }) => rendererChain?.id === id)
 
-  const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
-  const publicClient = createPublicClient({
-    chain: auraEVMTestnet,
-    transport: http(),
-  })
-
   const providerOptions = useContext(ProviderOptionsContext)
   const includeListingCurrency =
     providerOptions.alwaysIncludeListingCurrency !== false
@@ -543,6 +537,11 @@ export const MintModalRenderer: FC<Props> = ({
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {
       setItemAmount(maxItemAmount)
+    }
+
+    if (paymentCurrency?.currencyTotalRaw) {
+      paymentCurrency.currencyTotalRaw *= BigInt(itemAmount)
+      _setPaymentCurrency(paymentCurrency)
     }
   }, [maxItemAmount, itemAmount])
 

@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import { Box, Flex, Text } from '../../primitives'
 import TokenMedia from '../../components/TokenMedia'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faImage from '@fortawesome/free-solid-svg-icons/faImage'
+import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { useTokens } from '../../hooks'
 import { MintModalStepData } from './MintModalRenderer'
 
@@ -67,6 +67,8 @@ export const MintImages: FC<Props> = ({ stepData, tokenKind }) => {
                           id: mint?.token?.contract,
                         },
                         kind: tokenKind,
+                        media:
+                          'https://twilight.s3.ap-southeast-1.amazonaws.com/assets/images/dfimg.png',
                       }}
                       fallbackMode="simple"
                       style={{ width: 100, height: 100 }}

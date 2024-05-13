@@ -25,6 +25,7 @@ type Props = {
   feeOnTop: bigint
   feeUsd: string
   crosschainFees?: BuyResponses['fees'] | MintResponses['fees']
+  itemAmount: number
 }
 
 export const PaymentDetails: FC<Props> = ({
@@ -35,6 +36,7 @@ export const PaymentDetails: FC<Props> = ({
   feeOnTop,
   feeUsd,
   crosschainFees,
+  itemAmount: itemAmount,
 }) => {
   const coinConversion = useCoinConversion('USD')
   const usdPrice = coinConversion.length > 0 ? coinConversion[0].price : 0
@@ -45,7 +47,7 @@ export const PaymentDetails: FC<Props> = ({
   //   (paymentCurrency?.decimals || 18) + 6
   const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
   const usdTotal = formatUnits(
-    ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
+    ((paymentCurrency?.currencyTotalRaw ?? 0n) * BigInt(itemAmount) + feeOnTop) *
       (usdPriceRaw || 0n),
     (paymentCurrency?.decimals || 18) + 6
   )
@@ -126,7 +128,9 @@ export const PaymentDetails: FC<Props> = ({
                     textStyle="body2"
                     textColor="subtle"
                     amount={
-                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) *
+                        BigInt(itemAmount) +
+                      feeOnTop
                     }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
@@ -141,7 +145,9 @@ export const PaymentDetails: FC<Props> = ({
                     textStyle="h6"
                     textColor="base"
                     amount={
-                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) *
+                        BigInt(itemAmount) +
+                      feeOnTop
                     }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}

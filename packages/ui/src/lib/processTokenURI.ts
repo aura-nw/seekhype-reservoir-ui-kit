@@ -35,9 +35,9 @@ export const convertTokenUriToImage = async (uri: string): Promise<string> => {
       return image
     }
 
-    return ''
+    return 'https://twilight.s3.ap-southeast-1.amazonaws.com/assets/images/dfimg.png'
   } catch (e) {
     console.error(e)
-    return ''
+    return 'https://twilight.s3.ap-southeast-1.amazonaws.com/assets/images/dfimg.png'
   }
 }

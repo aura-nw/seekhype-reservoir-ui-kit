@@ -67,8 +67,6 @@ export const MintImages: FC<Props> = ({ stepData, tokenKind }) => {
                           id: mint?.token?.contract,
                         },
                         kind: tokenKind,
-                        media:
-                          'https://twilight.s3.ap-southeast-1.amazonaws.com/assets/images/dfimg.png',
                       }}
                       fallbackMode="simple"
                       style={{ width: 100, height: 100 }}

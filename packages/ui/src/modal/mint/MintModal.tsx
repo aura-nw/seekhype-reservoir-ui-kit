@@ -320,9 +320,28 @@ export function MintModal({
                     </Text>
                   ) : null}
                 </Flex>
-                <Button css={{ width: '100%' }} onClick={() => setOpen(false)}>
-                  {copy.mintCtaClose}
-                </Button>
+                {fetchMintPathError?.message &&
+                fetchMintPathError?.message
+                  ?.toLowerCase()
+                  ?.indexOf('balance too low') > -1 ? (
+                  <Button
+                    onClick={() => {
+                      window.open(addFundsLink, '_blank')
+                    }}
+                    css={{ width: '100%' }}
+                  >
+                    {copy.mintCtaInsufficientFunds}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      setOpen(false)
+                    }}
+                    css={{ width: '100%' }}
+                  >
+                    {copy.mintCtaClose}
+                  </Button>
+                )}
               </Flex>
             ) : null}
             {!loading &&

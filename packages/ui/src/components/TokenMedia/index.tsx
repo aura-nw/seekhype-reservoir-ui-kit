@@ -222,7 +222,7 @@ const TokenMedia: FC<Props> = ({
     if (tokenURI) {
       setIsUpdatingOnChainImage(true)
       ;(async () => {
-        const updatedOnChainImage = await convertTokenUriToImage(tokenURI)
+        const updatedOnChainImage = await convertTokenUriToImage(tokenURI, chainId)
         setOnChainImage(updatedOnChainImage)
       })().then(() => {
         setIsUpdatingOnChainImage(false)

@@ -530,9 +530,11 @@ export const MintModalRenderer: FC<Props> = ({
     }
   }, [open])
 
-  open
-    ? (axios.defaults.headers.common['x-rkui-context'] = 'mintModalRenderer')
-    : delete axios.defaults.headers.common?.['x-rkui-context']
+  // open
+  //   ? (axios.defaults.headers.common['x-rkui-context'] = 'mintModalRenderer')
+  //   : delete axios.defaults.headers.common?.['x-rkui-context']
+
+  delete axios.defaults.headers.common?.['x-rkui-context']
 
   useEffect(() => {
     if (maxItemAmount > 0 && itemAmount > maxItemAmount) {

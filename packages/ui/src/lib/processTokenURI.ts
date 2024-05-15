@@ -1,12 +1,20 @@
 import { axios } from '@sh-reservoir0x/reservoir-sdk'
 
 const gatewayConfig = {
-  'ipfs://': 'https://ipfs.io/ipfs/',
-  'ar://': 'https://arweave.net/',
+  [1235 as number]: {
+    'ipfs://': 'https://ipfs-gw.dev.aura.network/ipfs/',
+    'ar://': 'https://arweave.net/',
+  },
+  [1236 as number]: {
+    'ipfs://': 'https://ipfs-gw.dev.aura.network/ipfs/',
+    'ar://': 'https://arweave.net/',
+  },
 }
 
-const convertToGatewayUrl = (url: string) => {
-  for (const [protocol, gateway] of Object.entries(gatewayConfig)) {
+const convertToGatewayUrl = (url: string, chainId?: number) => {
+  for (const [protocol, gateway] of Object.entries(
+    gatewayConfig[chainId || 1235]
+  )) {
     if (url.includes(protocol)) {
       return url.replace(protocol, gateway)
     }
@@ -14,8 +22,8 @@ const convertToGatewayUrl = (url: string) => {
   return url
 }
 
-const fetchUri = async (uri: string) => {
-  const response = await axios(convertToGatewayUrl(uri), {
+const fetchUri = async (uri: string, chainId?: number) => {
+  const response = await axios(convertToGatewayUrl(uri, chainId), {
     method: 'GET',
   })
 
@@ -26,12 +34,15 @@ const fetchUri = async (uri: string) => {
   return response.data
 }
 
-export const convertTokenUriToImage = async (uri: string): Promise<string> => {
+export const convertTokenUriToImage = async (
+  uri: string,
+  chainId?: number
+): Promise<string> => {
   try {
-    const json = await fetchUri(uri)
+    const json = await fetchUri(uri, chainId)
 
     if (json.image) {
-      const image = convertToGatewayUrl(json.image)
+      const image = convertToGatewayUrl(json.image, chainId)
       return image
     }
 

@@ -47,7 +47,7 @@ export const PaymentDetails: FC<Props> = ({
   //   (paymentCurrency?.decimals || 18) + 6
   const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
   const usdTotal = formatUnits(
-    ((paymentCurrency?.currencyTotalRaw ?? 0n) * BigInt(itemAmount) + feeOnTop) *
+    ((paymentCurrency?.currencyTotalRaw ?? 0n) * BigInt(itemAmount || 1) + feeOnTop) *
       (usdPriceRaw || 0n),
     (paymentCurrency?.decimals || 18) + 6
   )
@@ -129,7 +129,7 @@ export const PaymentDetails: FC<Props> = ({
                     textColor="subtle"
                     amount={
                       (paymentCurrency?.currencyTotalRaw ?? 0n) *
-                        BigInt(itemAmount) +
+                        BigInt(itemAmount || 1) +
                       feeOnTop
                     }
                     address={paymentCurrency?.address}
@@ -146,7 +146,7 @@ export const PaymentDetails: FC<Props> = ({
                     textColor="base"
                     amount={
                       (paymentCurrency?.currencyTotalRaw ?? 0n) *
-                        BigInt(itemAmount) +
+                        BigInt(itemAmount || 1) +
                       feeOnTop
                     }
                     address={paymentCurrency?.address}

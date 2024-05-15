@@ -540,7 +540,7 @@ export const MintModalRenderer: FC<Props> = ({
     }
 
     if (paymentCurrency?.currencyTotalRaw) {
-      paymentCurrency.currencyTotalRaw *= BigInt(itemAmount)
+      paymentCurrency.currencyTotalRaw *= BigInt(itemAmount || 1)
       _setPaymentCurrency(paymentCurrency)
     }
   }, [maxItemAmount, itemAmount])

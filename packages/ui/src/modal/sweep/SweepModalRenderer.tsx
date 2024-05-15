@@ -519,7 +519,9 @@ export const SweepModalRenderer: FC<Props> = ({
       }
 
       setTotalIncludingFees(paymentCurrency.currencyTotalRaw + totalFees)
-      setAverageUnitPrice(paymentCurrency.currencyTotalRaw / BigInt(itemAmount))
+      setAverageUnitPrice(
+        paymentCurrency.currencyTotalRaw / BigInt(itemAmount || 1)
+      )
     } else {
       setTotalIncludingFees(0n)
       setAverageUnitPrice(0n)

@@ -33,7 +33,11 @@ export const TokenInfo: FC<Props> = ({ token, collection, chain }) => {
             {chain ? (
               <>
                 <Divider direction="vertical" />
-                <ChainIcon chainId={chain.id} height={12} />
+                <ChainIcon
+                  chainId={chain.id}
+                  height={12}
+                  css={{ alignItems: 'center', width: '12px' }}
+                />
                 <Text style="subtitle2" color="subtle" ellipsify>
                   {chain.name}
                 </Text>

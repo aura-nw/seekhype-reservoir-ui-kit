@@ -46,7 +46,7 @@ export const CollectionInfo: FC<Props> = ({ collection, chain }) => {
                 {mintEndTime ? (
                   <Divider direction="vertical" css={{ maxHeight: 12 }} />
                 ) : null}
-                <ChainIcon chainId={chain.id} height={12} />
+                <ChainIcon chainId={chain.id} height={12} css={{ alignItems: 'center', width: '12px' }} />
                 <Text style="subtitle2" color="subtle" ellipsify>
                   {chain.name}
                 </Text>

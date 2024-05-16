@@ -179,9 +179,15 @@ const TokenMedia: FC<Props> = ({
     borderRadius,
     position: 'relative',
   }
+
+  const maxWidthStyle: CSSProperties = {
+    maxWidth: 'unset'
+  }
+
   const computedStyle = {
     ...defaultStyle,
     ...style,
+    ...maxWidthStyle
   }
 
   useModelViewer(

@@ -416,7 +416,7 @@ export default function (options: {
           chainId: token.chainId,
           totalPriceWithoutFee:
             path && path?.length > 0
-              ? BigInt(Number((path[0] as any).totalPriceWithoutFee))
+              ? BigInt(Number((path[0] as any).totalPriceWithoutFee || 0))
               : 0n,
         }
       })

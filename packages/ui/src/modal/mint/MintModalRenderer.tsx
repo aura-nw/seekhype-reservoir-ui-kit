@@ -317,7 +317,9 @@ export const MintModalRenderer: FC<Props> = ({
 
             const pathOrderQuantity =
               pathData?.reduce(
-                (quantity, order) => quantity + (order?.quantity || 1),
+                (mintableQuantity, order: any) =>
+                  Number(mintableQuantity) +
+                  (Number(order?.mintableQuantity) || 1),
                 0
               ) || 0
             let totalMaxQuantity = pathOrderQuantity
@@ -333,20 +335,32 @@ export const MintModalRenderer: FC<Props> = ({
                 // if value is null/undefined, we don't know max quantity, but simulation succeeed with quantity of 1
                 totalMaxQuantity = maxQuantity ? Number(maxQuantity) : 1
               }
+            } else {
+              totalMaxQuantity =
+                maxMintPerWallet && maxMintPerWallet > 0
+                  ? maxMintPerWallet
+                  : (maxMintQuantity || 1) > 20
+                  ? 20
+                  : maxMintQuantity || 1
             }
 
-            // setMaxItemAmount(
-            //   pathOrderQuantity > totalMaxQuantity
-            //     ? totalMaxQuantity
-            //     : pathOrderQuantity
-            // )
-            const maxQuantity =
-              maxMintPerWallet && maxMintPerWallet > 0
-                ? maxMintPerWallet
-                : (maxMintQuantity || 1) > 20
+            setMaxItemAmount(
+              pathOrderQuantity > totalMaxQuantity
+                ? totalMaxQuantity > 20
+                  ? 20
+                  : totalMaxQuantity
+                : pathOrderQuantity > 20
                 ? 20
-                : maxMintQuantity || 1
-            setMaxItemAmount(maxQuantity)
+                : pathOrderQuantity
+            )
+
+            // const maxQuantity =
+            //   maxMintPerWallet && maxMintPerWallet > 0
+            //     ? maxMintPerWallet
+            //     : (maxMintQuantity || 1) > 20
+            //     ? 20
+            //     : maxMintQuantity || 1
+            // setMaxItemAmount(maxQuantity)
           }
         })
         .catch((err) => {

@@ -22,6 +22,7 @@ export type EnhancedCurrency =
       usdBalanceRaw?: bigint
       balance?: string | number | bigint
       currencyTotalRaw?: bigint
+      totalPriceWithoutFee?: bigint
       currencyTotalFormatted?: string
       maxItems?: number
       capacityPerRequest?: bigint
@@ -247,7 +248,7 @@ export default function (options: {
       normalizedQuantities[key.toLowerCase()] = quantityToken[key]
     }
 
-    path?.forEach((pathItem, i) => {
+    path?.forEach((pathItem: any, i) => {
       const tokenKey = `${pathItem.contract?.toLowerCase()}:${pathItem.tokenId}`
       const contractKey = `${pathItem.contract?.toLowerCase()}` //todo: test with sweeping
 
@@ -265,7 +266,8 @@ export default function (options: {
       requiredQuantity = normalizedQuantities[assetKey] || 0
 
       //quantity check
-      const pathQuantity = pathItem.quantity || 0
+      // const pathQuantity = pathItem.quantity || 0
+      const pathQuantity = Number(pathItem.mintableQuantity) || 0
       const quantityLeft = requiredQuantity - totalQuantity
       if (totalQuantity === requiredQuantity) {
         return
@@ -412,6 +414,10 @@ export default function (options: {
           maxItems,
           capacityPerRequest,
           chainId: token.chainId,
+          totalPriceWithoutFee:
+            path && path?.length > 0
+              ? (path[0] as any).totalPriceWithoutFee
+              : 0n,
         }
       })
       .sort((a, b) => {

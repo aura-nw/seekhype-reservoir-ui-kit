@@ -227,12 +227,7 @@ export function MintModal({
         //   ? paymentCurrency?.maxItems
         //   : maxItemAmount
 
-        const maxQuantity =
-          maxMintPerWallet && maxMintPerWallet > 0
-            ? maxMintPerWallet
-            : (maxMintQuantity || 1) > 20
-            ? 20
-            : maxMintQuantity || 1
+        const maxQuantity = maxItemAmount
 
         const totalMints =
           stepData?.currentStep?.items?.reduce((total, item) => {

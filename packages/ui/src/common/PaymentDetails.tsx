@@ -47,8 +47,7 @@ export const PaymentDetails: FC<Props> = ({
   //   (paymentCurrency?.decimals || 18) + 6
   const usdPriceRaw = parseUnits(usdPrice.toString(), 6)
   const usdTotal = formatUnits(
-    ((paymentCurrency?.currencyTotalRaw ?? 0n) * BigInt(itemAmount || 1) +
-      feeOnTop) *
+    ((paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop) *
       (usdPriceRaw || 0n),
     (paymentCurrency?.decimals || 18) + 6
   )
@@ -128,18 +127,16 @@ export const PaymentDetails: FC<Props> = ({
                     chainId={chainId}
                     textStyle="body2"
                     textColor="subtle"
+                    amount={
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
+                    }
                     // amount={
-                    //   (paymentCurrency?.currencyTotalRaw ?? 0n) *
+                    //   (paymentCurrency?.totalPriceWithoutFee
+                    //     ? paymentCurrency?.totalPriceWithoutFee
+                    //     : paymentCurrency?.currencyTotalRaw ?? 0n) *
                     //     BigInt(itemAmount || 1) +
                     //   feeOnTop
                     // }
-                    amount={
-                      (paymentCurrency?.totalPriceWithoutFee
-                        ? paymentCurrency?.totalPriceWithoutFee
-                        : paymentCurrency?.currencyTotalRaw ?? 0n) *
-                        BigInt(itemAmount || 1) +
-                      feeOnTop
-                    }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
                     symbol={paymentCurrency?.symbol}
@@ -152,18 +149,16 @@ export const PaymentDetails: FC<Props> = ({
                     chainId={chainId}
                     textStyle="h6"
                     textColor="base"
+                    amount={
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
+                    }
                     // amount={
-                    //   (paymentCurrency?.currencyTotalRaw ?? 0n) *
+                    //   (paymentCurrency?.totalPriceWithoutFee
+                    //     ? paymentCurrency?.totalPriceWithoutFee
+                    //     : paymentCurrency?.currencyTotalRaw ?? 0n) *
                     //     BigInt(itemAmount || 1) +
                     //   feeOnTop
                     // }
-                    amount={
-                      (paymentCurrency?.totalPriceWithoutFee
-                        ? paymentCurrency?.totalPriceWithoutFee
-                        : paymentCurrency?.currencyTotalRaw ?? 0n ?? 0n) *
-                        BigInt(itemAmount || 1) +
-                      feeOnTop
-                    }
                     address={paymentCurrency?.address}
                     decimals={paymentCurrency?.decimals}
                     symbol={paymentCurrency?.symbol}

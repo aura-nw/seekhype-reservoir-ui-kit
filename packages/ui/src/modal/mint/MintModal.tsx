@@ -545,15 +545,11 @@ export function MintModal({
                     token={token}
                     itemCount={itemAmount}
                     totalPrice={
-                      (paymentCurrency?.currencyTotalRaw || 0n) *
-                        BigInt(itemAmount || 1) +
-                      feeOnTop
+                      (paymentCurrency?.currencyTotalRaw ?? 0n) + feeOnTop
                     }
                     currency={paymentCurrency}
                     usdTotalFormatted={formatUnits(
-                      ((paymentCurrency?.currencyTotalRaw || 0n) *
-                        BigInt(itemAmount || 1) +
-                        feeOnTop) *
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
                         (usdCoinConversionPriceRaw || 0n),
                       (paymentCurrency?.decimals || 18) + 6
                     )}
@@ -709,15 +705,11 @@ export function MintModal({
                     token={token}
                     itemCount={itemAmount}
                     totalPrice={
-                      (paymentCurrency?.currencyTotalRaw || 0n) *
-                        BigInt(itemAmount || 1) +
-                      feeOnTop
+                      (paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop
                     }
                     currency={paymentCurrency}
                     usdTotalFormatted={formatUnits(
-                      ((paymentCurrency?.currencyTotalRaw || 0n) *
-                        BigInt(itemAmount || 1) +
-                        feeOnTop) *
+                      ((paymentCurrency?.currencyTotalRaw || 0n) + feeOnTop) *
                         (usdCoinConversionPriceRaw || 0n),
                       (paymentCurrency?.decimals || 18) + 6
                     )}

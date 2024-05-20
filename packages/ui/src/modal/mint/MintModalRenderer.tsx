@@ -484,6 +484,12 @@ export const MintModalRenderer: FC<Props> = ({
         setFeeOnTop(0n)
       }
       setTotalIncludingFees(paymentCurrency?.currencyTotalRaw + totalFees)
+      // setTotalIncludingFees(
+      //   paymentCurrency?.totalPriceWithoutFee
+      //     ? BigInt(Number(paymentCurrency?.totalPriceWithoutFee || 0)) +
+      //         totalFees
+      //     : paymentCurrency?.currencyTotalRaw + totalFees
+      // )
     } else {
       setTotalIncludingFees(0n)
     }

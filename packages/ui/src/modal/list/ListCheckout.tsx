@@ -34,10 +34,10 @@ const ListCheckout: FC<ListCheckoutProps> = ({
   expirationOption,
   containerCss,
 }) => {
-  const expirationDisplay =
-    expirationOption?.value === 'custom' && expirationOption.relativeTime
-      ? useTimeSince(expirationOption.relativeTime)
-      : `in ${expirationOption?.text.toLowerCase()}`
+  // const expirationDisplay =
+  //   expirationOption?.value === 'custom' && expirationOption.relativeTime
+  //     ? useTimeSince(expirationOption.relativeTime)
+  //     : `in ${expirationOption?.text.toLowerCase()}`
 
   return (
     <Flex align="center" justify="between" css={{ p: '$4', ...containerCss }}>

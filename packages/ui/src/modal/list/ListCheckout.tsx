@@ -98,11 +98,11 @@ const ListCheckout: FC<ListCheckoutProps> = ({
             textStyle="h6"
           />
         ) : null}
-        {expirationOption ? (
+        {/* {expirationOption ? (
           <Text style="body2" color="subtle">
             Expires {expirationDisplay}
           </Text>
-        ) : null}
+        ) : null} */}
       </Flex>
     </Flex>
   )

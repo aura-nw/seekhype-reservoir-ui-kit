@@ -267,7 +267,9 @@ export default function (options: {
 
       //quantity check
       // const pathQuantity = pathItem.quantity || 0
-      const pathQuantity = Number(pathItem.mintableQuantity) || 0
+      const pathQuantity = pathItem.mintableQuantity
+        ? Number(pathItem.mintableQuantity) || 0
+        : pathItem.quantity || 0
       const quantityLeft = requiredQuantity - totalQuantity
       if (totalQuantity === requiredQuantity) {
         return

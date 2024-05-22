@@ -37,6 +37,18 @@ export const ContractConfig = {
     ZoraProtocolFeeSettings: '0xCFE3456274bE608f2aBf92d0f7d952712D4F3275',
     WETH: '0x5Db8A2543e7e3Add18389C5ED63757A46A4848C1',
   },
+  // euphoria
+  [6321 as number]: {
+    ASK1_1_MODULE_ADDRESS: '0x33EB929b3D924B593420cAa2407125623E7A438C',
+    ZORA_MODULE_MANAGER_ADDRESS: '0xcdDe41b8F12182F7D25d1A2f35ADdA971Aa58FcA',
+    ERC721TRANSFERHELPER: '0x364Fe4DcB58363fa1a298207B5Ed54F875835aBf',
+
+    // RoyaltyRegistry: '0x727A80Eb575c2d0397a594De24bAb97165D12705',
+    ERC20TransferHelper: '0xBB1dEE78eF86cdBe3ea92cA4ab60D3895d875d0f',
+    RoyaltyEngineV1: '0xD388d812c1cE2CE7C46D797684BA912De65CD414',
+    ZoraProtocolFeeSettings: '0xCFE3456274bE608f2aBf92d0f7d952712D4F3275',
+    WETH: '0x9A1945e4A316708631332BF7EC4fA8A2f6C6E2f8',
+  },
 }
 
 export const ChainConfig = {
@@ -80,14 +92,36 @@ export const ChainConfig = {
       },
     },
   },
+  [6321 as number]: {
+    id: 6321,
+    name: 'Aura EVM',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'aura',
+      symbol: 'aura',
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://jsonrpc.euphoria.aura.network/'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Aura EVM Block Explorer',
+        url: 'https://euphoria.aurascan.io/',
+      },
+    },
+  },
 }
 
 export const HALO_TRADE = {
   [1235 as number]: 'https://dev.halotrade.zone/swap',
-  [1236 as number]: 'https://serenity.halotrade.zone/swap'
+  [1236 as number]: 'https://serenity.halotrade.zone/swap',
+  [6321 as number]: 'https://euphoria.halotrade.zone/evm/swap'
 }
 
 export const IPFS_GATEWAY = {
   [1235 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/',
-  [1236 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/'
+  [1236 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/',
+  [6321 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/'
 }

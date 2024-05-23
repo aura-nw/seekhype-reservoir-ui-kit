@@ -174,17 +174,26 @@ const chainIcons = {
     dark: <BlastIconDark />,
     color: <BlastIconColor />,
   },
-  9_000: { // Evmos testnet
+  9_000: {
+    // Evmos testnet
     light: <GoerliIconDark />,
     dark: <GoerliIconLight />,
     color: null,
   },
-  1235: { // Aura dev
+  1235: {
+    // Aura dev
     light: <AuraIconLight />,
     dark: <AuraIconDark />,
     color: null,
   },
-  1236: { // Aura serenity
+  1236: {
+    // Aura serenity
+    light: <AuraIconLight />,
+    dark: <AuraIconDark />,
+    color: null,
+  },
+  6321: {
+    // Aura euphoria
     light: <AuraIconLight />,
     dark: <AuraIconDark />,
     color: null,

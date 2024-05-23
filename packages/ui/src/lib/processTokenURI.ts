@@ -9,6 +9,10 @@ const gatewayConfig = {
     'ipfs://': 'https://ipfs-gw.dev.aura.network/ipfs/',
     'ar://': 'https://arweave.net/',
   },
+  [6321 as number]: {
+    'ipfs://': 'https://ipfs-gw.dev.aura.network/ipfs/',
+    'ar://': 'https://arweave.net/',
+  },
 }
 
 const convertToGatewayUrl = (url: string, chainId?: number) => {

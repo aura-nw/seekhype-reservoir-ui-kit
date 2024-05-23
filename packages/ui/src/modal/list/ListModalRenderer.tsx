@@ -487,7 +487,7 @@ export const ListModalRenderer: FC<Props> = ({
         kind: 'transaction',
         action: '',
         description:
-          'Please approve the collection(s) form your wallet. Each collection only needs to be approved once.',
+          'Please approve the collection(s) from your wallet. Each collection only needs to be approved once.',
         id: '1',
       },
       listingData: [],

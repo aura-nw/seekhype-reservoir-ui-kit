@@ -115,13 +115,13 @@ export const ChainConfig = {
 }
 
 export const HALO_TRADE = {
-  [1235 as number]: 'https://dev.halotrade.zone/swap',
-  [1236 as number]: 'https://serenity.halotrade.zone/swap',
-  [6321 as number]: 'https://euphoria.halotrade.zone/evm/swap'
+  [1235 as number]: 'https://dev.halotrade.zone/evm/swap',
+  [1236 as number]: 'https://serenity.halotrade.zone/evm/swap',
+  [6321 as number]: 'https://euphoria.halotrade.zone/evm/swap',
 }
 
 export const IPFS_GATEWAY = {
   [1235 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/',
   [1236 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/',
-  [6321 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/'
+  [6321 as number]: 'https://ipfs-gw.dev.aura.network/ipfs/',
 }

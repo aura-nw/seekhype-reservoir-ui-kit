@@ -256,7 +256,7 @@ export function BuyModal({
                   <Text style="h6" css={{ textAlign: 'center' }}>
                     {isOwner
                       ? 'You already own this token.'
-                      : 'Item is no longer available.'}
+                      : 'The listing is no longer available.'}
                   </Text>
                 </Flex>
                 <Button
@@ -572,7 +572,7 @@ export function BuyModal({
                         align="center"
                         justify="center"
                       >
-                        {!!tokenData?.token?.collection?.image && (
+                        {/* {!!tokenData?.token?.collection?.image && (
                           <Box css={{ mr: '$1' }}>
                             <img
                               src={tokenData?.token?.collection?.image}
@@ -583,7 +583,7 @@ export function BuyModal({
                               }}
                             />
                           </Box>
-                        )}
+                        )} */}
                         <Text
                           style="subtitle3"
                           css={{ maxWidth: '100%' }}

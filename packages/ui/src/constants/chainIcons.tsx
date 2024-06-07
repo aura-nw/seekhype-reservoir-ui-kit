@@ -198,6 +198,12 @@ const chainIcons = {
     dark: <AuraIconDark />,
     color: null,
   },
+  6322: {
+    // Aura main
+    light: <AuraIconLight />,
+    dark: <AuraIconDark />,
+    color: null,
+  },
 }
 
 export default chainIcons

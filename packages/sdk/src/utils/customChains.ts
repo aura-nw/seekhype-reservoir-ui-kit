@@ -287,6 +287,26 @@ export const auraEVMEuphoria = {
     },
   },
 } as const satisfies Chain
+export const auraEVMMain = {
+  id: 6322,
+  name: 'Aura EVM',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'aura',
+    symbol: 'aura',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://jsonrpc.aura.network/'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Aura EVM Block Explorer',
+      url: 'https://aurascan.io/',
+    },
+  },
+} as const satisfies Chain
 export const auraEVMSerenity = {
   id: 1236,
   name: 'Aura EVM',
@@ -321,5 +341,6 @@ export const customChains = {
   redstone,
   auraEVMDev,
   auraEVMSerenity,
-  auraEVMEuphoria
+  auraEVMEuphoria,
+  auraEVMMain,
 } as const satisfies Record<string, Chain>

@@ -142,6 +142,7 @@ export const ListModalRenderer: FC<Props> = ({
 
   const [listStep, setListStep] = useState<ListStep>(ListStep.SetPrice)
   const [listingData, setListingData] = useState<ListingData[]>([])
+  const [publicClient, setPublicClient] = useState<any>(undefined)
   const [allMarketplaces] = useMarketplaces(
     collectionId,
     tokenId,
@@ -160,10 +161,15 @@ export const ListModalRenderer: FC<Props> = ({
   )
 
   const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
-  const publicClient = createPublicClient({
-    chain: auraEVMTestnet,
-    transport: http(),
-  })
+
+  useEffect(() => {
+    setPublicClient(
+      createPublicClient({
+        chain: ChainConfig[chainId ? chainId : 1235],
+        transport: http(),
+      })
+    )
+  }, [])
 
   const [transactionError, setTransactionError] = useState<Error | null>()
   const [stepData, setStepData] = useState<ListModalStepData | null>(null)
@@ -383,9 +389,11 @@ export const ListModalRenderer: FC<Props> = ({
   }
 
   useEffect(() => {
-    checkIsApproveModuleAsk()
-    checkIsApproveNft()
-  }, [account, publicClient])
+    if (publicClient) {
+      checkIsApproveModuleAsk()
+      checkIsApproveNft()
+    }
+  }, [publicClient])
 
   const triggerListTokenContract = (maker: any) => {
     setListStep(ListStep.Listing)

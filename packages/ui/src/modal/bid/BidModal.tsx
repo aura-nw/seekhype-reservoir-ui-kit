@@ -877,7 +877,7 @@ export function BidModal({
                                 {copy.ctaConvertAutomatically.length > 0
                                   ? copy.ctaConvertAutomatically
                                   : `Convert ${amountToWrap} ${
-                                      balance?.symbol || 'ETH'
+                                      balance?.symbol || 'Aura'
                                     } for me`}
                               </Text>
                             </Button>

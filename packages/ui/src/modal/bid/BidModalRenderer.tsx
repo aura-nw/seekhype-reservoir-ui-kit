@@ -38,9 +38,18 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { Address, WalletClient, erc20Abi, formatUnits, parseUnits } from 'viem'
+import {
+  Address,
+  WalletClient,
+  createPublicClient,
+  erc20Abi,
+  formatUnits,
+  http,
+  parseUnits,
+} from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { ChainConfig, ContractConfig } from '../../constants/common'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -195,6 +204,22 @@ export const BidModalRenderer: FC<Props> = ({
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency(rendererChain?.id)
+  const [publicClient, setPublicClient] = useState<any>(undefined)
+  const [isApproveModule, setIsApproveModule] = useState(false)
+  const [isSetAllowance, setIsSetAllowance] = useState(false)
+
+  const account = useAccount()
+  const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
+
+  useEffect(() => {
+    setPublicClient(
+      createPublicClient({
+        chain: ChainConfig[chainId ? chainId : 1235],
+        transport: http(),
+      })
+    )
+  }, [])
+
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
       ? wrappedContracts[chainCurrency.chainId]
@@ -512,6 +537,88 @@ export const BidModalRenderer: FC<Props> = ({
       )
     }
   }, [currencies])
+
+  const checkIsApproveModuleAsk = () => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            inputs: [
+              { internalType: 'address', name: '_user', type: 'address' },
+              { internalType: 'address', name: '_module', type: 'address' },
+            ],
+            name: 'isModuleApproved',
+            outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.OFFER_MODULE_MANAGER as `0x${string}`,
+        functionName: 'isModuleApproved',
+        args: [
+          account?.address as `0x${string}`,
+          ContractConfig[chainId ? chainId : 1235]
+            ?.OFFERS_OMNIBUS as `0x${string}`,
+        ],
+      })
+      .then((res) => {
+        if (res) {
+          setIsApproveModule(true)
+        }
+      })
+      .catch(() => {
+        setIsApproveModule(false)
+      })
+  }
+
+  const checkIsSetAllowance = () => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            type: 'function',
+            name: 'allowance',
+            inputs: [
+              {
+                name: '',
+                type: 'address',
+                internalType: 'address',
+              },
+              {
+                name: '',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
+            outputs: [
+              {
+                name: '',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+            ],
+            stateMutability: 'view',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.WETH as `0x${string}`,
+        functionName: 'allowance',
+        args: [
+          account?.address as `0x${string}`,
+          ContractConfig[chainId ? chainId : 1235]
+            ?.ERC20TransferHelper as `0x${string}`,
+        ],
+      })
+      .then((res) => {
+        if (res) {
+          setIsSetAllowance(true)
+        }
+      })
+      .catch((err) => {
+        setIsSetAllowance(false)
+      })
+  }
 
   const placeBid = useCallback(
     async (options?: { royaltyBps?: number }) => {

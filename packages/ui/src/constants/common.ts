@@ -23,7 +23,11 @@ export const ContractConfig = {
     ERC20TransferHelper: '0xbeA9f83Dc816f0Df3F7fB43a288BE9fF211C3E7A',
     RoyaltyEngineV1: '0xA1b5001fbda9179CBe69DfBEED78be1EC900d523',
     ZoraProtocolFeeSettings: '0x8a914102864dEd8B134E7338e2a54b8f6eb7cb0e',
+    
+    // for offer/bid
     WETH: '0x7C258D32e0C5ADda30d18194870b56A38E2EBBbC',
+    OFFER_MODULE_MANAGER: '0x6B1Cc558DA2f0d909aD16FA29F2D74bF7A8cA6B4',
+    OFFERS_OMNIBUS: '0x14511dEfE1fbc147b7364d3A5A3ED1179bd0c707',
   },
   // serenity
   [1236 as number]: {

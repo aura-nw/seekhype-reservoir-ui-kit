@@ -565,12 +565,12 @@ export const BidModalRenderer: FC<Props> = ({
             ?.OFFERS_OMNIBUS as `0x${string}`,
         ],
       })
-      .then((res) => {
+      .then((res: any) => {
         if (res) {
           setIsApproveModule(true)
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         setIsApproveModule(false)
         setBidStep(BidStep.SetPrice)
         setTransactionError(err)
@@ -615,7 +615,7 @@ export const BidModalRenderer: FC<Props> = ({
             ?.ERC20TransferHelper as `0x${string}`,
         ],
       })
-      .then((res) => {
+      .then((res: any) => {
         if (res) {
           if (res < balance) {
             setIsSetAllowance(false)
@@ -625,7 +625,7 @@ export const BidModalRenderer: FC<Props> = ({
           }
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         setIsSetAllowance(false)
         setBidStep(BidStep.SetPrice)
         setTransactionError(err)
@@ -661,13 +661,13 @@ export const BidModalRenderer: FC<Props> = ({
         functionName: 'balanceOf',
         args: [account?.address as `0x${string}`],
       })
-      .then((res) => {
+      .then((res: any) => {
         if (res) {
           checkIsSetAllowance(res)
           setWAuraBalance(res)
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         setIsSetAllowance(false)
         setBidStep(BidStep.SetPrice)
         setTransactionError(err)
@@ -690,7 +690,7 @@ export const BidModalRenderer: FC<Props> = ({
         kind: 'signature',
         action: '',
         description:
-          'Please review and confirm to create the listing from your wallet.',
+          'A free on-chain signature to create the offer',
         id: '1',
       },
     })
@@ -797,9 +797,9 @@ export const BidModalRenderer: FC<Props> = ({
       stepProgress: 1,
       currentStep: {
         kind: 'transaction',
-        action: 'Set Allowance',
+        action: 'Wrapping currency',
         description:
-          'Please set allowance. Each offer only needs to be set once.',
+          `We'll ask your approval to wrap the currency for bidding. Gas fee required.`,
         id: '1',
       },
     })
@@ -985,7 +985,7 @@ export const BidModalRenderer: FC<Props> = ({
               kind: 'transaction',
               action: 'Approval',
               description:
-                'You will be prompted to grant approval for selling on the marketplace. You only need to approve it once for the first time.',
+                'You will be prompted to grant approval for making offer on the marketplace. You only need to approve it once for the first time.',
               id: '1',
             },
           })
@@ -1021,10 +1021,10 @@ export const BidModalRenderer: FC<Props> = ({
             .then((hash) => {
               publicClient
                 .waitForTransactionReceipt({ hash })
-                .then((res) => {
+                .then((res: any) => {
                   triggerSetAllowance(maker)
                 })
-                .catch((error) => {
+                .catch((error: any) => {
                   triggerSetAllowance(maker)
                   setTransactionError(error)
                 })

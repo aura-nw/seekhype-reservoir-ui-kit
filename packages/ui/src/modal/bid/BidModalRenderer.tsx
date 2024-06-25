@@ -797,9 +797,9 @@ export const BidModalRenderer: FC<Props> = ({
       stepProgress: 1,
       currentStep: {
         kind: 'transaction',
-        action: '',
+        action: 'Set Allowance',
         description:
-          'Please approve the collection(s) from your wallet. Each collection only needs to be approved once.',
+          'Please set allowance. Each offer only needs to be set once.',
         id: '1',
       },
     })
@@ -848,7 +848,7 @@ export const BidModalRenderer: FC<Props> = ({
           .then(() => {
             triggerBidTokenContract(maker)
           })
-          .catch((error) => {
+          .catch((error: any) => {
             triggerBidTokenContract(maker)
             setTransactionError(error)
           })
@@ -983,7 +983,7 @@ export const BidModalRenderer: FC<Props> = ({
             stepProgress: 1,
             currentStep: {
               kind: 'transaction',
-              action: 'approval',
+              action: 'Approval',
               description:
                 'You will be prompted to grant approval for selling on the marketplace. You only need to approve it once for the first time.',
               id: '1',

@@ -263,7 +263,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         ],
         address:
           enhancedTokens?.length > 0
-            ? (enhancedTokens[0].tokenData?.token?.contract as `0x${string}`)
+            ? (enhancedTokens[0].collectionId as `0x${string}`)
             : '',
         functionName: 'isApprovedForAll',
         args: [
@@ -1016,6 +1016,20 @@ export const AcceptBidModalRenderer: FC<Props> = ({
               map[currencySymbol].royalty += royalty
               map[currencySymbol].marketplaceFee += marketplaceFee
               map[currencySymbol].feesOnTop += referralFee
+            }
+          } else {
+            map['WAURA'] = {
+              netAmount: netAmount,
+              amount: amount,
+              royalty: royalty,
+              marketplaceFee: marketplaceFee,
+              feesOnTop: 0,
+              currency: {
+                contract: ContractConfig[chainId ? chainId : 1235]
+                  ?.WETH as `0x${string}`,
+                symbol: 'WAURA',
+                decimals: 18,
+              },
             }
           }
           return map

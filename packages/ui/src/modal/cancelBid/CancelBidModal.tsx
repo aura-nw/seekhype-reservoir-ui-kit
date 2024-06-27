@@ -20,7 +20,7 @@ import { Modal } from '../Modal'
 import TokenPrimitive from '../../modal/TokenPrimitive'
 import Progress from '../Progress'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faGasPump from '@fortawesome/free-solid-svg-icons/faGasPump'
+import { faGasPump } from '@fortawesome/free-solid-svg-icons'
 
 import { truncateAddress } from '../../lib/truncate'
 import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
@@ -274,9 +274,9 @@ export function CancelBidModal({
                   <Text style="body2" color="subtle" css={{ mb: 24 }}>
                     <>
                       Your{' '}
-                      <Text style="body2" color="accent">
+                      {/* <Text style="body2" color="accent">
                         {bid?.source?.name as string}
-                      </Text>{' '}
+                      </Text>{' '} */}
                       offer for{' '}
                       <Text style="body2" color="accent">
                         {bid?.criteria?.data?.token?.name ||

@@ -35,10 +35,12 @@ import {
 import TokenInfo from './TokenInfo'
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCalendar from '@fortawesome/free-solid-svg-icons/faCalendar'
-import faClose from '@fortawesome/free-solid-svg-icons/faClose'
-import faCheckCircle from '@fortawesome/free-solid-svg-icons/faCheckCircle'
-import faHand from '@fortawesome/free-solid-svg-icons/faHand'
+import {
+  faCheckCircle,
+  faCalendar,
+  faClose,
+  faHand,
+} from '@fortawesome/free-solid-svg-icons'
 
 import Flatpickr from 'react-flatpickr'
 import TransactionProgress from '../TransactionProgress'
@@ -877,7 +879,7 @@ export function BidModal({
                                 {copy.ctaConvertAutomatically.length > 0
                                   ? copy.ctaConvertAutomatically
                                   : `Convert ${amountToWrap} ${
-                                      balance?.symbol || 'ETH'
+                                      balance?.symbol || 'Aura'
                                     } for me`}
                               </Text>
                             </Button>

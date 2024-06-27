@@ -38,9 +38,20 @@ import dayjs from 'dayjs'
 import wrappedContractNames from '../../constants/wrappedContractNames'
 import wrappedContracts from '../../constants/wrappedContracts'
 import { Currency } from '../../types/Currency'
-import { Address, WalletClient, erc20Abi, formatUnits, parseUnits } from 'viem'
+import {
+  Address,
+  WalletClient,
+  createPublicClient,
+  erc20Abi,
+  formatUnits,
+  http,
+  parseEther,
+  parseUnits,
+  zeroAddress,
+} from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
+import { ChainConfig, ContractConfig } from '../../constants/common'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -195,6 +206,23 @@ export const BidModalRenderer: FC<Props> = ({
   const [trait, setTrait] = useState<Trait>(attribute)
   const [attributes, setAttributes] = useState<Traits>()
   const chainCurrency = useChainCurrency(rendererChain?.id)
+  const [publicClient, setPublicClient] = useState<any>(undefined)
+  const [isApproveModule, setIsApproveModule] = useState(false)
+  const [isSetAllowance, setIsSetAllowance] = useState(false)
+  const [wAuraBalance, setWAuraBalance] = useState(false)
+
+  const account = useAccount()
+  const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
+
+  useEffect(() => {
+    setPublicClient(
+      createPublicClient({
+        chain: ChainConfig[chainId ? chainId : 1235],
+        transport: http(),
+      })
+    )
+  }, [])
+
   const nativeWrappedContractAddress =
     chainCurrency.chainId in wrappedContracts
       ? wrappedContracts[chainCurrency.chainId]
@@ -513,6 +541,322 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
+  const checkIsApproveModuleAsk = () => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            inputs: [
+              { internalType: 'address', name: '_user', type: 'address' },
+              { internalType: 'address', name: '_module', type: 'address' },
+            ],
+            name: 'isModuleApproved',
+            outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.OFFER_MODULE_MANAGER as `0x${string}`,
+        functionName: 'isModuleApproved',
+        args: [
+          account?.address as `0x${string}`,
+          ContractConfig[chainId ? chainId : 1235]
+            ?.OFFERS_OMNIBUS as `0x${string}`,
+        ],
+      })
+      .then((res: any) => {
+        if (res) {
+          setIsApproveModule(true)
+        }
+      })
+      .catch((err: any) => {
+        setIsApproveModule(false)
+        setBidStep(BidStep.SetPrice)
+        setTransactionError(err)
+      })
+  }
+
+  const checkIsSetAllowance = (balance: any) => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            type: 'function',
+            name: 'allowance',
+            inputs: [
+              {
+                name: '',
+                type: 'address',
+                internalType: 'address',
+              },
+              {
+                name: '',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
+            outputs: [
+              {
+                name: '',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+            ],
+            stateMutability: 'view',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.WETH as `0x${string}`,
+        functionName: 'allowance',
+        args: [
+          account?.address as `0x${string}`,
+          ContractConfig[chainId ? chainId : 1235]
+            ?.ERC20TransferHelper as `0x${string}`,
+        ],
+      })
+      .then((res: any) => {
+        if (res) {
+          if (res < balance) {
+            setIsSetAllowance(false)
+            triggerSetAllowance(account?.address)
+          } else {
+            setIsSetAllowance(true)
+          }
+        }
+      })
+      .catch((err: any) => {
+        setIsSetAllowance(false)
+        setBidStep(BidStep.SetPrice)
+        setTransactionError(err)
+      })
+  }
+
+  const checkBalanceWAura = () => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+            name: 'balanceOf',
+            outputs: [
+              {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+              },
+            ],
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.WETH as `0x${string}`,
+        functionName: 'balanceOf',
+        args: [account?.address as `0x${string}`],
+      })
+      .then((res: any) => {
+        if (res) {
+          checkIsSetAllowance(res)
+          setWAuraBalance(res)
+        }
+      })
+      .catch((err: any) => {
+        setIsSetAllowance(false)
+        setBidStep(BidStep.SetPrice)
+        setTransactionError(err)
+      })
+  }
+
+  useEffect(() => {
+    if (publicClient) {
+      checkIsApproveModuleAsk()
+      checkBalanceWAura()
+    }
+  }, [publicClient])
+
+  const triggerBidTokenContract = (maker: any) => {
+    setBidStep(BidStep.Offering)
+    setStepData({
+      totalSteps: 1,
+      stepProgress: 1,
+      currentStep: {
+        kind: 'signature',
+        action: '',
+        description: 'A free on-chain signature to create the offer',
+        id: '1',
+      },
+    })
+    // Bid token
+    wagmiWallet
+      ?.writeContract({
+        abi: [
+          {
+            type: 'function',
+            name: 'createOffer',
+            inputs: [
+              {
+                name: '_tokenContract',
+                type: 'address',
+                internalType: 'address',
+              },
+              {
+                name: '_tokenId',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+              {
+                name: '_offerCurrency',
+                type: 'address',
+                internalType: 'address',
+              },
+              {
+                name: '_offerAmount',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+              {
+                name: '_expiry',
+                type: 'uint96',
+                internalType: 'uint96',
+              },
+              {
+                name: '_findersFeeBps',
+                type: 'uint16',
+                internalType: 'uint16',
+              },
+              {
+                name: '_listingFeeBps',
+                type: 'uint16',
+                internalType: 'uint16',
+              },
+              {
+                name: '_listingFeeRecipient',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
+            outputs: [
+              {
+                name: '',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+            ],
+            stateMutability: 'payable',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.OFFERS_OMNIBUS as `0x{string}`,
+        functionName: 'createOffer',
+        args: [
+          contract as `0x${string}`,
+          BigInt(Number(tokenId)),
+          zeroAddress,
+          totalBidAmount,
+          0n,
+          0,
+          0,
+          zeroAddress,
+        ],
+        gas: 500000n,
+        value: totalBidAmount,
+      })
+      .then((hash) => {
+        publicClient
+          .waitForTransactionReceipt({ hash })
+          .then((res: any) => {
+            if (res?.status === 'success') {
+              setTimeout(() => {
+                setBidStep(BidStep.Complete)
+              }, 5000)
+            }
+          })
+          .catch((error: any) => {
+            setBidStep(BidStep.SetPrice)
+            setTransactionError(error)
+          })
+      })
+      .catch((err) => {
+        setTransactionError(err)
+        setBidStep(BidStep.SetPrice)
+      })
+  }
+
+  const triggerSetAllowance = (maker: any) => {
+    setBidStep(BidStep.Offering)
+    setStepData({
+      totalSteps: 1,
+      stepProgress: 1,
+      currentStep: {
+        kind: 'transaction',
+        action: 'Approve currency',
+        description: `We'll ask your approval for the exchange to access your token. This is a one-time only operation per exchange`,
+        id: '1',
+      },
+    })
+    // set allowance
+    wagmiWallet
+      ?.writeContract({
+        abi: [
+          {
+            type: 'function',
+            name: 'approve',
+            inputs: [
+              {
+                name: 'guy',
+                type: 'address',
+                internalType: 'address',
+              },
+              {
+                name: 'wad',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+            ],
+            outputs: [
+              {
+                name: '',
+                type: 'bool',
+                internalType: 'bool',
+              },
+            ],
+            stateMutability: 'nonpayable',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.WETH as `0x${string}`,
+        functionName: 'approve',
+        args: [
+          ContractConfig[chainId ? chainId : 1235]
+            ?.ERC20TransferHelper as `0x${string}`,
+          totalBidAmount,
+        ],
+        gas: 500000n,
+      })
+      .then((hash) => {
+        publicClient
+          .waitForTransactionReceipt({ hash })
+          .then(() => {
+            triggerBidTokenContract(maker)
+          })
+          .catch((error: any) => {
+            triggerBidTokenContract(maker)
+            setTransactionError(error)
+          })
+      })
+      .catch((err) => {
+        setTransactionError(err)
+        setBidStep(BidStep.SetPrice)
+      })
+  }
+
   const placeBid = useCallback(
     async (options?: { royaltyBps?: number }) => {
       if (!wallet) {
@@ -628,49 +972,118 @@ export const BidModalRenderer: FC<Props> = ({
       }
 
       setBidData(bid)
-
-      client.actions
-        .placeBid({
-          chainId: rendererChain?.id,
-          wallet,
-          bids: [bid],
-          onProgress: (steps: Execute['steps']) => {
-            const executableSteps = steps.filter(
-              (step) => step.items && step.items.length > 0
-            )
-
-            let stepCount = executableSteps.length
-            let incompleteStepItemIndex: number | null = null
-            let incompleteStepIndex: number | null = null
-
-            executableSteps.find((step, i) => {
-              if (!step.items) {
-                return false
-              }
-
-              incompleteStepItemIndex = step.items.findIndex(
-                (item) => item.status == 'incomplete'
-              )
-              if (incompleteStepItemIndex !== -1) {
-                incompleteStepIndex = i
-                return true
-              }
+      const maker = account?.address
+      if (rendererChain?.name === auraEVMTestnet?.name) {
+        if (!isApproveModule) {
+          setBidStep(BidStep.Offering)
+          setStepData({
+            totalSteps: 1,
+            stepProgress: 1,
+            currentStep: {
+              kind: 'transaction',
+              action: 'Module Approval',
+              description:
+                'You will be prompted to grant approval for offering on the marketplace. You only need to approve it once.',
+              id: '1',
+            },
+          })
+          // approve module
+          await wagmiWallet
+            ?.writeContract({
+              abi: [
+                {
+                  inputs: [
+                    {
+                      internalType: 'address',
+                      name: '_module',
+                      type: 'address',
+                    },
+                    { internalType: 'bool', name: '_approved', type: 'bool' },
+                  ],
+                  name: 'setApprovalForModule',
+                  outputs: [],
+                  stateMutability: 'nonpayable',
+                  type: 'function',
+                },
+              ],
+              address: ContractConfig[chainId ? chainId : 1235]
+                ?.OFFER_MODULE_MANAGER as `0x${string}`,
+              functionName: 'setApprovalForModule',
+              args: [
+                ContractConfig[chainId ? chainId : 1235]
+                  ?.OFFERS_OMNIBUS as `0x${string}`,
+                true,
+              ],
+              gas: 500000n,
+            })
+            .then((hash) => {
+              publicClient
+                .waitForTransactionReceipt({ hash })
+                .then((res: any) => {
+                  triggerSetAllowance(maker)
+                })
+                .catch((error: any) => {
+                  triggerSetAllowance(maker)
+                  setTransactionError(error)
+                })
+            })
+            .catch((err) => {
+              setTransactionError(err)
+              setBidStep(BidStep.SetPrice)
             })
 
-            if (incompleteStepIndex !== null) {
-              setStepData({
-                totalSteps: stepCount,
-                stepProgress: incompleteStepIndex,
-                currentStep: executableSteps[incompleteStepIndex],
+          return
+        }
+
+        if (!isSetAllowance) {
+          triggerSetAllowance(maker)
+        } else {
+          triggerBidTokenContract(maker)
+        }
+      } else {
+        client.actions
+          .placeBid({
+            chainId: rendererChain?.id,
+            wallet,
+            bids: [bid],
+            onProgress: (steps: Execute['steps']) => {
+              const executableSteps = steps.filter(
+                (step) => step.items && step.items.length > 0
+              )
+
+              let stepCount = executableSteps.length
+              let incompleteStepItemIndex: number | null = null
+              let incompleteStepIndex: number | null = null
+
+              executableSteps.find((step, i) => {
+                if (!step.items) {
+                  return false
+                }
+
+                incompleteStepItemIndex = step.items.findIndex(
+                  (item) => item.status == 'incomplete'
+                )
+                if (incompleteStepItemIndex !== -1) {
+                  incompleteStepIndex = i
+                  return true
+                }
               })
-            } else {
-              setBidStep(BidStep.Complete)
-            }
-          },
-        })
-        .catch((e: Error) => {
-          setTransactionError(e)
-        })
+
+              if (incompleteStepIndex !== null) {
+                setStepData({
+                  totalSteps: stepCount,
+                  stepProgress: incompleteStepIndex,
+                  currentStep: executableSteps[incompleteStepIndex],
+                })
+              } else {
+                setBidStep(BidStep.Complete)
+              }
+            },
+          })
+          .catch((e: Error) => {
+            setTransactionError(e)
+          })
+      }
     },
     [
       config,

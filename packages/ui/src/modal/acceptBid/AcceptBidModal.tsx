@@ -22,11 +22,13 @@ import {
 } from '../../primitives'
 
 import { Modal } from '../Modal'
-import faCircleExclamation from '@fortawesome/free-solid-svg-icons/faCircleExclamation'
-import {faChevronDown} from '@fortawesome/free-solid-svg-icons'
-import faCube from '@fortawesome/free-solid-svg-icons/faCube'
-import faCircleCheck from '@fortawesome/free-solid-svg-icons/faCircleCheck'
-import faEnvelopeOpen from '@fortawesome/free-solid-svg-icons/faEnvelopeOpen'
+import {
+  faCircleExclamation,
+  faChevronDown,
+  faCube,
+  faCircleCheck,
+  faEnvelopeOpen,
+} from '@fortawesome/free-solid-svg-icons'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -310,11 +312,11 @@ export function AcceptBidModal({
                         decimals={
                           swapCurrency?.decimals || bidPath.currencyDecimals
                         }
-                        sourceImg={
-                          bidPath.source
-                            ? `${baseApiUrl}/redirect/sources/${bidPath.source}/logo/v2`
-                            : ''
-                        }
+                        // sourceImg={
+                        //   bidPath.source
+                        //     ? `${baseApiUrl}/redirect/sources/${bidPath.source}/logo/v2`
+                        //     : ''
+                        // }
                       />
                     ))
                   }

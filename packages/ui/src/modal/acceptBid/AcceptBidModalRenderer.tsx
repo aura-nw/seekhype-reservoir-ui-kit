@@ -405,7 +405,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   }
 
   const triggerAcceptBidContract = () => {
-    setAcceptBidStep(AcceptBidStep.Auth)
+    setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
     setStepData({
       totalSteps: 1,
       currentStep: {
@@ -482,13 +482,57 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         gas: 500000n,
       })
       .then((hash) => {
+        setAcceptBidStep(AcceptBidStep.Finalizing)
         publicClient
           .waitForTransactionReceipt({ hash })
           .then((res: any) => {
             if (res?.status === 'success') {
               setTimeout(() => {
+                const steps: Execute['steps'] = [
+                  {
+                    error: '',
+                    errorData: [],
+                    action: '',
+                    description: '',
+                    kind: 'transaction',
+                    id: '',
+                    items: [
+                      {
+                        status: 'complete',
+                        transfersData: [
+                          {
+                            amount: '1',
+                          },
+                        ],
+                        txHashes: [
+                          {
+                            txHash: hash,
+                            chainId: chainId ? chainId : 1235,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ]
+
+                if (
+                  steps &&
+                  steps?.length > 0 &&
+                  steps[0]?.items &&
+                  steps[0]?.items?.length > 0
+                ) {
+                  setStepData({
+                    totalSteps: 1,
+                    currentStep: steps[0],
+                    currentStepItem: steps[0]?.items[0],
+                    steps: steps,
+                  })
+                }
+
                 setAcceptBidStep(AcceptBidStep.Complete)
               }, 5000)
+            } else {
+              setAcceptBidStep(AcceptBidStep.Checkout)
             }
           })
           .catch((error: any) => {
@@ -914,6 +958,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     prices,
     feesOnTop,
     mutateTokens,
+    bid,
   ])
 
   useEffect(() => {

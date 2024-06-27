@@ -312,11 +312,11 @@ export function AcceptBidModal({
                         decimals={
                           swapCurrency?.decimals || bidPath.currencyDecimals
                         }
-                        sourceImg={
-                          bidPath.source
-                            ? `${baseApiUrl}/redirect/sources/${bidPath.source}/logo/v2`
-                            : ''
-                        }
+                        // sourceImg={
+                        //   bidPath.source
+                        //     ? `${baseApiUrl}/redirect/sources/${bidPath.source}/logo/v2`
+                        //     : ''
+                        // }
                       />
                     ))
                   }

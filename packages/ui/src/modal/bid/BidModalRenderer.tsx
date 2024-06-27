@@ -689,8 +689,7 @@ export const BidModalRenderer: FC<Props> = ({
       currentStep: {
         kind: 'signature',
         action: '',
-        description:
-          'A free on-chain signature to create the offer',
+        description: 'A free on-chain signature to create the offer',
         id: '1',
       },
     })
@@ -797,9 +796,8 @@ export const BidModalRenderer: FC<Props> = ({
       stepProgress: 1,
       currentStep: {
         kind: 'transaction',
-        action: 'Wrapping currency',
-        description:
-          `We'll ask your approval to wrap the currency for bidding. Gas fee required.`,
+        action: 'Approve currency',
+        description: `We'll ask your approval for the exchange to access your token. This is a one-time only operation per exchange`,
         id: '1',
       },
     })
@@ -983,9 +981,9 @@ export const BidModalRenderer: FC<Props> = ({
             stepProgress: 1,
             currentStep: {
               kind: 'transaction',
-              action: 'Approval',
+              action: 'Module Approval',
               description:
-                'You will be prompted to grant approval for making offer on the marketplace. You only need to approve it once for the first time.',
+                'You will be prompted to grant approval for offering on the marketplace. You only need to approve it once.',
               id: '1',
             },
           })

@@ -657,12 +657,12 @@ export const BidModalRenderer: FC<Props> = ({
         ],
       })
       .then((res: any) => {
-        if (res) {
-          if (res && res < totalBidAmount) {
-            triggerSetAllowance()
-          } else {
-            triggerBidTokenContract()
-          }
+        if (res < totalBidAmount) {
+          let allowanceValue = totalBidAmount - res
+
+          triggerSetAllowance(allowanceValue)
+        } else {
+          triggerBidTokenContract()
         }
       })
       .catch((err: any) => {
@@ -787,7 +787,7 @@ export const BidModalRenderer: FC<Props> = ({
       })
   }
 
-  const triggerSetAllowance = () => {
+  const triggerSetAllowance = (allowanceValue: bigint) => {
     setBidStep(BidStep.Offering)
     setStepData({
       totalSteps: 1,
@@ -834,7 +834,7 @@ export const BidModalRenderer: FC<Props> = ({
         args: [
           ContractConfig[chainId ? chainId : 1235]
             ?.ERC20TransferHelper as `0x${string}`,
-          totalBidAmount - wAuraBalance,
+          allowanceValue,
         ],
         gas: 500000n,
       })

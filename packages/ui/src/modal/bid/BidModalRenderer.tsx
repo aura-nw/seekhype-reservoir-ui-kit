@@ -51,7 +51,7 @@ import {
 } from 'viem'
 import { getAccount, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
-import { ChainConfig, ContractConfig } from '../../constants/common'
+import { ChainConfig, ContractConfig, HALO_TRADE } from '../../constants/common'
 
 const expirationOptions = [
   ...defaultExpirationOptions,
@@ -208,8 +208,7 @@ export const BidModalRenderer: FC<Props> = ({
   const chainCurrency = useChainCurrency(rendererChain?.id)
   const [publicClient, setPublicClient] = useState<any>(undefined)
   const [isApproveModule, setIsApproveModule] = useState(false)
-  const [isSetAllowance, setIsSetAllowance] = useState(false)
-  const [wAuraBalance, setWAuraBalance] = useState(false)
+  const [wAuraBalance, setWAuraBalance] = useState(0n)
 
   const account = useAccount()
   const auraEVMTestnet = ChainConfig[chainId ? chainId : 1235]
@@ -390,12 +389,15 @@ export const BidModalRenderer: FC<Props> = ({
   let convertLink: string = ''
 
   if (canAutomaticallyConvert) {
-    convertLink =
-      rendererChain?.id === mainnet.id || rendererChain?.id === goerli.id
-        ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
-        : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+    // convertLink =
+    //   rendererChain?.id === mainnet.id || rendererChain?.id === goerli.id
+    //     ? `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}&chain=mainnet&inputCurrency=eth&outputCurrency=${wrappedContractAddress}`
+    //     : `https://app.uniswap.org/#/swap?theme=dark&exactAmount=${amountToWrap}`
+
+    convertLink = HALO_TRADE[rendererChain?.id || 1235]
   } else {
-    convertLink = `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${wrappedContractAddress}`
+    // convertLink = `https://jumper.exchange/?toChain=${rendererChain?.id}&toToken=${wrappedContractAddress}`
+    convertLink = HALO_TRADE[rendererChain?.id || 1235]
   }
 
   const feeBps: number | undefined = useMemo(() => {
@@ -541,6 +543,45 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [currencies])
 
+  const checkBalanceWAura = () => {
+    publicClient
+      ?.readContract({
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+            name: 'balanceOf',
+            outputs: [
+              {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+              },
+            ],
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.WETH as `0x${string}`,
+        functionName: 'balanceOf',
+        args: [account?.address as `0x${string}`],
+      })
+      .then((res: any) => {
+        if (res) {
+          setWAuraBalance(res)
+        }
+      })
+      .catch((err: any) => {
+        setTransactionError(err)
+      })
+  }
+
   const checkIsApproveModuleAsk = () => {
     publicClient
       ?.readContract({
@@ -577,7 +618,7 @@ export const BidModalRenderer: FC<Props> = ({
       })
   }
 
-  const checkIsSetAllowance = (balance: any) => {
+  const checkIsSetAllowance = () => {
     publicClient
       ?.readContract({
         abi: [
@@ -617,58 +658,14 @@ export const BidModalRenderer: FC<Props> = ({
       })
       .then((res: any) => {
         if (res) {
-          if (res < balance) {
-            setIsSetAllowance(false)
-            triggerSetAllowance(account?.address)
+          if (res && res < totalBidAmount) {
+            triggerSetAllowance()
           } else {
-            setIsSetAllowance(true)
+            triggerBidTokenContract()
           }
         }
       })
       .catch((err: any) => {
-        setIsSetAllowance(false)
-        setBidStep(BidStep.SetPrice)
-        setTransactionError(err)
-      })
-  }
-
-  const checkBalanceWAura = () => {
-    publicClient
-      ?.readContract({
-        abi: [
-          {
-            inputs: [
-              {
-                internalType: 'address',
-                name: '',
-                type: 'address',
-              },
-            ],
-            stateMutability: 'view',
-            type: 'function',
-            name: 'balanceOf',
-            outputs: [
-              {
-                internalType: 'uint256',
-                name: '',
-                type: 'uint256',
-              },
-            ],
-          },
-        ],
-        address: ContractConfig[chainId ? chainId : 1235]
-          ?.WETH as `0x${string}`,
-        functionName: 'balanceOf',
-        args: [account?.address as `0x${string}`],
-      })
-      .then((res: any) => {
-        if (res) {
-          checkIsSetAllowance(res)
-          setWAuraBalance(res)
-        }
-      })
-      .catch((err: any) => {
-        setIsSetAllowance(false)
         setBidStep(BidStep.SetPrice)
         setTransactionError(err)
       })
@@ -681,7 +678,7 @@ export const BidModalRenderer: FC<Props> = ({
     }
   }, [publicClient])
 
-  const triggerBidTokenContract = (maker: any) => {
+  const triggerBidTokenContract = () => {
     setBidStep(BidStep.Offering)
     setStepData({
       totalSteps: 1,
@@ -689,7 +686,8 @@ export const BidModalRenderer: FC<Props> = ({
       currentStep: {
         kind: 'signature',
         action: '',
-        description: 'A free on-chain signature to create the offer',
+        description:
+          'Please review and confirm to create the offer from your wallet',
         id: '1',
       },
     })
@@ -779,17 +777,17 @@ export const BidModalRenderer: FC<Props> = ({
             }
           })
           .catch((error: any) => {
-            setBidStep(BidStep.SetPrice)
+            setBidStep(BidStep.Offering)
             setTransactionError(error)
           })
       })
       .catch((err) => {
         setTransactionError(err)
-        setBidStep(BidStep.SetPrice)
+        setBidStep(BidStep.Offering)
       })
   }
 
-  const triggerSetAllowance = (maker: any) => {
+  const triggerSetAllowance = () => {
     setBidStep(BidStep.Offering)
     setStepData({
       totalSteps: 1,
@@ -836,7 +834,7 @@ export const BidModalRenderer: FC<Props> = ({
         args: [
           ContractConfig[chainId ? chainId : 1235]
             ?.ERC20TransferHelper as `0x${string}`,
-          totalBidAmount,
+          totalBidAmount - wAuraBalance,
         ],
         gas: 500000n,
       })
@@ -844,16 +842,16 @@ export const BidModalRenderer: FC<Props> = ({
         publicClient
           .waitForTransactionReceipt({ hash })
           .then(() => {
-            triggerBidTokenContract(maker)
+            triggerBidTokenContract()
           })
           .catch((error: any) => {
-            triggerBidTokenContract(maker)
+            triggerBidTokenContract()
             setTransactionError(error)
           })
       })
       .catch((err) => {
         setTransactionError(err)
-        setBidStep(BidStep.SetPrice)
+        setBidStep(BidStep.Offering)
       })
   }
 
@@ -1020,26 +1018,25 @@ export const BidModalRenderer: FC<Props> = ({
               publicClient
                 .waitForTransactionReceipt({ hash })
                 .then((res: any) => {
-                  triggerSetAllowance(maker)
+                  checkIsSetAllowance()
+                  // triggerSetAllowance(maker)
                 })
                 .catch((error: any) => {
-                  triggerSetAllowance(maker)
+                  // triggerSetAllowance(maker)
                   setTransactionError(error)
+                  setBidStep(BidStep.Offering)
                 })
             })
             .catch((err) => {
               setTransactionError(err)
-              setBidStep(BidStep.SetPrice)
+              setBidStep(BidStep.Offering)
             })
 
           return
         }
 
-        if (!isSetAllowance) {
-          triggerSetAllowance(maker)
-        } else {
-          triggerBidTokenContract(maker)
-        }
+        // check allowance and trigger bid token
+        checkIsSetAllowance()
       } else {
         client.actions
           .placeBid({

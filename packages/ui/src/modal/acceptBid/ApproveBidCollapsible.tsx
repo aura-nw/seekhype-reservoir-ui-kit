@@ -139,7 +139,8 @@ export const ApproveBidCollapsible: FC<Props> = ({
                   color="subtle"
                   css={{ display: 'flex', alignItems: 'center' }}
                 >
-                  Confirm sale of {paths.length}{' '}
+                  {/* Confirm sale of {paths.length}{' '} */}
+                  Confirm sale of 1{' '}
                   {paths.length > 1 ? 'items' : 'item'} on{' '}
                   {marketplaces.length > 0 ? marketplaces : 'exchange'}
                 </Text>

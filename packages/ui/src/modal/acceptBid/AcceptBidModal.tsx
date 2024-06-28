@@ -405,7 +405,7 @@ export function AcceptBidModal({
                           />
                         </Flex>
                       ) : null}
-                      {price.marketplaceFee > 0 ? (
+                      {/* {price.marketplaceFee > 0 ? (
                         <Flex justify="between">
                           <Text style="subtitle3" color="subtle">
                             Marketplace Fee
@@ -426,7 +426,27 @@ export function AcceptBidModal({
                             textStyle="subtitle3"
                           />
                         </Flex>
-                      ) : null}
+                      ) : null} */}
+                      <Flex justify="between">
+                        <Text style="subtitle3" color="subtle">
+                          Marketplace Fee
+                        </Text>
+                        <Text
+                          css={{ ml: 'auto' }}
+                          style="subtitle3"
+                          color="subtle"
+                        >
+                          -
+                        </Text>
+                        <FormatCryptoCurrency
+                          chainId={modalChain?.id}
+                          amount={price.marketplaceFee}
+                          decimals={price.currency?.decimals}
+                          address={price.currency?.contract}
+                          symbol={price.currency?.symbol}
+                          textStyle="subtitle3"
+                        />
+                      </Flex>
                       {price.feesOnTop > 0 ? (
                         <Flex justify="between">
                           <Text style="subtitle3" color="subtle">

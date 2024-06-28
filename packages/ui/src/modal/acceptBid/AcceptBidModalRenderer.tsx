@@ -51,6 +51,7 @@ export type AcceptBidTokenData = {
   collectionId: string
   bidIds?: string[]
   bidsPath?: NonNullable<SellPath>
+  royalty?: number
 }
 
 export type EnhancedAcceptBidTokenData = Required<AcceptBidTokenData> & {
@@ -222,7 +223,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         })
       }
       return enhancedTokens
-    }, [] as EnhancedAcceptBidTokenData[])
+    }, [] as any[])
+    // }, [] as EnhancedAcceptBidTokenData[])
   }, [tokensData, tokens, bidsPath])
 
   const { data: bids } = useBids(
@@ -280,7 +282,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       .catch((err: any) => {
         setIsApproveAll(false)
         setAcceptBidStep(AcceptBidStep.Checkout)
-        setTransactionError(err)
       })
   }
 
@@ -330,7 +331,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       .catch((err: any) => {
         setIsApproveModule(false)
         setAcceptBidStep(AcceptBidStep.Checkout)
-        setTransactionError(err)
       })
   }
 
@@ -342,18 +342,53 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   }, [publicClient])
 
   const triggerSetApproveForModule = () => {
-    setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
-    setStepData({
-      totalSteps: 1,
-      currentStep: {
-        kind: 'transaction',
+    const steps: Execute['steps'] = [
+      {
+        error: '',
+        errorData: [],
         action: '',
-        description:
-          'Please approve the collection(s) from your wallet. Each collection only needs to be approved once.',
-        id: '1',
+        description: '',
+        kind: 'transaction',
+        id: 'sale',
+        items: [
+          {
+            status: 'complete',
+            transfersData: [
+              {
+                amount: '1',
+              },
+            ],
+          },
+        ],
       },
-      steps: [],
-    })
+    ]
+
+    if (
+      steps &&
+      steps?.length > 0 &&
+      steps[0]?.items &&
+      steps[0]?.items?.length > 0
+    ) {
+      setStepData({
+        totalSteps: 1,
+        currentStep: steps[0],
+        currentStepItem: steps[0]?.items[0],
+        steps: steps,
+      })
+    }
+
+    setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
+    // setStepData({
+    //   totalSteps: 1,
+    //   currentStep: {
+    //     kind: 'transaction',
+    //     action: '',
+    //     description:
+    //       'Please approve the collection(s) from your wallet. Each collection only needs to be approved once.',
+    //     id: '1',
+    //   },
+    //   steps: [],
+    // })
     // set allowance
     wagmiWallet
       ?.writeContract({
@@ -400,26 +435,61 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       })
       .catch((err) => {
         setTransactionError(err)
-        setAcceptBidStep(AcceptBidStep.Checkout)
+        setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
       })
   }
 
   const triggerAcceptBidContract = () => {
-    setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
-    setStepData({
-      totalSteps: 1,
-      currentStep: {
-        kind: 'signature',
+    const steps: Execute['steps'] = [
+      {
+        error: '',
+        errorData: [],
         action: '',
-        description:
-          'Please review and confirm to create the listing from your wallet.',
-        id: '1',
+        description: '',
+        kind: 'transaction',
+        id: 'sale',
+        items: [
+          {
+            status: 'complete',
+            transfersData: [
+              {
+                amount: '1',
+              },
+            ],
+          },
+        ],
       },
-      currentStepItem: {
-        status: 'incomplete',
-      },
-      steps: [],
-    })
+    ]
+
+    if (
+      steps &&
+      steps?.length > 0 &&
+      steps[0]?.items &&
+      steps[0]?.items?.length > 0
+    ) {
+      setStepData({
+        totalSteps: 1,
+        currentStep: steps[0],
+        currentStepItem: steps[0]?.items[0],
+        steps: steps,
+      })
+    }
+
+    setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
+    // setStepData({
+    //   totalSteps: 1,
+    //   currentStep: {
+    //     kind: 'signature',
+    //     action: '',
+    //     description:
+    //       'Please review and confirm to create the listing from your wallet.',
+    //     id: '1',
+    //   },
+    //   currentStepItem: {
+    //     status: 'incomplete',
+    //   },
+    //   steps: [],
+    // })
 
     const token =
       enhancedTokens?.length > 0
@@ -482,6 +552,46 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         gas: 500000n,
       })
       .then((hash) => {
+        const steps: Execute['steps'] = [
+          {
+            error: '',
+            errorData: [],
+            action: '',
+            description: '',
+            kind: 'transaction',
+            id: 'sale',
+            items: [
+              {
+                status: 'complete',
+                transfersData: [
+                  {
+                    amount: '1',
+                  },
+                ],
+                txHashes: [
+                  {
+                    txHash: hash,
+                    chainId: chainId ? chainId : 1235,
+                  },
+                ],
+              },
+            ],
+          },
+        ]
+
+        if (
+          steps &&
+          steps?.length > 0 &&
+          steps[0]?.items &&
+          steps[0]?.items?.length > 0
+        ) {
+          setStepData({
+            totalSteps: 1,
+            currentStep: steps[0],
+            currentStepItem: steps[0]?.items[0],
+            steps: steps,
+          })
+        }
         setAcceptBidStep(AcceptBidStep.Finalizing)
         publicClient
           .waitForTransactionReceipt({ hash })
@@ -495,7 +605,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
                     action: '',
                     description: '',
                     kind: 'transaction',
-                    id: '',
+                    id: 'sale',
                     items: [
                       {
                         status: 'complete',
@@ -549,7 +659,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
   const bidTokenMap = useMemo(
     () =>
       enhancedTokens.reduce((map, token) => {
-        token.bidIds.forEach((bidId) => {
+        token.bidIds.forEach((bidId: any) => {
           map[bidId] = token
         })
         return map
@@ -678,7 +788,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     () =>
       Array.from(
         enhancedTokens.reduce((symbols, { bidsPath }) => {
-          bidsPath.forEach(({ sellOutCurrencySymbol, currencySymbol }) => {
+          bidsPath.forEach(({ sellOutCurrencySymbol, currencySymbol }: any) => {
             if (sellOutCurrencySymbol) {
               symbols.add(sellOutCurrencySymbol)
             }
@@ -786,18 +896,53 @@ export const AcceptBidModalRenderer: FC<Props> = ({
 
     if (rendererChain?.name === auraEVMTestnet?.name) {
       if (!isApproveAll) {
-        setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
-        setStepData({
-          totalSteps: 1,
-          currentStep: {
+        const steps: Execute['steps'] = [
+          {
+            error: '',
+            errorData: [],
+            action: '',
+            description: '',
             kind: 'transaction',
-            action: 'approval',
-            description:
-              'You will be prompted to grant approval for selling on the marketplace. You only need to approve it once for the first time.',
-            id: '1',
+            id: 'sale',
+            items: [
+              {
+                status: 'complete',
+                transfersData: [
+                  {
+                    amount: '1',
+                  },
+                ],
+              },
+            ],
           },
-          steps: [],
-        })
+        ]
+
+        if (
+          steps &&
+          steps?.length > 0 &&
+          steps[0]?.items &&
+          steps[0]?.items?.length > 0
+        ) {
+          setStepData({
+            totalSteps: 1,
+            currentStep: steps[0],
+            currentStepItem: steps[0]?.items[0],
+            steps: steps,
+          })
+        }
+
+        setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
+        // setStepData({
+        //   totalSteps: 1,
+        //   currentStep: {
+        //     kind: 'transaction',
+        //     action: 'approval',
+        //     description:
+        //       'You will be prompted to grant approval for selling on the marketplace. You only need to approve it once for the first time.',
+        //     id: '1',
+        //   },
+        //   steps: [],
+        // })
         // approve module
         await wagmiWallet
           ?.writeContract({
@@ -843,7 +988,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           })
           .catch((err) => {
             setTransactionError(err)
-            setAcceptBidStep(AcceptBidStep.Checkout)
+            setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
           })
 
         return
@@ -983,7 +1128,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
         ) => {
           const netAmount = sellOutQuote || quote || 0
           const amount = totalPrice || 0
-          let royalty = 0
+          let royalty = tokens?.length > 0 ? tokens[0]?.royalty || 0 : 0
           let marketplaceFee = 0
 
           if (sellOutCurrency && sellOutCurrencySymbol) {
@@ -1064,9 +1209,9 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             }
           } else {
             map['WAURA'] = {
-              netAmount: netAmount,
+              netAmount: netAmount - marketplaceFee - netAmount * (royalty / 100),
               amount: amount,
-              royalty: royalty,
+              royalty: netAmount * (royalty / 100),
               marketplaceFee: marketplaceFee,
               feesOnTop: 0,
               currency: {

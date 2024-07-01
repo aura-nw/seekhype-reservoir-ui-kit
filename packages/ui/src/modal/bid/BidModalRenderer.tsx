@@ -577,9 +577,6 @@ export const BidModalRenderer: FC<Props> = ({
           setWAuraBalance(res)
         }
       })
-      .catch((err: any) => {
-        setTransactionError(err)
-      })
   }
 
   const checkIsApproveModuleAsk = () => {
@@ -610,11 +607,6 @@ export const BidModalRenderer: FC<Props> = ({
         if (res) {
           setIsApproveModule(true)
         }
-      })
-      .catch((err: any) => {
-        setIsApproveModule(false)
-        setBidStep(BidStep.SetPrice)
-        setTransactionError(err)
       })
   }
 
@@ -664,10 +656,6 @@ export const BidModalRenderer: FC<Props> = ({
         } else {
           triggerBidTokenContract()
         }
-      })
-      .catch((err: any) => {
-        setBidStep(BidStep.SetPrice)
-        setTransactionError(err)
       })
   }
 

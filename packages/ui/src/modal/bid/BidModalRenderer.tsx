@@ -658,7 +658,7 @@ export const BidModalRenderer: FC<Props> = ({
       })
       .then((res: any) => {
         if (res < totalBidAmount) {
-          let allowanceValue = totalBidAmount - res
+          let allowanceValue = totalBidAmount
 
           triggerSetAllowance(allowanceValue)
         } else {

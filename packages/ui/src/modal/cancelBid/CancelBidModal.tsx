@@ -1,4 +1,9 @@
-import { useFallbackState, useReservoirClient, useTimeSince } from '../../hooks'
+import {
+  useChainCurrency,
+  useFallbackState,
+  useReservoirClient,
+  useTimeSince,
+} from '../../hooks'
 import React, {
   ReactElement,
   Dispatch,
@@ -27,6 +32,8 @@ import { ReservoirWallet } from '@sh-reservoir0x/reservoir-sdk'
 import { WalletClient } from 'viem'
 import getChainBlockExplorerUrl from '../../lib/getChainBlockExplorerUrl'
 import { Dialog } from '../../primitives/Dialog'
+import wrappedContracts from '../../constants/wrappedContracts'
+import wrappedContractNames from '../../constants/wrappedContractNames'
 
 const ModalCopy = {
   title: 'Cancel Offer',
@@ -130,6 +137,26 @@ export function CancelBidModal({
           !loading
 
         const isOracleOrder = bid?.isNativeOffChainCancellable
+
+        const rendererChain = chainId
+          ? client?.chains.find(({ id }) => id === chainId) || currentChain
+          : currentChain
+
+        const chainCurrency = useChainCurrency(rendererChain?.id)
+
+        const nativeWrappedContractAddress =
+          chainCurrency.chainId in wrappedContracts
+            ? wrappedContracts[chainCurrency.chainId]
+            : wrappedContracts[1]
+        const nativeWrappedContractName =
+          chainCurrency.chainId in wrappedContractNames
+            ? wrappedContractNames[chainCurrency.chainId]
+            : wrappedContractNames[1]
+
+        const defaultCurrency = {
+          contract: nativeWrappedContractAddress,
+          symbol: nativeWrappedContractName,
+        }
 
         return (
           <Modal
@@ -282,8 +309,8 @@ export function CancelBidModal({
                         {bid?.criteria?.data?.token?.name ||
                           bid?.criteria?.data?.collection?.name}{' '}
                       </Text>
-                      at {bid?.price?.amount?.decimal}{' '}
-                      {bid?.price?.currency?.symbol} has been canceled.
+                      at {bid?.price?.amount?.decimal} {defaultCurrency?.symbol}{' '}
+                      has been canceled.
                     </>
                   </Text>
 

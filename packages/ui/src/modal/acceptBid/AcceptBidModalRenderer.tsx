@@ -35,6 +35,8 @@ import { customChains } from '@sh-reservoir0x/reservoir-sdk'
 import * as allChains from 'viem/chains'
 import { ChainConfig, ContractConfig } from '../../constants/common'
 import { BidStep } from '../bid/BidModalRenderer'
+import wrappedContractNames from '../../constants/wrappedContractNames'
+import wrappedContracts from '../../constants/wrappedContracts'
 
 export enum AcceptBidStep {
   Checkout,
@@ -546,7 +548,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           BigInt(Number(token?.tokenId)),
           BigInt(Number(bid?.rawData?.offerId || 0)),
           BigInt(Number(bid?.rawData?.askPrice) || 0),
-          zeroAddress,
+          wrappedContracts[chainId ? chainId : 1235] as `0x${string}`,
           zeroAddress,
         ],
         gas: 500000n,
@@ -1209,7 +1211,8 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             }
           } else {
             map['WAURA'] = {
-              netAmount: netAmount - marketplaceFee - netAmount * (royalty / 100),
+              netAmount:
+                netAmount - marketplaceFee - netAmount * (royalty / 100),
               amount: amount,
               royalty: netAmount * (royalty / 100),
               marketplaceFee: marketplaceFee,

@@ -46,6 +46,7 @@ import {
   formatUnits,
   http,
   parseEther,
+  parseGwei,
   parseUnits,
   zeroAddress,
 } from 'viem'
@@ -654,7 +655,11 @@ export const BidModalRenderer: FC<Props> = ({
 
           triggerSetAllowance(allowanceValue)
         } else {
-          triggerBidTokenContract()
+          if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
+            triggerDepositWAura()
+          } else {
+            triggerBidTokenContract()
+          }
         }
       })
   }
@@ -665,6 +670,54 @@ export const BidModalRenderer: FC<Props> = ({
       checkBalanceWAura()
     }
   }, [publicClient])
+
+  const triggerDepositWAura = () => {
+    setBidStep(BidStep.Offering)
+    setStepData({
+      totalSteps: 1,
+      stepProgress: 1,
+      currentStep: {
+        kind: 'transaction',
+        action: 'Wrap currency',
+        description: `We'll ask your approval to wrap the currency for bidding. Gas fee required.`,
+        id: '1',
+      },
+    })
+
+    wagmiWallet
+      ?.writeContract({
+        abi: [
+          {
+            type: 'function',
+            name: 'deposit',
+            inputs: [],
+            outputs: [],
+            stateMutability: 'payable',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.WETH as `0x${string}`,
+        functionName: 'deposit',
+        args: [],
+        gas: 500000n,
+        value: totalBidAmount - (wrappedBalance?.[0] || 0n),
+      })
+      .then((hash) => {
+        publicClient
+          .waitForTransactionReceipt({ hash })
+          .then(() => {
+            triggerBidTokenContract()
+          })
+          .catch((error: any) => {
+            triggerBidTokenContract()
+            setTransactionError(error)
+          })
+      })
+      .catch((err) => {
+        setTransactionError(err)
+        setBidStep(BidStep.Offering)
+      })
+  }
 
   const triggerBidTokenContract = () => {
     setBidStep(BidStep.Offering)
@@ -680,6 +733,17 @@ export const BidModalRenderer: FC<Props> = ({
       },
     })
     // Bid token
+    let expirationTime = 0
+    if (expirationOption.relativeTime) {
+      if (expirationOption.relativeTimeUnit) {
+        expirationTime = dayjs()
+          .add(expirationOption.relativeTime, expirationOption.relativeTimeUnit)
+          .unix()
+      } else {
+        expirationTime = expirationOption.relativeTime
+      }
+    }
+
     wagmiWallet
       ?.writeContract({
         abi: [
@@ -744,15 +808,14 @@ export const BidModalRenderer: FC<Props> = ({
         args: [
           contract as `0x${string}`,
           BigInt(Number(tokenId)),
-          zeroAddress,
+          wrappedContractAddress as `0x${string}`,
           totalBidAmount,
-          0n,
+          BigInt(expirationTime),
           0,
           0,
           zeroAddress,
         ],
         gas: 500000n,
-        value: totalBidAmount,
       })
       .then((hash) => {
         publicClient
@@ -762,6 +825,11 @@ export const BidModalRenderer: FC<Props> = ({
               setTimeout(() => {
                 setBidStep(BidStep.Complete)
               }, 5000)
+            } else {
+              setTransactionError({
+                name: 'reverted',
+                message: `Failed: Offer ${res?.status}`,
+              })
             }
           })
           .catch((error: any) => {
@@ -830,10 +898,19 @@ export const BidModalRenderer: FC<Props> = ({
         publicClient
           .waitForTransactionReceipt({ hash })
           .then(() => {
-            triggerBidTokenContract()
+            if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
+              triggerDepositWAura()
+            } else {
+              triggerBidTokenContract()
+            }
           })
           .catch((error: any) => {
-            triggerBidTokenContract()
+            if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
+              triggerDepositWAura()
+            } else {
+              triggerBidTokenContract()
+            }
+
             setTransactionError(error)
           })
       })

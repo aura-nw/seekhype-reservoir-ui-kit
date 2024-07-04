@@ -688,16 +688,19 @@ export function AcceptBidModal({
                 >
                   <Box
                     css={{
-                      color: failedSales ? '$errorAccent' : '$successAccent',
+                      color:
+                        failedSales > 0 ? '$errorAccent' : '$successAccent',
                     }}
                   >
                     <FontAwesomeIcon
-                      icon={failedSales ? faCircleExclamation : faCircleCheck}
+                      icon={
+                        failedSales > 0 ? faCircleExclamation : faCircleCheck
+                      }
                       fontSize={32}
                     />
                   </Box>
                   <Text style="h5" css={{ my: 24 }}>
-                    {failedSales
+                    {failedSales > 0
                       ? `${successfulSales} ${
                           successfulSales > 1 ? 'items' : 'item'
                         } sold, ${failedSales} ${

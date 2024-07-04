@@ -568,6 +568,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
                 transfersData: [
                   {
                     amount: '1',
+                    txHash: hash,
                   },
                 ],
                 txHashes: [

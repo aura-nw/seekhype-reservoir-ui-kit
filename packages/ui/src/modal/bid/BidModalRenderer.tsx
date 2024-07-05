@@ -605,8 +605,10 @@ export const BidModalRenderer: FC<Props> = ({
         ],
       })
       .then((res: any) => {
-        if (res) {
-          setIsApproveModule(true)
+        if (!res) {
+          triggerApproveModuleAsk()
+        } else {
+          triggerBidTokenContract()
         }
       })
   }
@@ -655,21 +657,77 @@ export const BidModalRenderer: FC<Props> = ({
 
           triggerSetAllowance(allowanceValue)
         } else {
-          if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
-            triggerDepositWAura()
-          } else {
-            triggerBidTokenContract()
-          }
+          checkIsApproveModuleAsk()
         }
       })
   }
 
   useEffect(() => {
     if (publicClient) {
-      checkIsApproveModuleAsk()
+      // checkIsApproveModuleAsk()
       checkBalanceWAura()
     }
   }, [publicClient])
+
+  const triggerApproveModuleAsk = () => {
+    setBidStep(BidStep.Offering)
+    setStepData({
+      totalSteps: 1,
+      stepProgress: 1,
+      currentStep: {
+        kind: 'transaction',
+        action: 'Module Approval',
+        description:
+          'You will be prompted to grant approval for offering on the marketplace. You only need to approve it once.',
+        id: '1',
+      },
+    })
+    // approve module
+    wagmiWallet
+      ?.writeContract({
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: '_module',
+                type: 'address',
+              },
+              { internalType: 'bool', name: '_approved', type: 'bool' },
+            ],
+            name: 'setApprovalForModule',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+        ],
+        address: ContractConfig[chainId ? chainId : 1235]
+          ?.OFFER_MODULE_MANAGER as `0x${string}`,
+        functionName: 'setApprovalForModule',
+        args: [
+          ContractConfig[chainId ? chainId : 1235]
+            ?.OFFERS_OMNIBUS as `0x${string}`,
+          true,
+        ],
+        gas: 500000n,
+      })
+      .then((hash) => {
+        publicClient
+          .waitForTransactionReceipt({ hash })
+          .then((res: any) => {
+            triggerBidTokenContract()
+          })
+          .catch((error: any) => {
+            triggerBidTokenContract()
+            setTransactionError(error)
+            setBidStep(BidStep.Offering)
+          })
+      })
+      .catch((err) => {
+        setTransactionError(err)
+        setBidStep(BidStep.Offering)
+      })
+  }
 
   const triggerDepositWAura = () => {
     setBidStep(BidStep.Offering)
@@ -678,7 +736,7 @@ export const BidModalRenderer: FC<Props> = ({
       stepProgress: 1,
       currentStep: {
         kind: 'transaction',
-        action: 'Wrap currency',
+        action: 'Wrapping currency',
         description: `We'll ask your approval to wrap the currency for bidding. Gas fee required.`,
         id: '1',
       },
@@ -706,10 +764,12 @@ export const BidModalRenderer: FC<Props> = ({
         publicClient
           .waitForTransactionReceipt({ hash })
           .then(() => {
-            triggerBidTokenContract()
+            // triggerBidTokenContract()
+            checkIsSetAllowance()
           })
           .catch((error: any) => {
-            triggerBidTokenContract()
+            // triggerBidTokenContract()
+            checkIsSetAllowance()
             setTransactionError(error)
           })
       })
@@ -803,7 +863,7 @@ export const BidModalRenderer: FC<Props> = ({
           },
         ],
         address: ContractConfig[chainId ? chainId : 1235]
-          ?.OFFERS_OMNIBUS as `0x{string}`,
+          ?.OFFERS_OMNIBUS as `0x${string}`,
         functionName: 'createOffer',
         args: [
           contract as `0x${string}`,
@@ -898,18 +958,10 @@ export const BidModalRenderer: FC<Props> = ({
         publicClient
           .waitForTransactionReceipt({ hash })
           .then(() => {
-            if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
-              triggerDepositWAura()
-            } else {
-              triggerBidTokenContract()
-            }
+            checkIsApproveModuleAsk()
           })
           .catch((error: any) => {
-            if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
-              triggerDepositWAura()
-            } else {
-              triggerBidTokenContract()
-            }
+            checkIsApproveModuleAsk()
 
             setTransactionError(error)
           })
@@ -1035,73 +1087,19 @@ export const BidModalRenderer: FC<Props> = ({
       }
 
       setBidData(bid)
-      const maker = account?.address
       if (rendererChain?.name === auraEVMTestnet?.name) {
-        if (!isApproveModule) {
-          setBidStep(BidStep.Offering)
-          setStepData({
-            totalSteps: 1,
-            stepProgress: 1,
-            currentStep: {
-              kind: 'transaction',
-              action: 'Module Approval',
-              description:
-                'You will be prompted to grant approval for offering on the marketplace. You only need to approve it once.',
-              id: '1',
-            },
-          })
-          // approve module
-          await wagmiWallet
-            ?.writeContract({
-              abi: [
-                {
-                  inputs: [
-                    {
-                      internalType: 'address',
-                      name: '_module',
-                      type: 'address',
-                    },
-                    { internalType: 'bool', name: '_approved', type: 'bool' },
-                  ],
-                  name: 'setApprovalForModule',
-                  outputs: [],
-                  stateMutability: 'nonpayable',
-                  type: 'function',
-                },
-              ],
-              address: ContractConfig[chainId ? chainId : 1235]
-                ?.OFFER_MODULE_MANAGER as `0x${string}`,
-              functionName: 'setApprovalForModule',
-              args: [
-                ContractConfig[chainId ? chainId : 1235]
-                  ?.OFFERS_OMNIBUS as `0x${string}`,
-                true,
-              ],
-              gas: 500000n,
-            })
-            .then((hash) => {
-              publicClient
-                .waitForTransactionReceipt({ hash })
-                .then((res: any) => {
-                  checkIsSetAllowance()
-                  // triggerSetAllowance(maker)
-                })
-                .catch((error: any) => {
-                  // triggerSetAllowance(maker)
-                  setTransactionError(error)
-                  setBidStep(BidStep.Offering)
-                })
-            })
-            .catch((err) => {
-              setTransactionError(err)
-              setBidStep(BidStep.Offering)
-            })
-
-          return
+        if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
+          triggerDepositWAura()
+        } else {
+          checkIsSetAllowance()
         }
 
-        // check allowance and trigger bid token
-        checkIsSetAllowance()
+        // check allowance or deposit aura
+        // if ((wrappedBalance?.[0] || 0n) < totalBidAmount) {
+        //   triggerDepositWAura()
+        // } else {
+        //   checkIsSetAllowance()
+        // }
       } else {
         client.actions
           .placeBid({

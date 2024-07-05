@@ -453,7 +453,7 @@ export const ListModalRenderer: FC<Props> = ({
           },
         ],
         address: ContractConfig[chainId ? chainId : 1235]
-          ?.ASK1_1_MODULE_ADDRESS as `0x{string}`,
+          ?.ASK1_1_MODULE_ADDRESS as `0x${string}`,
         functionName: 'createAsk',
         args: [
           contract as `0x${string}`,

@@ -541,7 +541,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           },
         ],
         address: ContractConfig[chainId ? chainId : 1235]
-          ?.OFFERS_OMNIBUS as `0x{string}`,
+          ?.OFFERS_OMNIBUS as `0x${string}`,
         functionName: 'fillOffer',
         args: [
           token ? (token?.contract as `0x${string}`) : ('' as `0x${string}`),

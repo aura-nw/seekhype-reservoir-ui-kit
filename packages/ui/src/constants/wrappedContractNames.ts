@@ -28,5 +28,7 @@ const wrappedContractNames: Record<number, string> = {
   81457: 'WETH', //blast
   1235: 'WAURA', //aura evm dev
   1236: 'WAURA', //aura evm dev
+  6321: 'WAURA', //aura evm dev
+  6322: 'WAURA', //aura evm dev
 }
 export default wrappedContractNames

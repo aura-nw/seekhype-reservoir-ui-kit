@@ -37,10 +37,10 @@ const TokenInfo: FC<Props> = ({
   expirationOption,
   containerCss,
 }) => {
-  // const expirationDisplay =
-  //   expirationOption?.value === 'custom' && expirationOption.relativeTime
-  //     ? useTimeSince(expirationOption.relativeTime)
-  //     : `in ${expirationOption?.text.toLowerCase()}`
+  const expirationDisplay =
+    expirationOption?.value === 'custom' && expirationOption.relativeTime
+      ? useTimeSince(expirationOption.relativeTime)
+      : `in ${expirationOption?.text.toLowerCase()}`
 
   const floorAsk = token?.market?.floorAsk ?? collection?.floorAsk
   const topBid = token?.market?.topBid ?? collection?.topBid
@@ -169,11 +169,11 @@ const TokenInfo: FC<Props> = ({
               textStyle="h6"
             />
           ) : null}
-          {/* {expirationOption ? (
+          {expirationOption ? (
             <Text style="body2" color="subtle">
               Expires {expirationDisplay}
             </Text>
-          ) : null} */}
+          ) : null}
         </Flex>
       )}
     </Flex>

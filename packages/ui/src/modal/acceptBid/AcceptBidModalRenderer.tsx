@@ -1178,7 +1178,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             if (!map[currencySymbol]) {
               map[currencySymbol] = {
                 netAmount:
-                  netAmount - referralFee - netAmount * (royalty / 100),
+                  netAmount - marketplaceFee - netAmount * (royalty / 100),
                 amount,
                 currency: {
                   contract: currency,

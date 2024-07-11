@@ -50,7 +50,7 @@ import {
   parseUnits,
   zeroAddress,
 } from 'viem'
-import { getAccount, switchChain } from 'wagmi/actions'
+import { getAccount, getWalletClient, switchChain } from 'wagmi/actions'
 import { Marketplace } from '../../hooks/useMarketplaces'
 import { ChainConfig, ContractConfig, HALO_TRADE } from '../../constants/common'
 
@@ -779,7 +779,7 @@ export const BidModalRenderer: FC<Props> = ({
       })
   }
 
-  const triggerBidTokenContract = () => {
+  const triggerBidTokenContract = async () => {
     setBidStep(BidStep.Offering)
     setStepData({
       totalSteps: 1,
@@ -804,7 +804,11 @@ export const BidModalRenderer: FC<Props> = ({
       }
     }
 
-    wagmiWallet
+    const wagmiWalletClient = await getWalletClient(config, {
+      chainId: rendererChain?.id,
+    })
+
+    wagmiWalletClient
       ?.writeContract({
         abi: [
           {

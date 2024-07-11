@@ -260,7 +260,7 @@ export function AcceptBidModal({
                   <ChainIcon
                     chainId={modalChain?.id}
                     height={12}
-                    css={{ mr: 5 }}
+                    css={{ alignItems: 'center', width: '12px', mr: 5 }}
                   />
                   <Text style="subtitle3" color="subtle">
                     {modalChain?.name}
@@ -347,12 +347,15 @@ export function AcceptBidModal({
                             textStyle="h6"
                           />
                           {price.currency?.symbol &&
-                          usdPrices[price.currency.symbol] ? (
+                          (usdPrices[price.currency.symbol] ||
+                            usdPrices['AURA']) ? (
                             <FormatCurrency
                               color="subtle"
                               style="tiny"
                               amount={
-                                usdPrices[price.currency.symbol].price *
+                                (usdPrices['AURA'].price
+                                  ? usdPrices['AURA'].price
+                                  : usdPrices[price.currency.symbol].price) *
                                 price.netAmount
                               }
                               css={{ textAlign: 'end' }}

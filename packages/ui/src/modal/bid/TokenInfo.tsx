@@ -72,7 +72,11 @@ const TokenInfo: FC<Props> = ({
             {chain && !expirationOption ? (
               <>
                 {token ? <Divider direction="vertical" /> : null}
-                <ChainIcon chainId={chain.id} height={12} />
+                <ChainIcon
+                  chainId={chain.id}
+                  height={12}
+                  css={{ alignItems: 'center', width: '12px' }}
+                />
                 <Text style="subtitle2" color="subtle" ellipsify>
                   {chain.name}
                 </Text>

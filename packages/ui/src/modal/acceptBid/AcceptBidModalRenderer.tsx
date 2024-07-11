@@ -478,21 +478,6 @@ export const AcceptBidModalRenderer: FC<Props> = ({
     }
 
     setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
-    // setStepData({
-    //   totalSteps: 1,
-    //   currentStep: {
-    //     kind: 'signature',
-    //     action: '',
-    //     description:
-    //       'Please review and confirm to create the listing from your wallet.',
-    //     id: '1',
-    //   },
-    //   currentStepItem: {
-    //     status: 'incomplete',
-    //   },
-    //   steps: [],
-    // })
-
     const token =
       enhancedTokens?.length > 0
         ? enhancedTokens[0].tokenData?.token
@@ -1192,22 +1177,24 @@ export const AcceptBidModalRenderer: FC<Props> = ({
             })
             if (!map[currencySymbol]) {
               map[currencySymbol] = {
-                netAmount: netAmount - referralFee,
+                netAmount:
+                  netAmount - referralFee - netAmount * (royalty / 100),
                 amount,
                 currency: {
                   contract: currency,
                   symbol: currencySymbol,
                   decimals: currencyDecimals,
                 },
-                royalty,
+                royalty: netAmount * (royalty / 100),
                 marketplaceFee,
                 feesOnTop: referralFee,
               }
             } else if (map[currencySymbol]) {
-              map[currencySymbol].netAmount += netAmount - referralFee
+              map[currencySymbol].netAmount +=
+                netAmount - referralFee - netAmount * (royalty / 100)
               map[currencySymbol].amount += amount
-              map[currencySymbol].royalty += royalty
-              map[currencySymbol].marketplaceFee += marketplaceFee
+              ;(map[currencySymbol].royalty += netAmount * (royalty / 100)),
+                (map[currencySymbol].marketplaceFee += marketplaceFee)
               map[currencySymbol].feesOnTop += referralFee
             }
           } else {

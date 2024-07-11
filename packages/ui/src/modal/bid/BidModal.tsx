@@ -879,7 +879,7 @@ export function BidModal({
                                 {copy.ctaConvertAutomatically.length > 0
                                   ? copy.ctaConvertAutomatically
                                   : `Convert ${amountToWrap} ${
-                                      balance?.symbol || 'Aura'
+                                      balance?.symbol?.toUpperCase() || 'AURA'
                                     } for me`}
                               </Text>
                             </Button>

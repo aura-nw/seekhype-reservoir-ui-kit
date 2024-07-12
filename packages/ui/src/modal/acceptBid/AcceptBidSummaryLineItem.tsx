@@ -70,7 +70,7 @@ const AcceptBidSummaryLineItem: FC<Props> = ({
   const usdPrice = useMemo(() => {
     let missingConversion = false
     const totalUsd = prices.reduce((total, { amount, currency }) => {
-      const conversion = usdPrices[currency.symbol]
+      const conversion = usdPrices['AURA'] ? usdPrices['AURA'] : usdPrices[currency.symbol]
       if (conversion) {
         total += conversion.price * amount
       } else {

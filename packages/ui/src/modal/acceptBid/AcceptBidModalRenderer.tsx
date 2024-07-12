@@ -437,7 +437,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
       })
       .catch((err) => {
         setTransactionError(err)
-        setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
+        setAcceptBidStep(AcceptBidStep.Checkout)
       })
   }
 
@@ -976,7 +976,7 @@ export const AcceptBidModalRenderer: FC<Props> = ({
           })
           .catch((err) => {
             setTransactionError(err)
-            setAcceptBidStep(AcceptBidStep.ApproveMarketplace)
+            setAcceptBidStep(AcceptBidStep.Checkout)
           })
 
         return

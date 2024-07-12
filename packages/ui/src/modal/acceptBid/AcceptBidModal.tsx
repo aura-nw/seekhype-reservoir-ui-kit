@@ -38,7 +38,12 @@ import {
   AcceptBidTokenData,
   EnhancedAcceptBidTokenData,
 } from './AcceptBidModalRenderer'
-import { useBids, useFallbackState, useReservoirClient } from '../../hooks'
+import {
+  useBids,
+  useDynamicTokens,
+  useFallbackState,
+  useReservoirClient,
+} from '../../hooks'
 import AcceptBidLineItem from './AcceptBidLineItem'
 import { Collapsible } from '../../primitives/Collapsible'
 import { ApproveBidCollapsible } from './ApproveBidCollapsible'
@@ -86,6 +91,7 @@ type Props = Pick<Parameters<typeof Modal>['0'], 'trigger'> & {
   onPointerDownOutside?: ComponentPropsWithoutRef<
     typeof Dialog
   >['onPointerDownOutside']
+  isAcceptHighestBid?: boolean
 }
 
 export function AcceptBidModal({

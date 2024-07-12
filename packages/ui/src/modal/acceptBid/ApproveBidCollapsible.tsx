@@ -142,7 +142,7 @@ export const ApproveBidCollapsible: FC<Props> = ({
                   {/* Confirm sale of {paths.length}{' '} */}
                   Confirm sale of 1{' '}
                   {paths.length > 1 ? 'items' : 'item'} on{' '}
-                  {marketplaces.length > 0 ? marketplaces : 'exchange'}
+                  {marketplaces.length > 0 ? marketplaces : 'SeekHYPE'}
                 </Text>
                 {isCurrentStep ? <Spinner /> : null}
               </React.Fragment>

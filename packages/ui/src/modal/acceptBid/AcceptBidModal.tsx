@@ -389,6 +389,12 @@ export function AcceptBidModal({
                           decimals={price.currency?.decimals}
                           address={price.currency?.contract}
                           symbol={price.currency?.symbol}
+                          maximumFractionDigits={
+                            price.currency?.symbol === 'AURA' ||
+                            price.currency?.symbol === 'WAURA'
+                              ? 2
+                              : 4
+                          }
                           textStyle="subtitle3"
                         />
                       </Flex>
@@ -410,6 +416,12 @@ export function AcceptBidModal({
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
+                            maximumFractionDigits={
+                              price.currency?.symbol === 'AURA' ||
+                              price.currency?.symbol === 'WAURA'
+                                ? 2
+                                : 4
+                            }
                             textStyle="subtitle3"
                           />
                         </Flex>
@@ -453,6 +465,12 @@ export function AcceptBidModal({
                           decimals={price.currency?.decimals}
                           address={price.currency?.contract}
                           symbol={price.currency?.symbol}
+                          maximumFractionDigits={
+                            price.currency?.symbol === 'AURA' ||
+                            price.currency?.symbol === 'WAURA'
+                              ? 2
+                              : 4
+                          }
                           textStyle="subtitle3"
                         />
                       </Flex>
@@ -474,6 +492,12 @@ export function AcceptBidModal({
                             decimals={price.currency?.decimals}
                             address={price.currency?.contract}
                             symbol={price.currency?.symbol}
+                            maximumFractionDigits={
+                              price.currency?.symbol === 'AURA' ||
+                              price.currency?.symbol === 'WAURA'
+                                ? 2
+                                : 4
+                            }
                             textStyle="subtitle3"
                           />
                         </Flex>

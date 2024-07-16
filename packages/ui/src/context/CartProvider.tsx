@@ -1143,6 +1143,22 @@ function cartStore({
             }),
           }))
 
+          if (cartData.current.transaction) {
+            cartData.current.transaction.currentStep = {
+              action: '',
+              description: '',
+              kind: 'transaction',
+              id: '',
+              items: [
+                {
+                  status: 'incomplete',
+                },
+              ],
+            }
+
+            commit()
+          }
+
           await wagmiWalletClient
             ?.writeContract({
               abi: [
@@ -1196,12 +1212,21 @@ function cartStore({
             .then((hash) => {
               if (cartData?.current?.transaction) {
                 cartData.current.transaction.status = CheckoutStatus.Finalizing
-                cartData.current.items = []
-                cartData.current.pools = {}
-                cartData.current.totalPrice = 0
-                cartData.current.currency = undefined
-                cartData.current.chain = undefined
+                cartData.current.transaction.currentStep = {
+                  action: '',
+                  description: '',
+                  kind: 'transaction',
+                  id: '',
+                  items: [
+                    {
+                      status: 'incomplete',
+                      txHashes: [{ txHash: hash, chainId: activeChain?.id }],
+                    },
+                  ],
+                }
               }
+
+              commit()
 
               publicClient
                 .waitForTransactionReceipt({ hash })
@@ -1218,13 +1243,16 @@ function cartStore({
                           id: '',
                           items: [
                             {
-                              status: 'complete', // Add the missing 'status' property
+                              status: 'complete',
                               transfersData: [
                                 {
                                   amount:
                                     cartData?.current?.items?.length?.toString() ||
                                     '0',
                                 },
+                              ],
+                              txHashes: [
+                                { txHash: hash, chainId: activeChain?.id },
                               ],
                             },
                           ],
@@ -1243,6 +1271,7 @@ function cartStore({
                 })
                 .catch((e) => {
                   let error = e as any
+                  let errorType = CheckoutTransactionError.Unknown
                   const errorStatus = (error as any)?.statusCode
 
                   if (
@@ -1272,6 +1301,8 @@ function cartStore({
                   if (cartData?.current?.transaction) {
                     cartData.current.transaction.status =
                       CheckoutStatus.Approving
+                    cartData.current.transaction.error = error
+                    cartData.current.transaction.errorType = errorType
                   }
 
                   commit()
@@ -1280,6 +1311,7 @@ function cartStore({
             })
             .catch((e) => {
               let error = e as any
+              let errorType = CheckoutTransactionError.Unknown
               const errorStatus = (error as any)?.statusCode
 
               if (error?.message && error?.message.includes('AURA balance')) {
@@ -1304,6 +1336,8 @@ function cartStore({
 
               if (cartData?.current?.transaction) {
                 cartData.current.transaction.status = CheckoutStatus.Approving
+                cartData.current.transaction.error = error
+                cartData.current.transaction.errorType = errorType
               }
 
               commit()

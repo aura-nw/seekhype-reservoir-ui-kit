@@ -234,7 +234,7 @@ export function CartPopover({
                 <ChainIcon
                   chainId={cartChain?.id}
                   height={12}
-                  css={{ mr: 5 }}
+                  css={{ mr: 5, alignItems: 'center', width: '12px' }}
                 />
                 <Text style="body3" color="subtle">
                   {cartChain?.name}

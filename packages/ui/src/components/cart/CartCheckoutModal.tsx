@@ -6,7 +6,13 @@ import { Anchor, Button, Flex, Text, Box, Loader } from '../../primitives'
 import { styled } from '@stitches/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import faClose from '@fortawesome/free-solid-svg-icons/faClose'
-import {faCheckCircle, faCircleExclamation, faCube, faLock, faWallet} from '@fortawesome/free-solid-svg-icons'
+import {
+  faCheckCircle,
+  faCircleExclamation,
+  faCube,
+  faLock,
+  faWallet,
+} from '@fortawesome/free-solid-svg-icons'
 
 import { ProviderOptionsContext } from '../../ReservoirKitProvider'
 import { TokenCheckout } from '../../modal/TokenCheckout'
@@ -262,6 +268,40 @@ export function CartCheckoutModal({
                           icon={faCube}
                           style={{ height: 24, width: 24 }}
                         />
+                        <Flex direction="column" css={{ gap: '$2', mb: '$3' }}>
+                          {transaction?.currentStep?.items?.map(
+                            (item, itemIndex) => {
+                              if (
+                                Array.isArray(item?.txHashes) &&
+                                item?.txHashes.length > 0
+                              ) {
+                                return item.txHashes.map(
+                                  (hash, txHashIndex) => {
+                                    const truncatedTxHash = truncateAddress(
+                                      hash.txHash
+                                    )
+                                    const blockExplorerBaseUrl =
+                                      getChainBlockExplorerUrl(hash.chainId)
+                                    return (
+                                      <Anchor
+                                        key={`${itemIndex}-${txHashIndex}`}
+                                        href={`${blockExplorerBaseUrl}/tx/${hash.txHash}`}
+                                        color="primary"
+                                        weight="medium"
+                                        target="_blank"
+                                        css={{ fontSize: 12 }}
+                                      >
+                                        View transaction: {truncatedTxHash}
+                                      </Anchor>
+                                    )
+                                  }
+                                )
+                              } else {
+                                return null
+                              }
+                            }
+                          )}
+                        </Flex>
                       </Flex>
                     </Flex>
                     <Button disabled={true} css={{ m: '$4' }}>

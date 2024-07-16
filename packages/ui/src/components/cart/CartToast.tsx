@@ -1,9 +1,11 @@
 import React, { FC, ReactNode } from 'react'
 import { Flex, Text } from '../../primitives'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faCircleCheck from '@fortawesome/free-solid-svg-icons/faCircleCheck'
-import faCircleInfo from '@fortawesome/free-solid-svg-icons/faCircleInfo'
-import faTriangleExclamation from '@fortawesome/free-solid-svg-icons/faTriangleExclamation'
+import {
+  faCircleCheck,
+  faCircleInfo,
+  faTriangleExclamation,
+} from '@fortawesome/free-solid-svg-icons'
 
 export type CartToastKind = 'success' | 'error' | 'warning'
 

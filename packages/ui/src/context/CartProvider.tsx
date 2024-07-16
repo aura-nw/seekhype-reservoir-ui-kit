@@ -25,9 +25,19 @@ import React, {
   useState,
 } from 'react'
 import { useAccount, useChains, useConfig, useSwitchChain } from 'wagmi'
-import { WalletClient, formatUnits, parseUnits, zeroAddress } from 'viem'
+import {
+  WalletClient,
+  formatUnits,
+  parseUnits,
+  zeroAddress,
+  encodeFunctionData,
+  createPublicClient,
+  http,
+} from 'viem'
 import { version } from '../../package.json'
 import { getAccount, getWalletClient } from 'wagmi/actions'
+import { auraEVMTestnet } from '../constants/evmosChain'
+import { ContractConfig } from '../constants/common'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -133,6 +143,11 @@ function cartStore({
     pools: {},
     isValidating: false,
     transaction: null,
+  })
+
+  const publicClient = createPublicClient({
+    chain: auraEVMTestnet,
+    transport: http(),
   })
 
   const subscribers = useRef(new Set<() => void>())
@@ -1077,182 +1092,402 @@ function cartStore({
       }
       commit()
 
-      client.actions
-        .buyToken({
-          expectedPrice: {
-            [options.currency || zeroAddress]: {
-              amount: expectedPrice,
-              raw: parseUnits(`${expectedPrice}`, currencyDecimals),
-              currencyAddress: options.currency || zeroAddress,
-              currencyDecimals: currencyDecimals,
-            },
-          },
-          wallet,
-          items: tokens,
-          options,
-          onProgress: (steps: Execute['steps'], path: Execute['path']) => {
-            if (!steps) {
-              return
-            }
-            if (transactionId != cartData.current.pendingTransactionId) {
-              return
-            }
+      if (activeChain?.name === auraEVMTestnet?.name) {
+        if (address) {
+          const calls = cartData?.current?.items?.map((item) => ({
+            allowFailure: true,
+            callData: encodeFunctionData({
+              abi: [
+                {
+                  inputs: [
+                    {
+                      internalType: 'address',
+                      name: '_tokenContract',
+                      type: 'address',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: '_tokenId',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'address',
+                      name: '_fillCurrency',
+                      type: 'address',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: '_fillAmount',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'address',
+                      name: '_finder',
+                      type: 'address',
+                    },
+                  ],
+                  name: 'fillAsk',
+                  outputs: [],
+                  stateMutability: 'payable',
+                  type: 'function',
+                },
+              ],
+              functionName: 'fillAsk',
+              args: [
+                item?.collection?.id as `0x${string}`,
+                BigInt(Number(item?.token?.id)),
+                item?.price?.currency?.contract as `0x${string}`,
+                BigInt(item?.price?.amount?.raw || 0n),
+                address as `0x${string}`,
+              ],
+            }),
+          }))
 
-            let status =
-              cartData.current.transaction?.status || CheckoutStatus.Approving
-
-            const executableSteps = steps.filter(
-              (step) => step.items && step.items.length > 0
-            )
-
-            let stepCount = executableSteps.length
-
-            let currentStepItem:
-              | NonNullable<Execute['steps'][0]['items']>[0]
-              | undefined
-
-            const currentStepIndex = executableSteps.findIndex((step) => {
-              currentStepItem = step.items?.find(
-                (item) => item.status === 'incomplete'
-              )
-              return currentStepItem
+          await wagmiWalletClient
+            ?.writeContract({
+              abi: [
+                {
+                  type: 'function',
+                  name: 'aggregate',
+                  inputs: [
+                    {
+                      name: 'calls',
+                      type: 'tuple[]',
+                      internalType: 'struct Multicall.Call[]',
+                      components: [
+                        {
+                          name: 'allowFailure',
+                          type: 'bool',
+                          internalType: 'bool',
+                        },
+                        {
+                          name: 'callData',
+                          type: 'bytes',
+                          internalType: 'bytes',
+                        },
+                      ],
+                    },
+                  ],
+                  outputs: [
+                    {
+                      name: 'returnData',
+                      type: 'tuple[]',
+                      internalType: 'struct Multicall.Result[]',
+                      components: [
+                        { name: 'success', type: 'bool', internalType: 'bool' },
+                        {
+                          name: 'returnData',
+                          type: 'bytes',
+                          internalType: 'bytes',
+                        },
+                      ],
+                    },
+                  ],
+                  stateMutability: 'payable',
+                },
+              ],
+              address: ContractConfig[activeChain?.id]
+                ?.ASK1_1_MODULE_ADDRESS as `0x${string}`,
+              functionName: `aggregate`,
+              args: [calls],
+              gas: 500000n,
+              value: parseUnits(cartData?.current?.totalPrice?.toString(), 18),
             })
-
-            const currentStep =
-              currentStepIndex > -1
-                ? executableSteps[currentStepIndex]
-                : executableSteps[stepCount - 1]
-
-            if (currentStep.error) {
-              return
-            }
-
-            executableSteps.findIndex((step) => {
-              currentStepItem = step.items?.find(
-                (item) => item.status === 'incomplete'
-              )
-              return currentStepItem
-            })
-
-            const transactionSteps = steps.filter(
-              (step) =>
-                step.kind === 'transaction' &&
-                step.items &&
-                step.items?.length > 0
-            )
-
-            if (
-              transactionSteps.length > 0 &&
-              transactionSteps.every((step) =>
-                step.items?.every((item) => item.txHashes)
-              )
-            ) {
-              status = CheckoutStatus.Finalizing
-              if (cartData.current.items.length > 0) {
+            .then((hash) => {
+              if (cartData?.current?.transaction) {
+                cartData.current.transaction.status = CheckoutStatus.Finalizing
                 cartData.current.items = []
                 cartData.current.pools = {}
                 cartData.current.totalPrice = 0
                 cartData.current.currency = undefined
                 cartData.current.chain = undefined
               }
-            }
-            if (
-              steps.every(
-                (step) =>
-                  !step.items ||
-                  step.items.length == 0 ||
-                  step.items?.every((item) => item.status === 'complete')
-              )
-            ) {
-              status = CheckoutStatus.Complete
-            }
 
-            if (
-              cartData.current.transaction?.status != status &&
-              (status === CheckoutStatus.Finalizing ||
-                status === CheckoutStatus.Complete)
-            ) {
-              cartData.current.items = []
-              cartData.current.pools = {}
-              cartData.current.totalPrice = 0
-              cartData.current.currency = undefined
-              cartData.current.chain = undefined
-            }
+              publicClient
+                .waitForTransactionReceipt({ hash })
+                .then((res) => {
+                  if (res?.status === 'success') {
+                    setTimeout(() => {
+                      if (cartData?.current?.transaction) {
+                        cartData.current.transaction.status =
+                          CheckoutStatus.Complete
+                        cartData.current.transaction.currentStep = {
+                          action: '',
+                          description: '',
+                          kind: 'transaction',
+                          id: '',
+                          items: [
+                            {
+                              status: 'complete', // Add the missing 'status' property
+                              transfersData: [
+                                {
+                                  amount:
+                                    cartData?.current?.items?.length?.toString() ||
+                                    '0',
+                                },
+                              ],
+                            },
+                          ],
+                        }
 
-            if (cartData.current.transaction) {
-              cartData.current.transaction.status = status
-              cartData.current.transaction.currentStep = currentStep
-              if (currentStepItem) {
-                cartData.current.transaction.txHashes =
-                  currentStepItem?.txHashes
-                cartData.current.transaction.steps = steps
-                cartData.current.transaction.path = path
-              }
-            }
-            commit()
-          },
-        })
-        .catch((e: any) => {
-          if (transactionId != cartData.current.pendingTransactionId) {
-            return
-          }
-          let error = e as any
-          let errorType = CheckoutTransactionError.Unknown
-          const errorStatus = (error as any)?.statusCode
+                        cartData.current.items = []
+                        cartData.current.pools = {}
+                        cartData.current.totalPrice = 0
+                        cartData.current.currency = undefined
+                        cartData.current.chain = undefined
 
-          if (error?.message && error?.message.includes('ETH balance')) {
-            errorType = CheckoutTransactionError.InsufficientBalance
-          } else if (error?.code && error?.code == 4001) {
-            errorType = CheckoutTransactionError.UserDenied
-          } else {
-            let message = 'Oops, something went wrong. Please try again.'
-            if (errorStatus >= 400 && errorStatus < 500) {
-              message = error.message
-            }
-            if (error?.type && error?.type === 'price mismatch') {
-              errorType = CheckoutTransactionError.PiceMismatch
-              message = error.message
-            }
+                        commit()
+                      }
+                    }, 5000)
+                  }
+                })
+                .catch((e) => {
+                  let error = e as any
+                  const errorStatus = (error as any)?.statusCode
 
-            //@ts-ignore: Should be fixed in an update to typescript
-            error = new Error(message, {
-              cause: error,
+                  if (
+                    error?.message &&
+                    error?.message.includes('ETH balance')
+                  ) {
+                    errorType = CheckoutTransactionError.InsufficientBalance
+                  } else if (error?.code && error?.code == 4001) {
+                    errorType = CheckoutTransactionError.UserDenied
+                  } else {
+                    let message =
+                      'Oops, something went wrong. Please try again.'
+                    if (errorStatus >= 400 && errorStatus < 500) {
+                      message = error.message
+                    }
+                    if (error?.type && error?.type === 'price mismatch') {
+                      errorType = CheckoutTransactionError.PiceMismatch
+                      message = error.message
+                    }
+
+                    //@ts-ignore: Should be fixed in an update to typescript
+                    error = new Error(message, {
+                      cause: error,
+                    })
+                  }
+
+                  if (cartData?.current?.transaction) {
+                    cartData.current.transaction.status =
+                      CheckoutStatus.Approving
+                  }
+
+                  commit()
+                  validate()
+                })
             })
-          }
-          if (cartData.current.transaction) {
-            cartData.current.transaction.status = CheckoutStatus.Idle
-            cartData.current.transaction.error = error
-            cartData.current.transaction.errorType = errorType
-            if (
-              cartData.current.chain?.id ==
-              cartData.current.transaction.chain.id
-            ) {
-              const items = [...cartData.current.transaction.items]
-              const pools = calculatePools(items)
-              const currency = getCartCurrency(
-                items,
-                cartData.current.transaction.chain.id
+            .catch((e) => {
+              let error = e as any
+              const errorStatus = (error as any)?.statusCode
+
+              if (error?.message && error?.message.includes('AURA balance')) {
+                errorType = CheckoutTransactionError.InsufficientBalance
+              } else if (error?.code && error?.code == 4001) {
+                errorType = CheckoutTransactionError.UserDenied
+              } else {
+                let message = 'Oops, something went wrong. Please try again.'
+                if (errorStatus >= 400 && errorStatus < 500) {
+                  message = error.message
+                }
+                if (error?.type && error?.type === 'price mismatch') {
+                  errorType = CheckoutTransactionError.PiceMismatch
+                  message = error.message
+                }
+
+                //@ts-ignore: Should be fixed in an update to typescript
+                error = new Error(message, {
+                  cause: error,
+                })
+              }
+
+              if (cartData?.current?.transaction) {
+                cartData.current.transaction.status = CheckoutStatus.Approving
+              }
+
+              commit()
+              validate()
+            })
+        }
+      } else {
+        client.actions
+          .buyToken({
+            expectedPrice: {
+              [options.currency || zeroAddress]: {
+                amount: expectedPrice,
+                raw: parseUnits(`${expectedPrice}`, currencyDecimals),
+                currencyAddress: options.currency || zeroAddress,
+                currencyDecimals: currencyDecimals,
+              },
+            },
+            wallet,
+            items: tokens,
+            options,
+            onProgress: (steps: Execute['steps'], path: Execute['path']) => {
+              if (!steps) {
+                return
+              }
+              if (transactionId != cartData.current.pendingTransactionId) {
+                return
+              }
+
+              let status =
+                cartData.current.transaction?.status || CheckoutStatus.Approving
+
+              const executableSteps = steps.filter(
+                (step) => step.items && step.items.length > 0
               )
-              const { totalPrice, feeOnTop } = calculatePricing(
-                items,
-                currency,
-                cartData.current.feesOnTopBps,
-                cartData.current.feesOnTopUsd,
-                usdPrice
+
+              let stepCount = executableSteps.length
+
+              let currentStepItem:
+                | NonNullable<Execute['steps'][0]['items']>[0]
+                | undefined
+
+              const currentStepIndex = executableSteps.findIndex((step) => {
+                currentStepItem = step.items?.find(
+                  (item) => item.status === 'incomplete'
+                )
+                return currentStepItem
+              })
+
+              const currentStep =
+                currentStepIndex > -1
+                  ? executableSteps[currentStepIndex]
+                  : executableSteps[stepCount - 1]
+
+              if (currentStep.error) {
+                return
+              }
+
+              executableSteps.findIndex((step) => {
+                currentStepItem = step.items?.find(
+                  (item) => item.status === 'incomplete'
+                )
+                return currentStepItem
+              })
+
+              const transactionSteps = steps.filter(
+                (step) =>
+                  step.kind === 'transaction' &&
+                  step.items &&
+                  step.items?.length > 0
               )
-              cartData.current.items = items
-              cartData.current.pools = pools
-              cartData.current.currency = currency
-              cartData.current.totalPrice = totalPrice
-              cartData.current.feeOnTop = feeOnTop
-              cartData.current.chain = cartData.current.transaction.chain
+
+              if (
+                transactionSteps.length > 0 &&
+                transactionSteps.every((step) =>
+                  step.items?.every((item) => item.txHashes)
+                )
+              ) {
+                status = CheckoutStatus.Finalizing
+                if (cartData.current.items.length > 0) {
+                  cartData.current.items = []
+                  cartData.current.pools = {}
+                  cartData.current.totalPrice = 0
+                  cartData.current.currency = undefined
+                  cartData.current.chain = undefined
+                }
+              }
+              if (
+                steps.every(
+                  (step) =>
+                    !step.items ||
+                    step.items.length == 0 ||
+                    step.items?.every((item) => item.status === 'complete')
+                )
+              ) {
+                status = CheckoutStatus.Complete
+              }
+
+              if (
+                cartData.current.transaction?.status != status &&
+                (status === CheckoutStatus.Finalizing ||
+                  status === CheckoutStatus.Complete)
+              ) {
+                cartData.current.items = []
+                cartData.current.pools = {}
+                cartData.current.totalPrice = 0
+                cartData.current.currency = undefined
+                cartData.current.chain = undefined
+              }
+
+              if (cartData.current.transaction) {
+                cartData.current.transaction.status = status
+                cartData.current.transaction.currentStep = currentStep
+                if (currentStepItem) {
+                  cartData.current.transaction.txHashes =
+                    currentStepItem?.txHashes
+                  cartData.current.transaction.steps = steps
+                  cartData.current.transaction.path = path
+                }
+              }
+              commit()
+            },
+          })
+          .catch((e: any) => {
+            if (transactionId != cartData.current.pendingTransactionId) {
+              return
             }
-            commit()
-            validate()
-          }
-        })
+            let error = e as any
+            let errorType = CheckoutTransactionError.Unknown
+            const errorStatus = (error as any)?.statusCode
+
+            if (error?.message && error?.message.includes('ETH balance')) {
+              errorType = CheckoutTransactionError.InsufficientBalance
+            } else if (error?.code && error?.code == 4001) {
+              errorType = CheckoutTransactionError.UserDenied
+            } else {
+              let message = 'Oops, something went wrong. Please try again.'
+              if (errorStatus >= 400 && errorStatus < 500) {
+                message = error.message
+              }
+              if (error?.type && error?.type === 'price mismatch') {
+                errorType = CheckoutTransactionError.PiceMismatch
+                message = error.message
+              }
+
+              //@ts-ignore: Should be fixed in an update to typescript
+              error = new Error(message, {
+                cause: error,
+              })
+            }
+            if (cartData.current.transaction) {
+              cartData.current.transaction.status = CheckoutStatus.Idle
+              cartData.current.transaction.error = error
+              cartData.current.transaction.errorType = errorType
+              if (
+                cartData.current.chain?.id ==
+                cartData.current.transaction.chain.id
+              ) {
+                const items = [...cartData.current.transaction.items]
+                const pools = calculatePools(items)
+                const currency = getCartCurrency(
+                  items,
+                  cartData.current.transaction.chain.id
+                )
+                const { totalPrice, feeOnTop } = calculatePricing(
+                  items,
+                  currency,
+                  cartData.current.feesOnTopBps,
+                  cartData.current.feesOnTopUsd,
+                  usdPrice
+                )
+                cartData.current.items = items
+                cartData.current.pools = pools
+                cartData.current.currency = currency
+                cartData.current.totalPrice = totalPrice
+                cartData.current.feeOnTop = feeOnTop
+                cartData.current.chain = cartData.current.transaction.chain
+              }
+              commit()
+              validate()
+            }
+          })
+      }
     },
-    [client, switchChainAsync, usdPrice, walletClient, config]
+    [client, switchChainAsync, usdPrice, walletClient, config, address]
   )
 
   return {

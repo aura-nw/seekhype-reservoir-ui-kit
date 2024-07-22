@@ -29,7 +29,7 @@ const wrappedContracts: Record<number, string> = {
   1235: '0x7C258D32e0C5ADda30d18194870b56A38E2EBBbC', //aura evm dev
   1236: '0xE974cC14c93FC6077B0d65F98832B846C5454A0B', //aura evm serenity
   6321: '0x7f4f375454B34895DAE95e0cCEDc0743B3850893', //aura evm euphoria
-  6322: '0x9A1945e4A316708631332BF7EC4fA8A2f6C6E2f8', //aura evm main
+  6322: '0xDE47A655a5d9904BD3F7e1A536D8323fBD99993A', //aura evm main
 }
 
 export default wrappedContracts

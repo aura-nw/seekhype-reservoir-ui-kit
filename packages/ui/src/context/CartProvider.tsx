@@ -37,7 +37,7 @@ import {
 import { version } from '../../package.json'
 import { getAccount, getWalletClient } from 'wagmi/actions'
 import { auraEVMTestnet } from '../constants/evmosChain'
-import { ContractConfig } from '../constants/common'
+import { ChainConfig, ContractConfig } from '../constants/common'
 
 type Order = NonNullable<ReturnType<typeof useListings>['data'][0]>
 type OrdersSchema =
@@ -145,13 +145,16 @@ function cartStore({
     transaction: null,
   })
 
+  const client = useReservoirClient()
+
+  const currentChain = client?.currentChain()
+
   const publicClient = createPublicClient({
-    chain: auraEVMTestnet,
+    chain: ChainConfig[currentChain ? currentChain?.id : 1235],
     transport: http(),
   })
 
   const subscribers = useRef(new Set<() => void>())
-  const client = useReservoirClient()
   const { data: usdFeeConversion } = useCurrencyConversion(
     cartChain?.id,
     cartCurrency?.contract,
@@ -1092,7 +1095,10 @@ function cartStore({
       }
       commit()
 
-      if (activeChain?.name === auraEVMTestnet?.name) {
+      if (
+        activeChain?.name ===
+        ChainConfig[currentChain ? currentChain?.id : 1235]?.name
+      ) {
         if (address) {
           const calls = cartData?.current?.items?.map((item) => ({
             allowFailure: true,
